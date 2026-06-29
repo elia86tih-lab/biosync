@@ -1978,8 +1978,11 @@ function setLang(l){
 }
 function refreshLang(){
   updateLandingTexts();
+  updateAuthTexts();
   if(!S.curUser)return;
-  if(S.curUser.role==='f')renderFemaleDash();
+  var u=S.users.find(function(x){return x.id===S.curUser});
+  if(!u)return;
+  if(u.gender==='female')renderFemaleDash();
   else renderMaleDash();
 }
 function updateLandingTexts(){
@@ -2003,6 +2006,68 @@ function updateLandingTexts(){
   if(mb)mb.innerHTML='<i data-lucide="mars" class="lx lx-lg"></i> '+_('btn_male');
   var al=document.querySelector('#p-landing .landing-link');
   if(al)al.innerHTML=_('have_account')+' <a onclick="navigate(\'login\')">'+_('login_btn')+'</a>';
+  lucide.createIcons();
+}
+function updateAuthTexts(){
+  var map={
+    'p-login h2':'login_welcome','p-login p.sub':'login_subtitle',
+    'p-login label[for=login-remember]':'login_remember',
+    'p-login .social-divider span':'login_or',
+    'p-login .auth-link':'no_account',
+    'p-login .auth-link a':'register_link',
+    'p-login button.btn-p':'login_btn',
+    'p-register-female #rf-page1 h2':'reg_title',
+    'p-register-female #rf-page1 p':'reg_f_sub',
+    'p-register-female #rf-page1 button.btn-p':'create_btn',
+    'p-register-female #rf-page2 h2':'cycle_setup',
+    'p-register-female #rf-page2 p':'cycle_setup_sub',
+    'p-register-female #rf-page2 button.btn-p':'cycle_save',
+    'p-register-male #rm-page1 h2':'reg_title',
+    'p-register-male #rm-page1 p':'reg_m_sub',
+    'p-register-male #rm-page1 button.btn-p':'create_btn',
+    'p-register-male #rm-page2 h2':'connect_title',
+    'p-register-male #rm-page2 p':'connect_sub',
+    'p-register-male #rm-page2 button.btn-p':'connect_btn'
+  };
+  for(var sel in map){
+    var key=map[sel];
+    var parts=sel.split(' ');
+    var scope=document.getElementById(parts[0].replace('#','').replace('p-','p-'));
+    if(!scope)scope=document.querySelector('#'+parts[0]);
+    if(!scope)continue;
+    var el=scope.querySelector(parts.slice(1).join(' '));
+    if(el){
+      var val=_(key);
+      if(sel.indexOf('auth-link')>=0&&key==='no_account'){
+        el.innerHTML=val+' <a onclick="navigate(\'landing\')">'+_('register_link')+'</a>';
+      }else if(sel.indexOf('auth-link')>=0&&key==='register_link'){
+        // skip, handled by no_account
+      }else if(sel.indexOf('.social-divider')>=0){
+        el.textContent=val;
+      }else if(el.tagName==='BUTTON'){
+        // preserve icon
+        var ic=el.querySelector('i[data-lucide],svg');
+        if(ic)el.innerHTML=ic.outerHTML+' '+val;else el.textContent=val;
+      }else{
+        el.textContent=val;
+      }
+    }
+  }
+  // Update labels
+  var labels={'rf-name':'name_label','rf-email':'login_email','rf-pass':'pass_label','rm-name':'name_label','rm-email':'login_email','rm-pass':'pass_label','login-email':'login_email','login-pass':'login_pass'};
+  for(var id in labels){
+    var inp=document.getElementById(id);
+    if(inp){
+      var lbl=inp.previousElementSibling;
+      if(lbl&&lbl.tagName==='LABEL')lbl.textContent=_(labels[id]);
+    }
+  }
+  // Placeholders
+  var phs={'rf-name':'name_ph','rf-pass':'pass_hint','rm-name':'name_ph','rm-pass':'pass_hint','login-pass':'login_pass_ph'};
+  for(var id in phs){
+    var e=document.getElementById(id);
+    if(e)e.placeholder=_(phs[id]);
+  }
   lucide.createIcons();
 }
 
@@ -3010,6 +3075,7 @@ function init(){
   checkConnectHash();
   lucide.createIcons(document.getElementById('p-landing'));
   updateLandingTexts();
+  updateAuthTexts();
   // Try auto-login from remembered session
   if(!S.curUser){
     try{var remembered=JSON.parse(localStorage.getItem('biosync_remember')||'null')}catch(e){localStorage.removeItem('biosync_remember')}
