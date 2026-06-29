@@ -1,42 +1,13 @@
 {
-  "users": [
-    {
-      "id": "g0bnh83lg",
-      "email": "elia-86tih@mail.ru",
-      "pass": "170686",
-      "name": "Елена",
-      "gender": "female",
-      "priv": {
-        "showPhase": true,
-        "showDay": true,
-        "showCareTips": true,
-        "showMood": false
-      }
-    }
-  ],
-  "curUser": "g0bnh83lg",
-  "cycle": {
-    "g0bnh83lg": {
-      "lps": "2026-06-25",
-      "cl": 28,
-      "pl": 5
-    }
-  },
+  "users": [],
+  "curUser": null,
+  "cycle": {},
   "logs": {},
   "couples": [],
   "notifs": {},
   "moodForm": {},
-  "subs": {
-    "g0bnh83lg": {
-      "plan": "premium",
-      "trial": 0,
-      "expires": 1785333243541,
-      "monthly": true
-    }
-  },
+  "subs": {},
   "voice": {},
   "_moodSaved": false,
-  "_theme": "light",
-  "_fTab": "sonya",
-  "_sonyaTopic": "быт"
+  "_theme": "light"
 }
