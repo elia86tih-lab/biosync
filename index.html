@@ -1738,8 +1738,272 @@ function loadTheme(){
 const LANG_NAMES={ru:'Русский',en:'English',zh:'中文',hi:'हिन्दी',es:'Español',ar:'العربية',fr:'Français',bn:'বাংলা',pt:'Português',ur:'اردو',de:'Deutsch',id:'Bahasa Indonesia',ja:'日本語',tr:'Türkçe',ko:'한국어'};
 const LANG_FLAGS={ru:'🇷🇺',en:'🇬🇧',zh:'🇨🇳',hi:'🇮🇳',es:'🇪🇸',ar:'🇸🇦',fr:'🇫🇷',bn:'🇧🇩',pt:'🇧🇷',ur:'🇵🇰',de:'🇩🇪',id:'🇮🇩',ja:'🇯🇵',tr:'🇹🇷',ko:'🇰🇷'};
 let _lang=localStorage.getItem('biosync_lang')||'ru';
-function setLang(l){_lang=l;localStorage.setItem('biosync_lang',l);document.getElementById('lang-select').value=l}
-function _(ru){return ru}
+const _PKN={n:['phase_mens','phase_foll','phase_ovul','phase_lut'],cn:['phase_mens_cn','phase_foll_cn','phase_ovul_cn','phase_lut_cn'],d:['phase_mens_desc','phase_foll_desc','phase_ovul_desc','phase_lut_desc']};
+const _MOOD_K={};['mood_great','mood_good','mood_neutral','mood_sad','mood_irrit','mood_tired'].forEach(function(k,i){_MOOD_K[['Отлично','Хорошо','Нейтрально','Грустно','Раздражена','Устала'][i]]=k});
+function _pn(pi){return _(_PKN.n[pi])}
+function _pd(pi){return _(_PKN.d[pi])}
+function _mk(lbl){var k=_MOOD_K[lbl];return k?_(k):lbl}
+const _T={
+'app_title':{ru:'BioSync — Код пары',en:'BioSync — Couple Code'},
+'theme_toggle':{ru:'Сменить тему',en:'Toggle theme'},
+'landing_h1':{ru:'BioSync <span>Код пары</span>',en:'BioSync <span>Couple Code</span>'},
+'landing_desc':{ru:'Превратите знание о цикле в инструмент бережного общения. Приложение синхронизирует гормональный трекер женщины с персонализированными подсказками для мужчины — через <strong>«Код пары»</strong> вы соединяете аккаунты и получаете единое пространство для отношений.',en:'Turn cycle awareness into a tool for gentle communication. The app syncs a woman\'s hormonal tracker with personalized tips for the man — through the <strong>Couple Code</strong> you connect accounts and get a shared space for your relationship.'},
+'ft_tracker':{ru:'Трекер цикла',en:'Cycle tracker'},
+'ft_sonya':{ru:'ИИ-медиатор Соня',en:'AI mediator Sonya'},
+'ft_rituals':{ru:'Парные ритуалы',en:'Couple rituals'},
+'ft_voice':{ru:'Выговориться',en:'Speak out'},
+'ft_analytics':{ru:'Аналитика пары',en:'Couple analytics'},
+'lang_label':{ru:'Язык интерфейса',en:'Interface language'},
+'btn_female':{ru:'Я — женщина',en:'I am a woman'},
+'btn_male':{ru:'Я — мужчина',en:'I am a man'},
+'have_account':{ru:'Уже есть аккаунт?',en:'Already have an account?'},
+'login_btn':{ru:'Войти',en:'Log in'},
+'login_welcome':{ru:'Добро пожаловать',en:'Welcome'},
+'login_subtitle':{ru:'Войдите в свой аккаунт BioSync',en:'Sign in to your BioSync account'},
+'login_email':{ru:'Email',en:'Email'},
+'login_pass':{ru:'Пароль',en:'Password'},
+'login_pass_ph':{ru:'Ваш пароль',en:'Your password'},
+'login_remember':{ru:'Запомнить устройство',en:'Remember this device'},
+'login_or':{ru:'или войти через',en:'or sign in with'},
+'no_account':{ru:'Нет аккаунта?',en:'Don\'t have an account?'},
+'register_link':{ru:'Зарегистрироваться',en:'Register'},
+'login_back':{ru:'С возвращением!',en:'Welcome back!'},
+'login_as':{ru:'Войти как',en:'Sign in as'},
+'login_not_me':{ru:'Это не я — войти заново',en:'Not me — sign in again'},
+'reg_title':{ru:'Регистрация',en:'Registration'},
+'reg_f_sub':{ru:'Создайте аккаунт, чтобы начать отслеживать свой цикл.',en:'Create an account to start tracking your cycle.'},
+'reg_m_sub':{ru:'Создайте аккаунт, чтобы подключиться к партнерше.',en:'Create an account to connect with your partner.'},
+'name_label':{ru:'Имя',en:'Name'},
+'name_ph':{ru:'Ваше имя',en:'Your name'},
+'pass_label':{ru:'Пароль',en:'Password'},
+'pass_hint':{ru:'Минимум 6 символов',en:'At least 6 characters'},
+'create_btn':{ru:'Создать аккаунт',en:'Create account'},
+'phase_word':{ru:'фаза',en:'phase'},
+'cycle_setup':{ru:'Настройка цикла',en:'Cycle setup'},
+'cycle_setup_sub':{ru:'Укажите параметры вашего цикла для персонализированного опыта.',en:'Set your cycle parameters for a personalized experience.'},
+'cycle_start':{ru:'Первый день последних месячных',en:'First day of last period'},
+'cycle_len':{ru:'Длина цикла (дни)',en:'Cycle length (days)'},
+'cycle_len_hint':{ru:'Обычно 21–35 дней',en:'Usually 21–35 days'},
+'period_len':{ru:'Длина месячных (дни)',en:'Period length (days)'},
+'period_len_hint':{ru:'Обычно 3–7 дней',en:'Usually 3–7 days'},
+'cycle_save':{ru:'Сохранить и продолжить',en:'Save and continue'},
+'cycle_skip':{ru:'Пропустить — настрою позже',en:'Skip — I\'ll set it up later'},
+'connect_title':{ru:'Подключение к паре',en:'Connect to couple'},
+'connect_sub':{ru:'Введите код пары, который передала вам партнерша.',en:'Enter the couple code your partner shared with you.'},
+'connect_code':{ru:'Код пары',en:'Couple code'},
+'connect_btn':{ru:'Подключиться',en:'Connect'},
+'connect_skip':{ru:'Пропустить — подключусь позже',en:'Skip — I\'ll connect later'},
+'logout':{ru:'Выйти',en:'Log out'},
+'voice_btn':{ru:'Выговориться',en:'Speak out'},
+'phase_mens':{ru:'Менструальная',en:'Menstrual'},
+'phase_mens_cn':{ru:'Этап восстановления',en:'Recovery phase'},
+'phase_mens_desc':{ru:'Дни покоя и заботы',en:'Days of rest and care'},
+'phase_foll':{ru:'Фолликулярная',en:'Follicular'},
+'phase_foll_cn':{ru:'Период энергии',en:'Energy period'},
+'phase_foll_desc':{ru:'Время новых идей и планов',en:'Time for new ideas and plans'},
+'phase_ovul':{ru:'Овуляторная',en:'Ovulatory'},
+'phase_ovul_cn':{ru:'Период близости',en:'Intimacy period'},
+'phase_ovul_desc':{ru:'Пик энергии и общительности',en:'Peak energy and sociability'},
+'phase_lut':{ru:'Лютеиновая',en:'Luteal'},
+'phase_lut_cn':{ru:'Период чуткости',en:'Sensitivity period'},
+'phase_lut_desc':{ru:'Время замедления и заботы',en:'Time to slow down and care'},
+'wave_rest':{ru:'Покой',en:'Rest'},
+'wave_grow':{ru:'Рост',en:'Growth'},
+'wave_bloom':{ru:'Цветение',en:'Bloom'},
+'wave_fade':{ru:'Увядание',en:'Fade'},
+'wave_seed':{ru:'Семя в земле',en:'Seed in soil'},
+'wave_sprout':{ru:'Первые всходы',en:'First sprouts'},
+'wave_flower':{ru:'Прекрасный цветок',en:'Beautiful flower'},
+'wave_fall':{ru:'Листопады',en:'Falling leaves'},
+'wave_day':{ru:'🌊 День {0} из {1} · {2}',en:'🌊 Day {0} of {1} · {2}'},
+'mood_great':{ru:'Отлично',en:'Great'},
+'mood_good':{ru:'Хорошо',en:'Good'},
+'mood_neutral':{ru:'Нейтрально',en:'Neutral'},
+'mood_sad':{ru:'Грустно',en:'Sad'},
+'mood_irrit':{ru:'Раздражена',en:'Irritated'},
+'mood_tired':{ru:'Устала',en:'Tired'},
+'prem_trial':{ru:'7-дневный пробный',en:'7-day trial'},
+'free_plan':{ru:'Бесплатный тариф',en:'Free plan'},
+'to_premium':{ru:'перейти в Premium',en:'upgrade to Premium'},
+'voice_limit':{ru:'Лимит исчерпан',en:'Limit reached'},
+'voice_limit_desc':{ru:'На бесплатном тарифе — 1 сессия в месяц. Оформите Premium для безлимитного доступа.',en:'Free plan: 1 session/month. Get Premium for unlimited access.'},
+'voice_listen':{ru:'Я слушаю',en:'I\'m listening'},
+'voice_prompt':{ru:'Говори сколько хочешь. Я никуда не спешу.',en:'Speak as much as you want. I\'m in no hurry.'},
+'voice_start':{ru:'Нажми, чтобы начать',en:'Tap to start'},
+'voice_cancel':{ru:'Отмена',en:'Cancel'},
+'voice_recording':{ru:'0:00 · Говорите...',en:'0:00 · Speaking...'},
+'voice_speaking':{ru:'Говорите...',en:'Speaking...'},
+'voice_analyzing':{ru:'🧠 Анализирую...',en:'🧠 Analyzing...'},
+'stress_high':{ru:'Высокий',en:'High'},
+'stress_med':{ru:'Средний',en:'Medium'},
+'stress_low':{ru:'Низкий',en:'Low'},
+'sessions_left':{ru:'Осталось: {0} сессии',en:'Remaining: {0} sessions'},
+'stress_level':{ru:'Уровень напряжения',en:'Stress level'},
+'voice_peak':{ru:'Пик: {0}',en:'Peak: {0}'},
+'voice_feelings':{ru:'Что чувствуется в речи:',en:'What I hear in your speech:'},
+'voice_sos':{ru:'SOS: здесь и сейчас',en:'SOS: here and now'},
+'voice_sos_run':{ru:'▶ Запустить',en:'▶ Start'},
+'voice_reco':{ru:'Рекомендация на сегодня',en:'Today\'s recommendation'},
+'voice_save':{ru:'Сохранить',en:'Save'},
+'voice_close':{ru:'Закрыть',en:'Close'},
+'voice_sos_active':{ru:'Практика запущена. Дышите спокойно.',en:'Practice started. Breathe calmly.'},
+'voice_saved':{ru:'Сессия сохранена',en:'Session saved'},
+'fertile_win':{ru:'🟢 Фертильное окно',en:'🟢 Fertile window'},
+'high_emo':{ru:'🔴 Повыш. эмоцион.',en:'🔴 High emotions'},
+'ovulation':{ru:'Овуляция',en:'Ovulation'},
+'ftab_wave':{ru:'Моя волна',en:'My wave'},
+'ftab_self':{ru:'Саморегуляция',en:'Self-care'},
+'ftab_sonya':{ru:'Соня',en:'Sonya'},
+'ftab_couple':{ru:'Код пары',en:'Couple code'},
+'ftab_diary':{ru:'Дневник',en:'Diary'},
+'ftab_notifs':{ru:'Уведомления',en:'Notifications'},
+'ftab_plans':{ru:'Тарифы',en:'Plans'},
+'ftab_settings':{ru:'Настройки',en:'Settings'},
+'mtab_compass':{ru:'Компас партнёра',en:'Partner compass'},
+'mtab_strategy':{ru:'Стратегия дня',en:'Daily strategy'},
+'mtab_sonya':{ru:'Соня',en:'Sonya'},
+'mtab_history':{ru:'История цикла',en:'Cycle history'},
+'mtab_tips':{ru:'Подсказки',en:'Tips'},
+'mtab_plans':{ru:'Тарифы',en:'Plans'},
+'mtab_settings':{ru:'Настройки',en:'Settings'},
+'wave_setup':{ru:'Настройте свой цикл',en:'Set up your cycle'},
+'wave_setup_desc':{ru:'Для отображения фаз укажите параметры цикла.',en:'To display phases, set your cycle parameters.'},
+'wave_today':{ru:'⭐ Главное на сегодня',en:'⭐ Today\'s highlight'},
+'wave_no_entry':{ru:'Нет записи',en:'No entry'},
+'wave_setup_chart':{ru:'📊 Настройте цикл',en:'📊 Set up cycle'},
+'wave_tooltip':{ru:'Текущая фаза с прогнозом на ближайшие дни.',en:'Current phase with forecast for the coming days.'},
+'wave_forecast':{ru:'📅 Прогноз фаз на цикл',en:'📅 Phase forecast'},
+'self_setup':{ru:'Настройте цикл',en:'Set up cycle'},
+'self_setup_desc':{ru:'Чтобы получать практики, укажите данные цикла.',en:'Enter your cycle data to get practices.'},
+'self_title':{ru:'Практики саморегуляции',en:'Self-regulation practices'},
+'self_tooltip':{ru:'Техники заботы о себе, подобранные под текущую фазу цикла.',en:'Self-care techniques tailored to your current cycle phase.'},
+'fill_fields':{ru:'Заполните все поля',en:'Fill in all fields'},
+'wrong_creds':{ru:'Неверный email или пароль',en:'Invalid email or password'},
+'pass_short':{ru:'Пароль минимум 6 символов',en:'Password must be at least 6 characters'},
+'email_taken':{ru:'Этот email уже зарегистрирован.',en:'This email is already registered.'},
+'login_instead':{ru:'Войти в аккаунт',en:'Sign in'},
+'enter_period':{ru:'Укажите первый день последних месячных',en:'Enter the first day of your last period'},
+'bad_cycle_len':{ru:'Некорректная длина цикла',en:'Invalid cycle length'},
+'enter_code':{ru:'Введите код пары',en:'Enter couple code'},
+'code_not_found':{ru:'Код не найден или уже использован',en:'Code not found or already used'},
+'already_paired':{ru:'Вы уже в другой паре',en:'You are already in another pair'},
+'grant_access':{ru:'Разрешите доступ к данным вашего цикла?',en:'Grant access to your cycle data?'},
+'access_desc':{ru:'Он увидит обобщенные фазы и подсказки по заботе.',en:'He will see generalized phases and care tips.'},
+'settings_title':{ru:'⚙️ Настройки',en:'⚙️ Settings'},
+'settings_sub':{ru:'Профиль, тема оформления и управление',en:'Profile, theme and management'},
+'settings_theme':{ru:'🌓 Тема оформления',en:'🌓 Theme'},
+'settings_theme_val':{ru:'Светлая / Тёмная',en:'Light / Dark'},
+'settings_lang':{ru:'🌐 Язык интерфейса',en:'🌐 Language'},
+'settings_cycle':{ru:'📊 Данные цикла',en:'📊 Cycle data'},
+'settings_day':{ru:'День цикла',en:'Cycle day'},
+'settings_couple_code':{ru:'💞 Код пары',en:'💞 Couple code'},
+'settings_code_new':{ru:'🔄 Новый',en:'🔄 New'},
+'settings_code_create':{ru:'🔑 Создать',en:'🔑 Create'},
+'settings_code_copy':{ru:'📋 Копировать код',en:'📋 Copy code'},
+'settings_code_link':{ru:'🔗 Отправить ссылку',en:'🔗 Send link'},
+'settings_code_link_desc':{ru:'По ссылке партнер автоматически перейдет к подключению',en:'The link will take your partner directly to the connection page'},
+'settings_active':{ru:'Активен',en:'Active'},
+'settings_compare':{ru:'Сравнить тарифы и подписки',en:'Compare plans'},
+'settings_icons':{ru:'🌸 Иконки волны',en:'🌸 Wave icons'},
+'settings_icons_desc':{ru:'Выберите набор иконок для отображения фаз цикла.',en:'Choose an icon set for displaying cycle phases.'},
+'settings_sync':{ru:'☁️ Синхронизация',en:'☁️ Sync'},
+'settings_sync_connected':{ru:'подключено',en:'connected'},
+'settings_sync_not':{ru:'не настроено',en:'not configured'},
+'settings_sync_auto':{ru:'Данные сохраняются автоматически каждые 60 секунд.',en:'Data auto-saves every 60 seconds.'},
+'settings_sync_btn':{ru:'⚙️ Настроить синхронизацию',en:'⚙️ Set up sync'},
+'settings_danger':{ru:'⚠️ Опасная зона',en:'⚠️ Danger zone'},
+'settings_danger_desc':{ru:'Все данные будут удалены без возможности восстановления.',en:'All data will be permanently deleted.'},
+'settings_reset_confirm':{ru:'Вы уверены? Все данные будут удалены.',en:'Are you sure? All data will be deleted.'},
+'settings_reset_btn':{ru:'🗑️ Сбросить все данные',en:'🗑️ Reset all data'},
+'settings_logout':{ru:'🚪 Выйти из аккаунта',en:'🚪 Log out'},
+'settings_on':{ru:'✅ Вкл',en:'✅ On'},
+'settings_off':{ru:'❌ Выкл',en:'❌ Off'},
+'settings_med':{ru:'🔒 Медицинские подробности и точный день овуляции всегда скрыты.',en:'🔒 Medical details and exact ovulation day are always hidden.'},
+'tut_wave':{ru:'Ваша волна',en:'Your wave'},
+'tut_wave_desc':{ru:'Здесь отображается текущая фаза и прогноз на ближайшие дни.',en:'Here you can see your current phase and forecast.'},
+'tut_self':{ru:'Саморегуляция',en:'Self-regulation'},
+'tut_self_desc':{ru:'Практики для снижения стресса в каждой фазе.',en:'Practices to reduce stress in each phase.'},
+'tut_sonya':{ru:'ИИ-медиатор Соня',en:'AI mediator Sonya'},
+'tut_sonya_desc':{ru:'Соня помогает общаться бережнее — переводит эмоции, даёт прогнозы для пары.',en:'Sonya helps you communicate gently — translates emotions, gives forecasts.'},
+'tut_couple':{ru:'Код пары',en:'Couple code'},
+'tut_couple_desc':{ru:'Подключите партнёра — он увидит фазы и получит подсказки по заботе.',en:'Connect your partner — they\'ll see phases and get care tips.'},
+'tut_diary':{ru:'Дневник',en:'Diary'},
+'tut_diary_desc':{ru:'Отмечайте настроение и самочувствие.',en:'Track your mood and wellbeing.'},
+'tut_back':{ru:'← Назад',en:'← Back'},
+'tut_next':{ru:'Далее →',en:'Next →'},
+'tut_done':{ru:'👌 Понятно!',en:'👌 Got it!'},
+'tut_skip':{ru:'Пропустить обучение',en:'Skip tutorial'},
+'setup_gh_token':{ru:'Введите GitHub Personal Access Token (с правами repo):',en:'Enter GitHub Personal Access Token (repo scope):'},
+'setup_gh_repo':{ru:'Введите репозиторий (owner/repo):',en:'Enter repository (owner/repo):'},
+'sonya_intro':{ru:'Привет, {0}! Я Соня — твой ИИ-медиатор пары.',en:'Hi {0}! I\'m Sonya — your couple AI mediator.'},
+'sonya_stats':{ru:'Я заметила: {0} записи дневника, {1} сессий «Выговориться», {2} ритуалов за это время.',en:'I noticed: {0} diary entries, {1} Speak Out sessions, {2} rituals during this time.'},
+'sonya_habit_diary':{ru:'Хорошая привычка вести дневник — помогает отслеживать эмоции.',en:'Good habit of keeping a diary — helps track emotions.'},
+'sonya_habit_voice':{ru:'«Выговориться» — отличный способ снижать напряжение.',en:'Speak Out — a great way to relieve tension.'},
+'sonya_close':{ru:'Я здесь, чтобы помочь вам слышать друг друга.',en:'I\'m here to help you hear each other.'},
+'sonya_setup':{ru:'Настройте цикл, и я смогу давать прогнозы.',en:'Set up your cycle and I\'ll give forecasts.'},
+'sonya_title':{ru:'Соня — ваш семейный ИИ-психолог',en:'Sonya — your family AI psychologist'},
+'sonya_24':{ru:'24/7 от BioSync',en:'24/7 from BioSync'},
+'sonya_tooltip':{ru:'ИИ-медиатор Соня',en:'AI mediator Sonya'},
+'sonya_predictor':{ru:'Предиктор Сони',en:'Sonya\'s Predictor'},
+'sonya_try':{ru:'Попробуй Соню в деле',en:'Try Sonya in action'},
+'sonya_try_desc':{ru:'Медиатор, предиктор, тренер — ваш персональный ИИ-психолог.',en:'Mediator, predictor, coach — your personal AI psychologist.'},
+'sonya_get':{ru:'Оформить',en:'Subscribe'},
+'sonya_try_btn':{ru:'Попробовать',en:'Try'},
+'sonya_mediator':{ru:'Медиатор',en:'Mediator'},
+'sonya_report':{ru:'Отчёт пары',en:'Couple report'},
+'sonya_sos_mode':{ru:'SOS-успокоение',en:'SOS calming'},
+'sonya_challenge':{ru:'Челлендж',en:'Challenge'},
+'m_sonya_inactive':{ru:'Соня пока не активна',en:'Sonya not active yet'},
+'m_sonya_tooltip':{ru:'Соня · переводчик пары',en:'Sonya · couple translator'},
+'m_sonya_prem':{ru:'Premium-доступ',en:'Premium access'},
+'m_sonya_translate':{ru:'Переводчик фаз',en:'Phase translator'},
+'m_sonya_tip':{ru:'Совет дня',en:'Daily tip'},
+'m_sonya_mood':{ru:'Что стоит за её mood',en:'What\'s behind her mood'},
+'m_sonya_personal':{ru:'От Сони лично тебе',en:'From Sonya personally'},
+'m_todo_do':{ru:'✅ Сделать',en:'✅ Do'},
+'m_todo_avoid':{ru:'🚫 Избегать',en:'🚫 Avoid'},
+'m_back_sonya':{ru:'← К Соне',en:'← Back to Sonya'},
+'m_sonya_tip_title':{ru:'💡 Совет Сони на сегодня',en:'💡 Sonya\'s tip for today'},
+};
+function _(key,...args){
+  var t=(_T[key]&&_T[key][_lang])||(_T[key]&&_T[key].ru)||key;
+  args.forEach(function(a,i){t=t.replace(new RegExp('\\{'+i+'\\}','g'),a)});
+  return t;
+}
+function setLang(l){
+  _lang=l;localStorage.setItem('biosync_lang',l);
+  var ls=document.getElementById('lang-select');if(ls)ls.value=l;
+  refreshLang();
+}
+function refreshLang(){
+  updateLandingTexts();
+  if(!S.curUser)return;
+  if(S.curUser.role==='f')renderFemaleDash();
+  else renderMaleDash();
+}
+function updateLandingTexts(){
+  var h1=document.querySelector('#p-landing h1');
+  if(h1)h1.innerHTML=_('landing_h1');
+  var d=document.querySelector('#p-landing p');
+  if(d)d.innerHTML=_('landing_desc');
+  var ft=document.querySelectorAll('#p-landing .landing>div:nth-child(5)>span');
+  if(ft.length>=5){
+    ft[0].innerHTML='<i data-lucide="waves" class="lx"></i> '+_('ft_tracker');
+    ft[1].innerHTML='<i data-lucide="brain" class="lx"></i> '+_('ft_sonya');
+    ft[2].innerHTML='<i data-lucide="heart" class="lx"></i> '+_('ft_rituals');
+    ft[3].innerHTML='<i data-lucide="mic" class="lx"></i> '+_('ft_voice');
+    ft[4].innerHTML='<i data-lucide="bar-chart-3" class="lx"></i> '+_('ft_analytics');
+  }
+  var ll=document.querySelector('#p-landing label');
+  if(ll)ll.innerHTML='<i data-lucide="globe" class="lx lx-sm"></i> '+_('lang_label');
+  var fb=document.querySelector('#p-landing .landing-btns button:first-child');
+  if(fb)fb.innerHTML='<i data-lucide="venus" class="lx lx-lg"></i> '+_('btn_female');
+  var mb=document.querySelector('#p-landing .landing-btns button:last-child');
+  if(mb)mb.innerHTML='<i data-lucide="mars" class="lx lx-lg"></i> '+_('btn_male');
+  var al=document.querySelector('#p-landing .landing-link');
+  if(al)al.innerHTML=_('have_account')+' <a onclick="navigate(\'login\')">'+_('login_btn')+'</a>';
+  lucide.createIcons();
+}
 
 // ====== PRIVACY HELPERS ======
 function getUserPriv(uid){
