@@ -576,14 +576,49 @@ function _px(obj){
 }
 let S=_px(loadState());
 const SVR=location.hostname==='localhost'||location.hostname==='127.0.0.1'?'http://localhost:4000':'';
-function save(){let j=JSON.stringify(S);localStorage.setItem(LS,j);fetch(SVR+'/api/data',{method:'POST',headers:{'Content-Type':'application/json'},body:j}).catch(()=>{})}
+// GitHub direct-sync (embedded from .env)
+let _ghToken=localStorage.getItem('biosync_gh_token')||'';
+let _ghRepo=localStorage.getItem('biosync_gh_repo')||'';
+let _ghPath=localStorage.getItem('biosync_gh_path')||'data.json';
+let _ghBranch=localStorage.getItem('biosync_gh_branch')||'main';
+let _nlHook=localStorage.getItem('biosync_nl_hook')||'';
+let _ghTimer2=null,_ghPending=null;
+async function ghDirectSave(json){
+  const t=_ghToken,r=_ghRepo;
+  if(!t||!r)return;
+  _ghPending=json;
+  clearTimeout(_ghTimer2);
+  _ghTimer2=setTimeout(async()=>{
+    const data=_ghPending;_ghPending=null;
+    try{
+      const p=_ghPath,b=_ghBranch;
+      const r1=await fetch('https://api.github.com/repos/'+r+'/contents/'+p+'?ref='+b,{headers:{Authorization:'Bearer '+t}});
+      const sha=r1.ok?(await r1.json()).sha:null;
+      const body={message:'Auto-save '+new Date().toISOString().slice(0,10),content:btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2)))),branch:b};
+      if(sha)body.sha=sha;
+      await fetch('https://api.github.com/repos/'+r+'/contents/'+p,{method:'PUT',headers:{Authorization:'Bearer '+t,'Content-Type':'application/json'},body:JSON.stringify(body)});
+    }catch(e){console.error('GitHub sync error:',e)}
+  },3000);
+}
+function save(){let j=JSON.stringify(S);localStorage.setItem(LS,j);fetch(SVR+'/api/data',{method:'POST',headers:{'Content-Type':'application/json'},body:j}).catch(()=>{});ghDirectSave(S)}
 async function loadFromServer(){var loc=localStorage.getItem(LS);if(loc)return;try{let r=await fetch(SVR+'/api/data');if(!r.ok)return;let d=await r.json();if(d&&Object.keys(d).length){Object.assign(S,d);localStorage.setItem(LS,JSON.stringify(S))}}catch(e){}}
-async function checkGhStatus(){try{let r=await fetch(SVR+'/api/status');if(!r.ok)return;let d=await r.json();let dot=document.getElementById('gh-indicator'),lb=document.getElementById('gh-label'),cb=document.getElementById('gh-connect-btn'),db=document.getElementById('gh-disconnect-btn');if(!dot)return;if(!d.gh){dot.style.background='#888';lb.textContent='не настроен';if(cb)cb.style.display='';if(db)db.style.display='none'}else if(d.ghStatus==='synced'){dot.style.background='var(--green)';lb.textContent='✔ синхронизировано';if(cb)cb.style.display='none';if(db)db.style.display=''}else if(d.ghStatus==='syncing'){dot.style.background='var(--gold)';lb.textContent='⟳ синхронизация...';if(cb)cb.style.display='none';if(db)db.style.display=''}else if(d.ghStatus==='error'){dot.style.background='#D46060';lb.textContent='✘ ошибка';if(cb)cb.style.display='none';if(db)db.style.display=''}else{dot.style.background='var(--text3)';lb.textContent='ожидание';if(cb)cb.style.display='';if(db)db.style.display='none'}}catch(e){}}
-function showGhSetup(){document.getElementById('gh-status').style.display='none';document.getElementById('gh-setup').style.display='';document.getElementById('gh-connect-btn').style.display='none'}
-function cancelGhSetup(){document.getElementById('gh-status').style.display='';document.getElementById('gh-setup').style.display='none';checkGhStatus()}
-async function saveGhConfig(){let token=document.getElementById('gh-token-input').value.trim();let repo=document.getElementById('gh-repo-input').value.trim();if(!token||!repo){alert('Заполните оба поля');return}try{let r=await fetch(SVR+'/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,repo})});if(!r.ok)throw Error();cancelGhSetup();checkGhStatus()}catch(e){alert('Ошибка сохранения')}}
-async function disconnectGh(){try{await fetch(SVR+'/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:'',repo:''})});checkGhStatus()}catch(e){}}
 
+function triggerNetlifyDeploy(){if(!_nlHook)return;fetch(_nlHook,{method:'POST'}).catch(()=>{})}
+// Periodic auto-save to GitHub every 60s
+let _autoSaveTimer=setInterval(()=>{if(S.curUser){save();triggerNetlifyDeploy()}},60000);
+function setupSync(){
+  let tk=prompt('Введите GitHub Personal Access Token (с правами repo):',_ghToken);
+  if(tk===null)return;
+  let rp=prompt('Введите репозиторий (owner/repo):',_ghRepo||'elia86tih-lab/biosync');
+  if(rp===null)return;
+  let nl=prompt('Введите Netlify Deploy Hook URL (необязательно):',_nlHook);
+  if(nl===null)nl=_nlHook;
+  _ghToken=tk;_ghRepo=rp;_nlHook=nl;
+  localStorage.setItem('biosync_gh_token',tk);
+  localStorage.setItem('biosync_gh_repo',rp);
+  localStorage.setItem('biosync_nl_hook',nl);
+  renderFemaleDash();renderMaleDash();
+}
 // ====== SUBSCRIPTIONS ======
 function getSub(uid){
   let s=S.subs[uid];
@@ -1940,6 +1975,21 @@ function fSettings(g){
           `).join('')}
         </div>
       </div>`:''}
+    </div>
+
+    <!-- Sync -->
+    <div class="rc" style="margin-bottom:16px;text-align:left">
+      <div style="font-weight:600;font-size:.95rem;margin-bottom:6px">☁️ Синхронизация</div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--text2)">
+        <span style="width:8px;height:8px;border-radius:50%;background:${_ghToken?'var(--green)':'#888'}"></span>
+        <span>GitHub: ${_ghToken?'подключено ('+_ghRepo+')':'не настроено'}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--text2);margin-top:6px">
+        <span style="width:8px;height:8px;border-radius:50%;background:${_nlHook?'var(--green)':'#888'}"></span>
+        <span>Netlify: ${_nlHook?'подключено':'не настроено'}</span>
+      </div>
+      <div style="font-size:.75rem;color:var(--text3);margin-top:8px">Данные сохраняются автоматически каждые 60 секунд.</div>
+      <button class="btn btn-s btn-sm btn-block mt-2" onclick="setupSync()" style="font-size:.82rem">⚙️ Настроить синхронизацию</button>
     </div>
 
     <!-- Danger zone -->
