@@ -1135,6 +1135,13 @@ function finishTut(){
 
 
 // ====== FEMALE DASHBOARD ======
+function appFooter(){
+  return `<div style="text-align:center;padding:24px 16px 32px;margin-top:20px;border-top:1px solid var(--border);font-size:.78rem;color:var(--text3);line-height:1.7">
+    <div style="margin-bottom:6px">${_('footer_tagline')} · ${new Date().getFullYear()}</div>
+    <div>${_('footer_contact')}: <a href="mailto:biosync2code@yandex.ru" style="color:var(--roseD);font-weight:600;text-decoration:none">biosync2code@yandex.ru</a></div>
+  </div>`;
+}
+
 function renderFemaleDash(){
   let u=S.users.find(x=>x.id===S.curUser);
   document.getElementById('df-user').textContent=u?u.name:'';
@@ -1150,8 +1157,8 @@ function renderFemaleDash(){
   let c=document.getElementById('df-content');
   let cf={'wave':fWave,'selfcare':fSelfCare,'couple':fCouple,'mood':fMood,'notif':()=>fNotifs('f'),'tariffs':fTariffs,'settings':()=>fSettings('f'),'sonya':fSonya};
   let fn=cf[activeTab];
-  if(fn){c.innerHTML=rI(fn());lucide.createIcons(c)}
-  else c.innerHTML='';
+  if(fn){c.innerHTML=rI(fn())+appFooter();lucide.createIcons(c)}
+  else c.innerHTML=appFooter();
   let hdr=document.querySelector('.dash-hdr .dash-r');
   if(hdr)lucide.createIcons(hdr);
 }
@@ -1506,8 +1513,8 @@ function renderMaleDash(){
   let c=document.getElementById('dm-content');
   let cf={'compass':mCompass,'strategy':mStrategy,'history':mHistory,'notif':mNotifs,'tariffs':fTariffs,'settings':()=>fSettings('m'),'sonya':mSonya};
   let fn=cf[activeTab];
-  if(fn){c.innerHTML=rI(fn());lucide.createIcons(c)}
-  else c.innerHTML='';
+  if(fn){c.innerHTML=rI(fn())+appFooter();lucide.createIcons(c)}
+  else c.innerHTML=appFooter();
 }
 
 function getCoupleForMale(){
@@ -1965,6 +1972,8 @@ const _T={
 'm_todo_avoid':{ru:'🚫 Избегать',en:'🚫 Avoid'},
 'm_back_sonya':{ru:'← К Соне',en:'← Back to Sonya'},
 'm_sonya_tip_title':{ru:'💡 Совет Сони на сегодня',en:'💡 Sonya\'s tip for today'},
+'footer_contact':{ru:'Связаться с разработчиком',en:'Contact developer'},
+'footer_tagline':{ru:'BioSync — Код пары',en:'BioSync — Couple Code'},
 };
 function _(key,...args){
   var t=(_T[key]&&_T[key][_lang])||(_T[key]&&_T[key].ru)||key;
@@ -2999,7 +3008,7 @@ function showPaymentModal(plan,price,period){
         1. Откройте приложение вашего банка<br>
         2. Переведите ${price} ₽ по указанным реквизитам<br>
         3. Сделайте скриншот чека<br>
-        4. Отправьте чек на <strong>biosync@yandex.ru</strong><br>
+        4. Отправьте чек на <strong>biosync2code@yandex.ru</strong><br>
         5. Мы активируем тариф в течение 1 часа
       </div>
       <button class="btn btn-p btn-sm btn-block mb-2" onclick="copyPaymentDetails()">📋 Скопировать реквизиты</button>
