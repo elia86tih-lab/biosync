@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BioSync — Код пары</title>
+<style>
+:root {
+  --bg: #FAF8F5; --card: #FFFFFF; --text: #2D2A26; --text2: #7A7570;
+  --text3: #B0ABA5; --rose: #D4A0A0; --roseL: #E8C8C8; --green: #A8C4A8;
+  --gold: #F0D78C; --brown: #D4A574; --lav: #C4B8D4; --border: #EDE8E2;
+  --font: 'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;
+  --sm:8px; --md:12px; --lg:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5}
+.page{display:none;min-height:100vh;flex-direction:column}
+.page.active{display:flex}
+input,button,select,textarea{font-family:inherit}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:12px 24px;border:none;border-radius:var(--md);
+  font-size:1rem;font-weight:600;cursor:pointer;transition:.2s}
+.btn-p{background:var(--rose);color:#fff}.btn-p:hover{background:#C48A8A}
+.btn-s{background:var(--card);color:var(--text);border:2px solid var(--border)}
+.btn-s:hover{border-color:var(--rose);color:var(--rose)}
+.btn-o{background:transparent;color:var(--rose);border:2px solid var(--rose)}
+.btn-o:hover{background:var(--rose);color:#fff}
+.btn-g{background:transparent;color:var(--text2);padding:8px 16px;font-size:.9rem}
+.btn-g:hover{color:var(--text)}
+.btn-sm{padding:8px 16px;font-size:.9rem}
+.btn-lg{padding:14px 32px;font-size:1.05rem}
+.btn-block{width:100%;justify-content:center}
+
+/* Landing */
+.landing{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:2rem;text-align:center;background:linear-gradient(135deg,#FAF8F5,#F5EDE8,#F0E8E4)}
+.landing h1{font-size:2.2rem;font-weight:700;margin-bottom:8px}
+.landing h1 span{color:var(--rose)}
+.landing p{color:var(--text2);max-width:480px;margin-bottom:32px;line-height:1.6}
+.landing-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.landing-link{margin-top:24px;font-size:.9rem;color:var(--text3)}
+.landing-link a{color:var(--rose);font-weight:600;cursor:pointer}
+
+/* Auth */
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;
+  background:linear-gradient(135deg,#FAF8F5,#F5EDE8,#F0E8E4)}
+.auth-card{background:var(--card);border-radius:var(--lg);padding:32px;width:100%;max-width:440px}
+.auth-card h2{font-size:1.4rem;margin-bottom:6px}
+.auth-card>p{color:var(--text2);margin-bottom:20px;font-size:.95rem}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:.9rem;font-weight:600;margin-bottom:6px}
+.fg input,.fg select{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:var(--sm);
+  font-size:1rem;background:var(--bg);color:var(--text);transition:.2s}
+.fg input:focus,.fg select:focus{outline:none;border-color:var(--rose)}
+.fg .hint{font-size:.8rem;color:var(--text3);margin-top:4px}
+.err{color:#D46060;font-size:.9rem;margin-bottom:12px;padding:8px 12px;background:#FDE8E8;border-radius:var(--sm)}
+.ok{color:#60A060;font-size:.9rem;margin-bottom:12px;padding:8px 12px;background:#E8F5E8;border-radius:var(--sm)}
+.auth-link{text-align:center;margin-top:16px;font-size:.9rem;color:var(--text2)}
+.auth-link a{color:var(--rose);font-weight:600;cursor:pointer}
+
+/* Gender cards */
+.gc{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.gc-card{padding:20px;border:2px solid var(--border);border-radius:var(--md);cursor:pointer;text-align:center;transition:.2s}
+.gc-card:hover{border-color:var(--rose);background:#FFF5F5}
+.gc-card.sel{border-color:var(--rose);background:#FFF0F0}
+.gc-icon{font-size:2rem;margin-bottom:8px}
+.gc-label{font-weight:600;font-size:.95rem}
+
+/* Dashboard */
+.dash{min-height:100vh;display:flex;flex-direction:column}
+.dash-hdr{background:var(--card);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.dash-logo{font-size:1.3rem;font-weight:700}
+.dash-logo span{color:var(--rose)}
+.dash-r{display:flex;align-items:center;gap:8px}
+.dash-user{font-size:.9rem;color:var(--text2)}
+.dash-c{flex:1;padding:20px;max-width:800px;margin:0 auto;width:100%}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.tab-btn{padding:8px 14px;border:2px solid var(--border);border-radius:var(--sm);font-size:.85rem;
+  font-weight:600;cursor:pointer;background:var(--card);color:var(--text2);transition:.2s}
+.tab-btn:hover{border-color:var(--rose);color:var(--rose)}
+.tab-btn.act{background:var(--rose);color:#fff;border-color:var(--rose)}
+
+/* Phase Wave */
+.pw{background:var(--card);border-radius:var(--lg);padding:20px;margin-bottom:20px;overflow:hidden}
+.ph{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.ph-sym{font-size:2.5rem;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.ph-i h3{font-size:1.2rem;font-weight:700}
+.ph-i p{color:var(--text2);font-size:.9rem}
+.pd{display:flex;justify-content:space-between;margin-top:4px;font-size:.8rem;color:var(--text3)}
+
+/* SVG Wave */
+.svg-wave{width:100%;height:110px;margin:4px 0 2px;overflow:visible}
+.wave-dot{animation:pulse 2s ease-in-out infinite;transform-origin:center}
+@keyframes pulse{0%,100%{opacity:1;r:6}50%{opacity:.7;r:7}}
+.wave-ring{animation:ringPulse 2s ease-in-out infinite}
+@keyframes ringPulse{0%,100%{opacity:.4;r:12}50%{opacity:.2;r:16}}
+.wave-label{font-size:.65rem;fill:var(--text2);text-anchor:middle;font-weight:600}
+.wave-icon{font-size:1.3rem;text-anchor:middle}
+
+/* Phase Garden - flower/season cards below wave */
+.pg{display:flex;gap:6px;margin-top:8px;justify-content:center;flex-wrap:wrap}
+.pg-item{flex:1;min-width:70px;max-width:90px;text-align:center;padding:8px 4px;border-radius:var(--md);cursor:pointer;transition:.3s;position:relative}
+.pg-item:hover{transform:translateY(-2px)}
+.pg-item.act{background:var(--bg);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.pg-item.act::after{content:'';position:absolute;bottom:-2px;left:20%;right:20%;height:3px;border-radius:3px}
+.pg-icon{font-size:1.5rem;display:block;margin-bottom:2px;transition:.3s}
+.pg-item.act .pg-icon{transform:scale(1.2)}
+.pg-name{font-size:.7rem;font-weight:600;display:block}
+.pg-name.sub{font-size:.6rem;font-weight:400;color:var(--text3);margin-top:1px}
+
+/* Tips */
+.ts h3{font-size:1.05rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.tc{background:var(--card);border-radius:var(--md);padding:12px 16px;margin-bottom:10px;
+  border-left:4px solid var(--rose);transition:.2s}
+.tc:hover{transform:translateX(3px)}
+.tc.av{border-left-color:#D46060}
+.tc.ps{border-left-color:var(--lav);background:linear-gradient(135deg,var(--card),#F5F0F8)}
+.tc.sc{border-left-color:var(--green)}
+.tc h4{font-size:.9rem;font-weight:700;color:var(--rose);margin-bottom:4px}
+.tc.av h4{color:#D46060}
+.tc.ps h4{color:var(--lav)}
+.tc p{font-size:.9rem;color:var(--text2);line-height:1.5}
+.tc .icon{font-size:1.2rem}
+
+/* Male strategy compact */
+.strat-grid{display:grid;grid-template-columns:1fr;gap:8px}
+.strat-card{background:var(--card);border-radius:var(--md);padding:14px 16px;display:flex;align-items:flex-start;gap:12px;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);border:1px solid var(--border);transition:.2s}
+.strat-card:hover{border-color:var(--rose);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.strat-card .s-icon{font-size:1.5rem;min-width:32px;text-align:center}
+.strat-card .s-body h4{font-size:.9rem;font-weight:700;margin-bottom:2px}
+.strat-card .s-body p{font-size:.85rem;color:var(--text2);line-height:1.5}
+.strat-card.do .s-body h4{color:var(--green)}
+.strat-card.avoid .s-body h4{color:#D46060}
+.strat-card.psych .s-body h4{color:var(--lav)}
+
+/* Mood */
+.ms{background:var(--card);border-radius:var(--lg);padding:20px;margin-bottom:20px}
+.ms h3{font-size:1.05rem;font-weight:700;margin-bottom:12px}
+.mg{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:12px}
+.mb{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border:2px solid var(--border);
+  border-radius:var(--sm);background:transparent;cursor:pointer;font-size:.75rem;color:var(--text3);transition:.2s}
+.mb:hover{border-color:var(--rose);background:#FFF5F5}
+.mb.sel{border-color:var(--rose);background:#FFF0F0;color:var(--rose)}
+.mb-emoji{font-size:1.3rem}
+.sg{margin-top:8px}
+.sg label{display:flex;justify-content:space-between;font-size:.85rem;color:var(--text2);margin-bottom:4px}
+.sg input{width:100%;accent-color:var(--rose)}
+
+/* Connect */
+.cs{background:var(--card);border-radius:var(--lg);padding:24px;text-align:center}
+.code{font-size:2.5rem;font-weight:700;letter-spacing:.3rem;color:var(--rose);margin:12px 0;
+  padding:12px;background:var(--bg);border-radius:var(--md);font-family:monospace}
+
+/* Partner status */
+.ps-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border-radius:var(--md);
+  margin-bottom:12px;font-size:.9rem}
+.ps-bar.conn{border-left:4px solid var(--green)}
+.ps-bar.disc{border-left:4px solid var(--text3)}
+
+/* Notif */
+.nc{background:var(--card);border-radius:var(--md);padding:12px 16px;margin-bottom:6px;
+  display:flex;align-items:flex-start;gap:10px;border-left:4px solid var(--gold)}
+.nc.rd{opacity:.6}
+.nc-ic{font-size:1.2rem}
+.nc-b h4{font-size:.9rem;font-weight:600;margin-bottom:2px}
+.nc-b p{font-size:.85rem;color:var(--text2)}
+.nc-t{font-size:.75rem;color:var(--text3);margin-top:4px}
+
+/* Ritual */
+.rc{background:linear-gradient(135deg,var(--roseL),#F5EDE8);border-radius:var(--md);padding:16px;margin-bottom:10px;cursor:pointer;transition:.2s}
+.rc:hover{transform:translateY(-2px)}
+.rc h4{font-size:1rem;font-weight:700;margin-bottom:4px}
+.rc p{font-size:.9rem;color:var(--text2)}
+
+/* Empty */
+.emp{text-align:center;padding:40px 16px;color:var(--text3)}
+.emp-ic{font-size:3rem;margin-bottom:10px}
+.emp h3{color:var(--text2);margin-bottom:6px}
+
+/* Mood indicator */
+.mi{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;
+  font-size:.85rem;background:var(--bg);color:var(--text2)}
+
+/* Phase list */
+.pl-item{display:flex;align-items:center;gap:10px;padding:6px 0}
+.pl-item .sym{font-size:1.2rem}
+.pl-item .info{flex:1}
+.pl-item .name{font-size:.85rem;font-weight:600}
+.pl-item .days{font-size:.75rem;color:var(--text3)}
+
+/* Utils */
+.mt-1{margin-top:8px}.mt-2{margin-top:16px}.mt-3{margin-top:24px}
+.mb-1{margin-bottom:8px}.mb-2{margin-bottom:16px}.mb-3{margin-bottom:24px}
+.flex{display:flex}.flex-1{flex:1}.gap-1{gap:8px}.gap-2{gap:16px}
+.w-full{width:100%}.text-center{text-align:center}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+@media(max-width:600px){
+  .landing h1{font-size:1.6rem}
+  .auth-card{padding:20px}
+  .dash-c{padding:12px}
+  .mg{grid-template-columns:repeat(3,1fr)}
+  .gc{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="page active" id="p-landing">
+  <div class="landing">
+    <div style="font-size:3rem;margin-bottom:8px">💞</div>
+    <h1>BioSync <span>Код пары</span></h1>
+    <p>Превратите знание о цикле в инструмент бережного общения. Гормональный трекер, семейная психология и умные подсказки для двоих.</p>
+    <div class="landing-btns">
+      <button class="btn btn-p btn-lg" onclick="navigate('register-female')">Я — женщина</button>
+      <button class="btn btn-o btn-lg" onclick="navigate('register-male')">Я — мужчина</button>
+    </div>
+    <div class="landing-link">Уже есть аккаунт? <a onclick="navigate('login')">Войти</a></div>
+  </div>
+</div>
+
+<div class="page" id="p-login">
+  <div class="auth-page">
+    <div class="auth-card">
+      <h2>💞 Добро пожаловать</h2>
+      <p>Войдите в свой аккаунт BioSync</p>
+      <div id="login-err" class="err" style="display:none"></div>
+      <div class="fg"><label>Email</label><input type="email" id="login-email" placeholder="email@example.com"></div>
+      <div class="fg"><label>Пароль</label><input type="password" id="login-pass" placeholder="Ваш пароль"></div>
+      <div class="fg" style="display:flex;align-items:center;gap:8px">
+        <input type="checkbox" id="login-remember" style="width:auto;accent-color:var(--rose);width:16px;height:16px" checked>
+        <label for="login-remember" style="font-weight:400;cursor:pointer;font-size:.9rem">Запомнить устройство</label>
+      </div>
+      <button class="btn btn-p btn-lg btn-block" onclick="handleLogin()">Войти</button>
+      <div class="auth-link">Нет аккаунта? <a onclick="navigate('landing')">Зарегистрироваться</a></div>
+      <div id="login-quick" style="display:none;margin-top:12px;padding:12px;background:var(--bg);border-radius:var(--md);text-align:center">
+        <p style="font-size:.85rem;color:var(--text2);margin-bottom:8px">👋 Быстрый вход</p>
+        <button class="btn btn-p btn-sm" id="login-quick-btn" onclick="quickLogin()">Войти как <span id="login-quick-name"></span></button>
+        <br><button class="btn btn-g btn-sm mt-1" onclick="clearRemembered()">Это не я — войти заново</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="p-register-female">
+  <div class="auth-page" id="rf-page1">
+    <div class="auth-card">
+      <h2>🌱 Регистрация</h2>
+      <p>Создайте аккаунт, чтобы начать отслеживать свой цикл.</p>
+      <div id="rf-err1" class="err" style="display:none"></div>
+      <div class="fg"><label>Имя</label><input type="text" id="rf-name" placeholder="Ваше имя"></div>
+      <div class="fg"><label>Email</label><input type="email" id="rf-email" placeholder="email@example.com"></div>
+      <div class="fg"><label>Пароль</label><input type="password" id="rf-pass" placeholder="Минимум 6 символов"></div>
+      <button class="btn btn-p btn-lg btn-block" onclick="handleRegFemale()">Создать аккаунт</button>
+      <div class="auth-link">Уже есть аккаунт? <a onclick="navigate('login')">Войти</a></div>
+    </div>
+  </div>
+  <div class="auth-page" id="rf-page2" style="display:none">
+    <div class="auth-card">
+      <h2>📊 Настройка цикла</h2>
+      <p>Укажите параметры вашего цикла для точного прогноза фаз.</p>
+      <div id="rf-err2" class="err" style="display:none"></div>
+      <div class="fg"><label>Первый день последних месячных</label><input type="date" id="rf-last-period"></div>
+      <div class="form-row">
+        <div class="fg"><label>Длина цикла (дни)</label><input type="number" id="rf-cycle-len" value="28" min="21" max="45"><div class="hint">Обычно 21–35 дней</div></div>
+        <div class="fg"><label>Длина месячных (дни)</label><input type="number" id="rf-period-len" value="5" min="3" max="10"><div class="hint">Обычно 3–7 дней</div></div>
+      </div>
+      <button class="btn btn-p btn-lg btn-block mt-2" onclick="handleCycleSetup()">Сохранить и продолжить</button>
+      <div class="text-center mt-2"><button class="btn btn-g" onclick="skipCycleSetup()">Пропустить — настрою позже</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="p-register-male">
+  <div class="auth-page" id="rm-page1">
+    <div class="auth-card">
+      <h2>🤝 Регистрация</h2>
+      <p>Создайте аккаунт, чтобы подключиться к партнерше.</p>
+      <div id="rm-err1" class="err" style="display:none"></div>
+      <div class="fg"><label>Имя</label><input type="text" id="rm-name" placeholder="Ваше имя"></div>
+      <div class="fg"><label>Email</label><input type="email" id="rm-email" placeholder="email@example.com"></div>
+      <div class="fg"><label>Пароль</label><input type="password" id="rm-pass" placeholder="Минимум 6 символов"></div>
+      <button class="btn btn-p btn-lg btn-block" onclick="handleRegMale()">Создать аккаунт</button>
+      <div class="auth-link">Уже есть аккаунт? <a onclick="navigate('login')">Войти</a></div>
+    </div>
+  </div>
+  <div class="auth-page" id="rm-page2" style="display:none">
+    <div class="auth-card">
+      <h2>🔗 Подключение к паре</h2>
+      <p>Введите код пары, который передала вам партнерша.</p>
+      <div id="rm-err2" class="err" style="display:none"></div>
+      <div class="fg"><label>Код пары</label><input type="text" id="rm-code" placeholder="XXXXXX" style="text-align:center;font-size:1.3rem;letter-spacing:.3rem;font-family:monospace" maxlength="6" oninput="this.value=this.value.toUpperCase()"></div>
+      <button class="btn btn-p btn-lg btn-block" onclick="handleConnect()">Подключиться</button>
+      <div class="text-center mt-2"><button class="btn btn-g" onclick="finishMaleReg()">Пропустить — подключусь позже</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="dash" id="p-dash-female">
+  <header class="dash-hdr">
+    <div class="dash-logo">Bio<span>Sync</span></div>
+    <div class="dash-r"><span class="dash-user" id="df-user"></span><button class="btn btn-g btn-sm" onclick="logout()">Выйти</button></div>
+  </header>
+  <div class="dash-c">
+    <div class="tabs" id="df-tabs"></div>
+    <div id="df-content"></div>
+  </div>
+</div>
+
+<div class="dash" id="p-dash-male">
+  <header class="dash-hdr">
+    <div class="dash-logo">Bio<span>Sync</span></div>
+    <div class="dash-r"><span class="dash-user" id="dm-user"></span><button class="btn btn-g btn-sm" onclick="logout()">Выйти</button></div>
+  </header>
+  <div class="dash-c">
+    <div class="tabs" id="dm-tabs"></div>
+    <div id="dm-content"></div>
+  </div>
+</div>
+
+<script>
+// ====== STATE ======
+const LS = 'biosync_data';
+const PHASES = [
+  { id:0, name:'Менструальная', cn:'Этап восстановления', desc:'Дни покоя и заботы', color:'#C4A4A4', sym:'🌰' },
+  { id:1, name:'Фолликулярная', cn:'Период энергии', desc:'Время новых идей и планов', color:'#A8C4A8', sym:'🌱' },
+  { id:2, name:'Овуляторная', cn:'Период близости', desc:'Пик энергии и общительности', color:'#F0D78C', sym:'🌸' },
+  { id:3, name:'Лютеиновая', cn:'Период чуткости', desc:'Время замедления и заботы', color:'#D4A574', sym:'🍂' },
+];
+const PC = ['#C4A4A4','#A8C4A8','#F0D78C','#D4A574'];
+const MOODS = [{e:'😊',l:'Отлично'},{e:'🙂',l:'Хорошо'},{e:'😐',l:'Нейтрально'},{e:'😔',l:'Грустно'},{e:'😤',l:'Раздражена'},{e:'😴',l:'Устала'}];
+const F_TIPS = [
+  [{t:'Техника заземления 5-4-3-2-1',b:'Назови 5 вещей, которые видишь, 4 — которые чувствуешь, 3 — которые слышишь, 2 — запах, 1 — вкус.',c:''},
+   {t:'Дыхательная практика',b:'Вдох на 4 счета, задержка на 7, выдох на 8. Повтори 4 раза.',c:'sc'},
+   {t:'Вечер кино без готовки',b:'Закажи любимую еду и устрой киновечер.',c:'sc'}],
+  [{t:'Мягкий старт разговора',b:'Начни с "Я хочу поговорить о..." вместо "Ты всегда...". Используй Я-высказывания.',c:''},
+   {t:'Движение и творчество',b:'Запишись на танцы или йогу. Новые движения дарят новую энергию.',c:'sc'}],
+  [{t:'Время ярких свиданий',b:'Вспомните ваши первые встречи. Энергия на пике — отличный момент для танцев.',c:''},
+   {t:'Флирт и игра',b:'Устрой романтический ужин. Твоя общительность сейчас на максимуме.',c:''}],
+  [{t:'Дневник "Выплеск эмоций"',b:'Запиши все, что накипело. Сам процесс письма снижает напряжение.',c:'sc'},
+   {t:'Техника КПТ',b:'"Он никогда меня не слушает" → "Я чувствую, что меня не слышат, потому что я устала".',c:''},
+   {t:'Замедление',b:'Откажись от одного энергозатратного дела сегодня. Твое тело замедляется — это нормально.',c:'sc'}]
+];
+const M_TIPS = [
+  [{t:'✅ Сделать',b:'Приготовь чай без просьбы и просто будь рядом. Предложи плед и тихий вечер.',c:''},
+   {t:'❌ Избегать',b:'Не предлагай активные занятия. Не спрашивай "что случилось?", если она молчит.',c:'av'},
+   {t:'👨‍⚕️ Совет психолога',b:'В дни восстановления женщине важно чувствовать безопасность. Твое спокойное присутствие — лучшая поддержка.',c:'ps'}],
+  [{t:'✅ Сделать',b:'Спланируй активный выезд на выходные. Её энергия на подъеме.',c:''},
+   {t:'✅ Поддержка',b:'Обсудите общие цели на месяц. Она открыта к диалогу.',c:''},
+   {t:'👨‍⚕️ Совет психолога',b:'Фолликулярная фаза — лучшее время для планирования и новых начинаний.',c:'ps'}],
+  [{t:'✅ Сделать',b:'Время ярких свиданий и легкого флирта. Вспомните ваши первые встречи.',c:''},
+   {t:'👨‍⚕️ Совет психолога',b:'Овуляторная фаза — пик женской энергии и общительности.',c:'ps'}],
+  [{t:'✅ Сделать',b:'Купи её любимый десерт. Телесный контакт без эротического подтекста.',c:''},
+   {t:'❌ Избегать',b:'Фраз-триггеров типа "Опять ты накручиваешь". Скажи: "Я вижу, тебе тяжело, давай я возьму ужин на себя".',c:'av'},
+   {t:'👨‍⚕️ Совет психолога',b:'В фазе ПМС мозг женщины иначе обрабатывает критику. Отложите разборы на 3-4 дня.',c:'ps'}]
+];
+
+function uid(){return Math.random().toString(36).substr(2,9)}
+function genCode(){return Math.random().toString(36).substr(2,6).toUpperCase()}
+
+function loadState(){
+  try{return JSON.parse(localStorage.getItem(LS))||defaultState()}catch(e){return defaultState()}
+}
+function defaultState(){
+  return {users:[],curUser:null,cycle:{},logs:{},couples:[],notifs:{},priv:{},moodForm:{}}
+}
+let S=loadState();
+function save(){localStorage.setItem(LS,JSON.stringify(S))}
+
+// ====== CYCLE ENGINE ======
+function getPhaseIdx(day,cl){
+  if(!day||day<1)return 0;
+  let d=Math.min(day,cl||28);
+  if(d<=5)return 0;if(d<=13)return 1;if(d<=16)return 2;return 3;
+}
+function getPhase(uid){
+  let c=S.cycle[uid];if(!c)return null;
+  let start=new Date(c.lps),now=new Date();
+  let day=Math.floor((now-start)/(86400000))+1;
+  let cl=c.cl||28,pl=c.pl||5;
+  let pi=getPhaseIdx(day,cl);
+  let ph=PHASES[pi];
+  return {...ph,phaseId:pi,day,cl,dnu:cl-day+1};
+}
+
+// ====== NAVIGATION ======
+function navigate(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  let el=document.getElementById('p-'+page);
+  if(el){el.classList.add('active');window.scrollTo(0,0)}
+  if(page==='login'){setTimeout(checkRemembered,100)}
+  if(page==='dash-female'&&S.curUser)renderFemaleDash();
+  if(page==='dash-male'&&S.curUser)renderMaleDash();
+}
+function show(id){document.getElementById(id).style.display=''}
+function hide(id){document.getElementById(id).style.display='none'}
+function err(id,msg){let e=document.getElementById(id);e.textContent=msg;e.style.display=msg?'':'none'}
+
+// ====== AUTH ======
+function goToLogin(email){
+  document.getElementById('login-email').value=email||'';
+  document.getElementById('login-pass').value='';
+  navigate('login');
+}
+
+function quickLogin(){
+  let remembered=JSON.parse(localStorage.getItem('biosync_remember')||'null');
+  if(!remembered)return;
+  let u=S.users.find(x=>x.id===remembered.userId);
+  if(!u){localStorage.removeItem('biosync_remember');return}
+  S.curUser=u.id;save();
+  navigate(u.gender==='female'?'dash-female':'dash-male');
+}
+
+function clearRemembered(){
+  localStorage.removeItem('biosync_remember');
+  document.getElementById('login-quick').style.display='none';
+  document.getElementById('login-email').value='';
+  document.getElementById('login-pass').value='';
+}
+
+function checkRemembered(){
+  let remembered=JSON.parse(localStorage.getItem('biosync_remember')||'null');
+  if(!remembered||!remembered.userId)return;
+  let u=S.users.find(x=>x.id===remembered.userId);
+  if(!u){localStorage.removeItem('biosync_remember');return}
+  document.getElementById('login-email').value=remembered.email||u.email||'';
+  document.getElementById('login-quick-name').textContent=u.name||'';
+  document.getElementById('login-quick').style.display='block';
+}
+
+function handleLogin(){
+  let email=document.getElementById('login-email').value.trim();
+  let pass=document.getElementById('login-pass').value;
+  let remember=document.getElementById('login-remember').checked;
+  err('login-err','');
+  if(!email||!pass){err('login-err','Заполните все поля');return}
+  let u=S.users.find(x=>x.email===email);
+  if(!u||u.pass!==pass){err('login-err','Неверный email или пароль');return}
+  S.curUser=u.id;
+  if(remember){
+    localStorage.setItem('biosync_remember',JSON.stringify({userId:u.id,email:u.email,name:u.name}));
+  } else {
+    localStorage.removeItem('biosync_remember');
+  }
+  save();
+  navigate(u.gender==='female'?'dash-female':'dash-male');
+}
+
+function handleRegFemale(){
+  let name=document.getElementById('rf-name').value.trim();
+  let email=document.getElementById('rf-email').value.trim();
+  let pass=document.getElementById('rf-pass').value;
+  err('rf-err1','');
+  if(!name||!email||!pass){err('rf-err1','Заполните все поля');return}
+  if(pass.length<6){err('rf-err1','Пароль минимум 6 символов');return}
+   if(S.users.find(x=>x.email===email)){
+    err('rf-err1','Этот email уже зарегистрирован.');
+    let e=document.getElementById('rf-err1');
+    e.innerHTML+=' <a style="color:var(--rose);font-weight:600;cursor:pointer;text-decoration:underline" onclick="goToLogin(\''+email+'\')">Войти в аккаунт</a>';
+    return}
+  let id=uid();
+  S.users.push({id,email,pass,name,gender:'female'});
+  S.curUser=id;
+  S.priv[id]={sp:1,sm:1};
+  save();
+  hide('rf-page1');show('rf-page2');
+}
+
+function handleCycleSetup(){
+  let lps=document.getElementById('rf-last-period').value;
+  let cl=parseInt(document.getElementById('rf-cycle-len').value)||28;
+  let pl=parseInt(document.getElementById('rf-period-len').value)||5;
+  err('rf-err2','');
+  if(!lps){err('rf-err2','Укажите первый день последних месячных');return}
+  if(cl<21||cl>45){err('rf-err2','Некорректная длина цикла');return}
+  S.cycle[S.curUser]={lps,cl,pl};
+  save();
+  navigate('dash-female');
+}
+function skipCycleSetup(){navigate('dash-female')}
+
+function handleRegMale(){
+  let name=document.getElementById('rm-name').value.trim();
+  let email=document.getElementById('rm-email').value.trim();
+  let pass=document.getElementById('rm-pass').value;
+  err('rm-err1','');
+  if(!name||!email||!pass){err('rm-err1','Заполните все поля');return}
+  if(pass.length<6){err('rm-err1','Пароль минимум 6 символов');return}
+  if(S.users.find(x=>x.email===email)){
+    err('rm-err1','Этот email уже зарегистрирован.');
+    let e=document.getElementById('rm-err1');
+    e.innerHTML+=' <a style="color:var(--rose);font-weight:600;cursor:pointer;text-decoration:underline" onclick="goToLogin(\''+email+'\')">Войти в аккаунт</a>';
+    return}
+  let id=uid();
+  S.users.push({id,email,pass,name,gender:'male'});
+  S.curUser=id;save();
+  hide('rm-page1');show('rm-page2');
+}
+
+function handleConnect(){
+  let code=document.getElementById('rm-code').value.trim();
+  err('rm-err2','');
+  if(!code){err('rm-err2','Введите код пары');return}
+  let cp=S.couples.find(x=>x.code===code&&x.status==='pending');
+  if(!cp){err('rm-err2','Код не найден или уже использован');return}
+  if(S.couples.find(x=>x.mId===S.curUser)){err('rm-err2','Вы уже в другой паре');return}
+  cp.mId=S.curUser;
+  let f=S.users.find(u=>u.id===cp.fId);
+  cp.status='pending';
+  save();
+  // notify female
+  if(!S.notifs[cp.fId])S.notifs[cp.fId]=[];
+  let mu=S.users.find(u=>u.id===S.curUser);
+  S.notifs[cp.fId].push({id:uid(),type:'connection',title:`${mu.name} хочет подключиться`,
+    body:'Разрешите доступ к данным вашего цикла? Он увидит обобщенные фазы и подсказки по заботе.',
+    read:0,createdAt:new Date().toISOString()});
+  save();
+  finishMaleReg();
+}
+
+function finishMaleReg(){navigate('dash-male')}
+
+function logout(){
+  S.curUser=null;save();
+  // If remembered, clear login fields but keep quick-login available
+  let remembered=localStorage.getItem('biosync_remember');
+  navigate('landing');
+}
+
+// ====== FEMALE DASHBOARD ======
+function renderFemaleDash(){
+  let u=S.users.find(x=>x.id===S.curUser);
+  document.getElementById('df-user').textContent=u?u.name:'';
+  let tabs=['wave','selfcare','couple','mood','notif'];
+  let labels=['🌊 Моя волна','🧘 Саморегуляция','💑 Пара','📝 Дневник','🔔 Уведомления'];
+  let activeTab=S._fTab||'wave';
+  let th=document.getElementById('df-tabs');
+  th.innerHTML=tabs.map((t,i)=>`<button class="tab-btn ${t===activeTab?'act':''}" onclick="S._fTab='${t}';renderFemaleDash()">${labels[i]}</button>`).join('');
+  let c=document.getElementById('df-content');
+  if(activeTab==='wave')c.innerHTML=fWave();
+  else if(activeTab==='selfcare')c.innerHTML=fSelfCare();
+  else if(activeTab==='couple')c.innerHTML=fCouple();
+  else if(activeTab==='mood')c.innerHTML=fMood();
+  else if(activeTab==='notif')c.innerHTML=fNotifs('f');
+}
+
+// ====== NEW SVG WAVE ENGINE ======
+const WAVE_COLORS = ['#C4A4A4','#A8C4A8','#F0D78C','#D4A574'];
+const WAVE_ICONS = ['🌰','🌱','🌸','🍂'];
+const WAVE_NAMES = ['Покой','Рост','Цветение','Увядание'];
+const WAVE_DESC = ['Семя в земле','Первые всходы','Прекрасный цветок','Листопады'];
+const WAVE_BN = [0,5/28,13/28,16/28,1]; // phase boundaries as fraction
+const WAVE_BY = [82,76,18,24,80]; // y at each boundary
+
+function waveY(x){
+  for(let i=0;i<4;i++){
+    if(x>=WAVE_BN[i]*400&&x<=WAVE_BN[i+1]*400){
+      let t=(x-WAVE_BN[i]*400)/((WAVE_BN[i+1]-WAVE_BN[i])*400);
+      return WAVE_BY[i]+(WAVE_BY[i+1]-WAVE_BY[i])*t;
+    }
+  }
+  return 80;
+}
+function renderWaveSVG(ph){
+  const W=400,H=100,cols=WAVE_COLORS,bn=WAVE_BN,by=WAVE_BY;
+  let svg=`<svg class="svg-wave" viewBox="0 0 ${W} ${H}">`;
+  // Gradients for each phase
+  for(let i=0;i<4;i++){
+    let x1=bn[i]*W,x2=bn[i+1]*W,y1=by[i],y2=by[i+1];
+    let mx=(x1+x2)/2,c1x=x1+(x2-x1)*0.4,c2x=x1+(x2-x1)*0.6;
+    let op=i===ph.phaseId?'.85':'.45';
+    let col=cols[i];
+    // Sub-gradients for depth
+    svg+=`<linearGradient id="wg${i}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${col}" stop-opacity=".9"/>
+      <stop offset="100%" stop-color="${col}" stop-opacity=".3"/>
+    </linearGradient>`;
+    // Fill area under wave
+    svg+=`<path d="M ${x1},${H} L ${x1},${y1} C ${c1x},${y1} ${c2x},${y2} ${x2},${y2} L ${x2},${H} Z"
+      fill="url(#wg${i})" opacity="${op}"/>`;
+    // Phase separator dots
+    if(i>0){
+      svg+=`<circle cx="${x1}" cy="${y1}" r="2.5" fill="${cols[i-1]}" opacity=".4"/>`;
+    }
+  }
+  // Wave line on top
+  let d=`M 0,${by[0]}`;
+  for(let i=0;i<4;i++){
+    let x1=bn[i]*W,x2=bn[i+1]*W,y1=by[i],y2=by[i+1];
+    let c1x=x1+(x2-x1)*0.4,c2x=x1+(x2-x1)*0.6;
+    d+=` C ${c1x},${y1} ${c2x},${y2} ${x2},${y2}`;
+  }
+  svg+=`<path d="${d}" fill="none" stroke="#2D2A26" stroke-width="1.5" opacity=".15"/>`;
+  // Current position marker
+  let cx=(ph.day/ph.cl)*W,cy=waveY(cx);
+  svg+=`<circle class="wave-ring" cx="${cx}" cy="${cy}" r="12" fill="none" stroke="${cols[ph.phaseId]}" stroke-width="2"/>`;
+  svg+=`<circle class="wave-dot" cx="${cx}" cy="${cy}" r="6" fill="${cols[ph.phaseId]}" stroke="#fff" stroke-width="2.5"/>`;
+  // Phase labels at bottom of wave
+  for(let i=0;i<4;i++){
+    let lx=(bn[i]+bn[i+1])/2*W;
+    svg+=`<text x="${lx}" y="96" class="wave-icon">${WAVE_ICONS[i]}</text>`;
+    svg+=`<text x="${lx}" y="108" class="wave-label">${['Покой','Рост','Расцвет','Увяд.'][i]}</text>`;
+  }
+  svg+=`</svg>`;
+  return svg;
+}
+function renderPhaseGarden(ph){
+  let html='<div class="pg">';
+  let days=[{s:1,e:5},{s:6,e:13},{s:14,e:16},{s:17,e:ph.cl}];
+  for(let i=0;i<4;i++){
+    let act=i===ph.phaseId;
+    html+=`<div class="pg-item ${act?'act':''}" style="${act?`background:${WAVE_COLORS[i]}15;box-shadow:0 2px 8px ${WAVE_COLORS[i]}30`:''}">
+      <span class="pg-icon">${WAVE_ICONS[i]}</span>
+      <span class="pg-name">${WAVE_NAMES[i]}</span>
+      <span class="pg-name sub">${WAVE_DESC[i]}</span>
+      <span class="pg-name sub">Дни ${days[i].s}–${days[i].e}</span>
+    </div>`;
+  }
+  html+='</div>';
+  return html;
+}
+
+function fWave(){
+  let ph=getPhase(S.curUser);
+  if(!ph) return `<div class="emp"><div class="emp-ic">📊</div><h3>Настройте свой цикл</h3><p>Для отображения фаз укажите параметры цикла.</p></div>`;
+  let html=`<div class="pw">
+    <div class="ph"><div class="ph-sym">${PHASES[ph.phaseId].sym}</div>
+      <div class="ph-i"><h3>${PHASES[ph.phaseId].name}</h3><p>${PHASES[ph.phaseId].desc}</p></div></div>
+    ${renderWaveSVG(ph)}
+    <div class="pd"><span>🌊 День ${ph.day} из ${ph.cl}</span><span>📍 ${WAVE_NAMES[ph.phaseId]} — ${WAVE_DESC[ph.phaseId]}</span></div>
+    ${renderPhaseGarden(ph)}
+  </div>`;
+  // Prediction
+  html+=`<div class="pw" style="padding:14px"><h3 style="font-size:.95rem;margin-bottom:8px;color:var(--text2)">📅 Прогноз фаз на цикл</h3>`;
+  PHASES.forEach((p,i)=>{
+    let sd=i===0?1:[6,14,17][i-1],ed=[5,13,16,ph.cl][i];
+    let act=i===ph.phaseId?'font-weight:700;color:var(--text)':'';
+    html+=`<div class="pl-item" style="${act}"><span class="sym">${WAVE_ICONS[i]}</span>
+      <div class="info"><div class="name">${p.name} <span style="font-weight:400;color:var(--text3);font-size:.8rem">«${WAVE_NAMES[i]}»</span></div>
+      <div class="days">Дни ${sd}–${ed} · ${WAVE_DESC[i]}</div></div></div>`;
+  });
+  html+=`</div>`;
+  return html;
+}
+
+function fSelfCare(){
+  let ph=getPhase(S.curUser);
+  if(!ph)return `<div class="emp"><div class="emp-ic">🧘</div><h3>Настройте цикл</h3><p>Чтобы получать практики, укажите данные цикла.</p></div>`;
+  let tips=F_TIPS[ph.phaseId]||[];
+  let html=`<div class="ts"><h3>🧘 Практики для ${ph.name}</h3>`;
+  tips.forEach(t=>{
+    let cls='tc'+(t.c?' '+t.c:'');
+    html+=`<div class="${cls}"><h4>${t.t}</h4><p>${t.b}</p></div>`;
+  });
+  html+=`</div>`;
+  return html;
+}
+
+function fCouple(){
+  let cp=S.couples.find(x=>x.fId===S.curUser);
+  if(cp&&cp.status==='pending'&&cp.mId){
+    let mu=S.users.find(u=>u.id===cp.mId);
+    return `<div class="cs">
+      <div style="font-size:3rem;margin-bottom:8px">💞</div>
+      <h3>Запрос от ${mu?mu.name:'партнера'}</h3>
+      <p>${mu?mu.name:''} хочет подключиться к вашему циклу.</p>
+      <div class="ps-bar disc mt-2"><span>⏳</span><span>Ожидает вашего подтверждения</span></div>
+      <div class="flex gap-2 mt-3">
+        <button class="btn btn-p flex-1" onclick="approveCouple()">✅ Подтвердить</button>
+        <button class="btn btn-s flex-1" onclick="rejectCouple()">Отклонить</button>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--md);padding:12px;margin-top:16px;text-align:left">
+        <h4 style="font-size:.9rem;margin-bottom:6px">🔒 Что увидит партнер:</h4>
+        <ul style="font-size:.85rem;color:var(--text2);padding-left:1.2rem;line-height:1.8">
+          <li>✅ Обобщенную фазу цикла</li>
+          <li>✅ Подсказки по заботе</li>
+          <li>❌ Медицинские подробности</li>
+          <li>❌ Точный день овуляции</li>
+        </ul>
+      </div>
+    </div>`;
+  }
+  if(cp&&cp.status==='active'){
+    let mu=S.users.find(u=>u.id===cp.mId);
+    return `<div class="cs">
+      <div style="font-size:3rem;margin-bottom:8px">💞</div>
+      <h3>Вы в паре с ${mu?mu.name:'партнером'}</h3>
+      <div class="ps-bar conn mt-2"><span>✅</span><span>Пара активна. Партнер видит фазы и подсказки.</span></div>
+      <div class="ts mt-3" style="text-align:left">
+        <h3>💝 Ритуалы связи</h3>
+        <div class="rc"><h4>Благодарность дня</h4><p>Напиши партнеру 3 вещи, за которые ты ему благодарна сегодня.</p></div>
+        <div class="rc"><h4>Свидание без телефонов</h4><p>Запланируйте свидание на ближайшие выходные без гаджетов.</p></div>
+        <div class="rc"><h4>Я-высказывание</h4><p>Начни разговор с "Я чувствую..." вместо "Ты всегда...".</p></div>
+      </div>
+      <div class="ts mt-3" style="text-align:left">
+        <h3>📚 Библиотека статей</h3>
+        <div class="rc"><h4>Я-высказывания: искусство диалога</h4><p>Как говорить о чувствах без обвинений.</p></div>
+        <div class="rc"><h4>Активное слушание</h4><p>Слышать, а не ждать ответа.</p></div>
+        <div class="rc"><h4>Управление конфликтами</h4><p>Как ссориться конструктивно.</p></div>
+      </div>
+    </div>`;
+  }
+  if(cp&&cp.code){
+    return `<div class="cs"><div style="font-size:3rem;margin-bottom:8px">🔗</div>
+      <h3>Код пары создан</h3>
+      <p>Отправьте этот код партнеру:</p>
+      <div class="code">${cp.code}</div>
+      <p style="font-size:.85rem;color:var(--text3)">После подключения придет запрос на подтверждение.</p></div>`;
+  }
+  return `<div class="cs"><div style="font-size:3rem;margin-bottom:8px">🔗</div>
+    <h3>Подключение партнера</h3>
+    <p>Создайте код пары и отправьте его партнеру.</p>
+    <button class="btn btn-p btn-lg mt-2" onclick="createCoupleCode()">Создать код пары</button></div>`;
+}
+
+function fMood(){
+  let mf=S.moodForm[S.curUser]||{mood:'',energy:5,pain:0};
+  let saved=S._moodSaved;
+  let html=`<div class="ms"><h3>📝 Как ты сегодня?</h3>
+    <div class="mg">${MOODS.map(m=>`<button class="mb ${mf.mood===m.l?'sel':''}" onclick="setMood('${m.l}')">
+      <span class="mb-emoji">${m.e}</span><span>${m.l}</span></button>`).join('')}</div>
+    <div class="sg"><label><span>🔋 Энергия</span><span id="m-energy">${mf.energy}</span>/10</label>
+      <input type="range" min="1" max="10" value="${mf.energy}" oninput="S.moodForm['${S.curUser}']=S.moodForm['${S.curUser}']||{mood:'',energy:5,pain:0};S.moodForm['${S.curUser}'].energy=parseInt(this.value);document.getElementById('m-energy').textContent=this.value"></div>
+    <div class="sg"><label><span>😣 Болевые ощущения</span><span id="m-pain">${mf.pain}</span>/10</label>
+      <input type="range" min="0" max="10" value="${mf.pain}" oninput="S.moodForm['${S.curUser}']=S.moodForm['${S.curUser}']||{mood:'',energy:5,pain:0};S.moodForm['${S.curUser}'].pain=parseInt(this.value);document.getElementById('m-pain').textContent=this.value"></div>
+    <button class="btn btn-p btn-block mt-2" onclick="saveMood()">${saved?'✅ Сохранено!':'Сохранить'}</button>
+  </div>`;
+  return html;
+}
+
+function setMood(l){
+  if(!S.moodForm[S.curUser])S.moodForm[S.curUser]={mood:'',energy:5,pain:0};
+  S.moodForm[S.curUser].mood=l;save();
+  renderFemaleDash();
+}
+function saveMood(){
+  let mf=S.moodForm[S.curUser];if(!mf||!mf.mood)return;
+  let today=new Date().toISOString().split('T')[0];
+  if(!S.logs[S.curUser])S.logs[S.curUser]=[];
+  let ex=S.logs[S.curUser].findIndex(l=>l.date===today);
+  let entry={date:today,mood:mf.mood,energy:mf.energy,pain:mf.pain};
+  if(ex>=0)S.logs[S.curUser][ex]=entry;else S.logs[S.curUser].push(entry);
+  S._moodSaved=true;save();
+  setTimeout(()=>{S._moodSaved=false;renderFemaleDash()},2000);
+}
+
+function fNotifs(g){
+  let uid=S.curUser;
+  let ns=S.notifs[uid]||[];
+  let html=`<h3 style="margin-bottom:12px">🔔 Уведомления</h3>`;
+  if(!ns.length)html+=`<div class="emp"><div class="emp-ic">🔔</div><h3>Нет уведомлений</h3></div>`;
+  else ns.forEach(n=>{
+    let ic=n.type==='phase'?'🌊':n.type==='ritual'?'💝':n.type==='warning'?'⚠️':'💬';
+    html+=`<div class="nc ${n.read?'rd':''}"><div class="nc-ic">${ic}</div>
+      <div class="nc-b"><h4>${n.title}</h4><p>${n.body}</p>
+      <div class="nc-t">${new Date(n.createdAt).toLocaleDateString('ru-RU')}</div></div></div>`;
+  });
+  if(g==='m'){
+    html+=`<button class="btn btn-sm btn-s mt-2" onclick="genNotifs()">🔄 Сгенерировать подсказки</button>`;
+  }
+  return html;
+}
+
+function createCoupleCode(){
+  if(S.couples.find(x=>x.fId===S.curUser))return;
+  let code=genCode();
+  S.couples.push({code,fId:S.curUser,mId:null,status:'pending'});
+  save();renderFemaleDash();
+}
+function approveCouple(){
+  let cp=S.couples.find(x=>x.fId===S.curUser);
+  if(!cp)return;
+  cp.status='active';
+  let p=S.priv[S.curUser]||{sp:1,sm:1};p.sp=1;p.sm=1;
+  S.priv[S.curUser]=p;
+  // notify male
+  if(!S.notifs[cp.mId])S.notifs[cp.mId]=[];
+  let u=S.users.find(x=>x.id===S.curUser);
+  S.notifs[cp.mId].push({id:uid(),type:'approved',title:`${u.name} открыла доступ`,
+    body:'Теперь вы видите фазы цикла и персональные подсказки по заботе.',read:0,createdAt:new Date().toISOString()});
+  save();renderFemaleDash();
+}
+function rejectCouple(){
+  let cp=S.couples.find(x=>x.fId===S.curUser);
+  if(!cp)return;
+  S.couples=S.couples.filter(x=>x.fId!==S.curUser);
+  save();renderFemaleDash();
+}
+
+// ====== MALE DASHBOARD ======
+function renderMaleDash(){
+  let u=S.users.find(x=>x.id===S.curUser);
+  document.getElementById('dm-user').textContent=u?u.name:'';
+  let tabs=['compass','strategy','history','notif'];
+  let labels=['🧭 Компас партнера','📋 Стратегия дня','📊 История цикла','🔔 Подсказки'];
+  let activeTab=S._mTab||'compass';
+  let th=document.getElementById('dm-tabs');
+  th.innerHTML=tabs.map((t,i)=>`<button class="tab-btn ${t===activeTab?'act':''}" onclick="S._mTab='${t}';renderMaleDash()">${labels[i]}</button>`).join('');
+  let c=document.getElementById('dm-content');
+  if(activeTab==='compass')c.innerHTML=mCompass();
+  else if(activeTab==='strategy')c.innerHTML=mStrategy();
+  else if(activeTab==='history')c.innerHTML=mHistory();
+  else if(activeTab==='notif')c.innerHTML=mNotifs();
+}
+
+function getCoupleForMale(){
+  return S.couples.find(x=>x.mId===S.curUser);
+}
+
+function mCompass(){
+  let cp=getCoupleForMale();
+  if(!cp||cp.status==='pending'){
+    let msg=cp?'Запрос отправлен. Ожидайте подтверждения от партнерши.':'Не подключен к паре. Запросите код пары у партнерши.';
+    return `<div class="ps-bar disc"><span>⏳</span><span>${msg}</span></div>
+      <div class="emp"><div class="emp-ic">🔗</div><h3>Подключитесь к партнерше</h3>
+      <p>Попросите у партнерши код пары и введите его при регистрации.</p></div>`;
+  }
+  if(cp.status!=='active')return `<div class="emp"><div class="emp-ic">🔗</div><h3>Ожидание</h3></div>`;
+  let fu=S.users.find(x=>x.id===cp.fId);
+  let ph=getPhase(cp.fId);
+  if(!ph)return `<div class="ps-bar conn"><span>💞</span><span>Подключен к ${fu?fu.name:'партнерше'}</span></div>
+    <div class="emp"><div class="emp-ic">📊</div><h3>Партнерша еще не настроила цикл</h3></div>`;
+  let p=S.priv[cp.fId];
+  if(p&&!p.sp)return `<div class="ps-bar conn"><span>💞</span><span>Подключен к ${fu?fu.name:'партнерше'}</span></div>
+    <div class="emp"><div class="emp-ic">🔒</div><h3>Доступ ограничен</h3>
+    <p>Партнерша ограничила доступ к данным цикла.</p></div>`;
+  // mood summary
+  let logs=S.logs[cp.fId]||[];
+  let lastLog=logs.length?logs[logs.length-1]:null;
+  let moodHtml='';
+  if(lastLog&&p&&p.sm){
+    let mo=MOODS.find(m=>m.l===lastLog.mood);
+    moodHtml=`<div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap">
+      <div class="mi"><span>${mo?mo.e:'😐'}</span><span>Настроение: ${lastLog.mood||'—'}</span></div>
+      ${lastLog.energy?`<div class="mi"><span>🔋</span><span>Энергия: ${lastLog.energy}/10</span></div>`:''}
+    </div>`;
+  }
+  let html=`<div class="ps-bar conn"><span>💞</span><span>Подключен к ${fu?fu.name:'партнерше'}</span></div>
+    <div class="pw">
+    <div class="ph"><div class="ph-sym">${ph.sym}</div>
+      <div class="ph-i"><h3>${ph.cn}</h3><p>${ph.desc}</p></div></div>
+    ${moodHtml}
+    ${renderWaveSVG(ph)}
+    <div class="pd"><span>🌊 День ${ph.day} из ${ph.cl}</span><span>📍 ${WAVE_NAMES[ph.phaseId]} — ${WAVE_DESC[ph.phaseId]}</span></div>
+    ${renderPhaseGarden(ph)}
+    </div>
+    <div class="text-center mb-2"><button class="btn btn-g btn-sm" onclick="genNotifs()">🔄 Сгенерировать подсказки</button></div>`;
+}
+
+function mStrategy(){
+  let cp=getCoupleForMale();
+  if(!cp||cp.status!=='active'){
+    return `<div class="emp"><div class="emp-ic">📋</div><h3>Нет стратегии</h3>
+      <p>Подключитесь к партнерше, чтобы получать стратегии поддержки.</p></div>`;
+  }
+  let ph=getPhase(cp.fId);
+  if(!ph)return `<div class="emp"><div class="emp-ic">📋</div><h3>Данные цикла недоступны</h3></div>`;
+  let tips=M_TIPS[ph.phaseId]||[];
+  // Phase banner
+  let html=`<div class="pw" style="padding:14px;background:linear-gradient(135deg,${ph.color}22,transparent);border-left:4px solid ${ph.color};margin-bottom:16px">
+    <div class="ph" style="margin-bottom:0"><div class="ph-sym" style="font-size:1.8rem">${WAVE_ICONS[ph.phaseId]}</div>
+    <div class="ph-i"><h3 style="font-size:1rem">${ph.cn}</h3><p>${ph.desc} · День ${ph.day}</p></div></div>
+  </div>`;
+  // Strategy cards
+  html+=`<h3 style="font-size:1rem;font-weight:700;margin-bottom:10px">📋 Рекомендации на сегодня</h3>
+    <div class="strat-grid">`;
+  let icons={'':'✅','av':'🚫','ps':'🧠'};
+  let classes={'':'do','av':'avoid','ps':'psych'};
+  let labels={'':'Сделать','av':'Избегать','ps':'Совет психолога'};
+  tips.forEach(t=>{
+    let c=classes[t.c]||'do';
+    html+=`<div class="strat-card ${c}"><div class="s-icon">${icons[t.c]||'✅'}</div>
+      <div class="s-body"><h4>${labels[t.c]||''}</h4><p>${t.b}</p></div></div>`;
+  });
+  html+=`</div>`;
+  // Rituals
+  html+=`<div class="ts mt-3"><h3>💑 Ритуалы для двоих</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">`;
+  let rituals=[
+    {i:'🙏',t:'Благодарность',b:'Скажи 3 вещи, которые ценишь в ней.'},
+    {i:'👂',t:'Активное слушание',b:'10 минут слушать, не перебивая.'},
+    {i:'🎁',t:'Сюрприз',b:'Купи любимый десерт без повода.'},
+    {i:'🤗',t:'Объятия',b:'Обними без слов — просто будь рядом.'},
+  ];
+  rituals.forEach(r=>{
+    html+=`<div class="strat-card" style="flex-direction:column;text-align:center;padding:12px;gap:4px">
+      <div style="font-size:1.5rem">${r.i}</div>
+      <div class="s-body"><h4>${r.t}</h4><p>${r.b}</p></div></div>`;
+  });
+  html+=`</div></div>`;
+  return html;
+}
+
+function mHistory(){
+  let cp=getCoupleForMale();
+  if(!cp||cp.status!=='active'){
+    return `<div class="emp"><div class="emp-ic">📊</div><h3>Нет данных</h3><p>Подключитесь к партнерше.</p></div>`;
+  }
+  let fu=S.users.find(x=>x.id===cp.fId);
+  return `<div class="pw"><h3 class="mb-2">📊 Как прошел цикл</h3>
+    <p style="color:var(--text2);font-size:.9rem">Обобщенная информация о циклах, которой партнерша решила поделиться.</p>
+    <div class="flex gap-1 mt-2" style="flex-wrap:wrap">
+      <span class="mi">🌰 Этап восстановления</span>
+      <span class="mi">🌱 Период энергии</span>
+      <span class="mi">🌸 Период близости</span>
+      <span class="mi">🍂 Период чуткости</span>
+    </div>
+    <p class="mt-2" style="color:var(--text3);font-size:.85rem">Статистика будет доступна после завершения первого полного цикла.</p>
+  </div>`;
+}
+
+function mNotifs(){
+  let cp=getCoupleForMale();
+  let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <h3>🔔 Подсказки</h3>
+    <button class="btn btn-g btn-sm" onclick="genNotifs()">🔄 Обновить</button></div>`;
+  let ns=S.notifs[S.curUser]||[];
+  if(!ns.length){
+    html+=`<div class="emp"><div class="emp-ic">🔔</div><h3>Нет подсказок</h3>
+      <button class="btn btn-p btn-sm mt-2" onclick="genNotifs()">Сгенерировать тестовые</button></div>`;
+  } else {
+    ns.forEach(n=>{
+      let ic=n.type==='warning'?'⚠️':n.type==='phase'?'🌊':n.type==='ritual'?'💝':'💬';
+      html+=`<div class="nc ${n.read?'rd':''}"><div class="nc-ic">${ic}</div>
+        <div class="nc-b"><h4>${n.title}</h4><p>${n.body}</p>
+        <div class="nc-t">${new Date(n.createdAt).toLocaleDateString('ru-RU')}</div></div></div>`;
+    });
+  }
+  if(cp&&cp.status==='active'){
+    let ph=getPhase(cp.fId);
+    if(ph){
+      let tips=M_TIPS[ph.phaseId]||[];
+      html+=`<div class="pw mt-2" style="padding:14px;background:linear-gradient(135deg,${WAVE_COLORS[ph.phaseId]}15,transparent)"><h4 class="mb-1">📌 Текущие рекомендации</h4>
+        <ul style="font-size:.85rem;color:var(--text2);padding-left:1.2rem;line-height:1.8">
+        <li><strong>${WAVE_ICONS[ph.phaseId]} Фаза:</strong> ${ph.cn} (${WAVE_NAMES[ph.phaseId]})</li>
+        <li><strong>📅 День:</strong> ${ph.day} из ${ph.cl}</li>
+        <li><strong>💡 Совет дня:</strong> ${tips.length?tips[0].b:'Будьте внимательны и заботливы'}</li></ul></div>`;
+    }
+  }
+  return html;
+}
+
+function genNotifs(){
+  let cp=getCoupleForMale();
+  if(!cp||cp.status!=='active')return;
+  let ph=getPhase(cp.fId);
+  if(!ph)return;
+  if(!S.notifs[S.curUser])S.notifs[S.curUser]=[];
+  let lutealStart=17;
+  if(ph.day>=lutealStart-2&&ph.day<lutealStart){
+    let fu=S.users.find(x=>x.id===cp.fId);
+    S.notifs[S.curUser].push({id:uid(),type:'warning',
+      title:'Приближается период чуткости',
+      body:`${fu?fu.name:'Партнерша'} будет особенно нуждаться в сочувствии. Запланируйте освободить вечер.`,
+      read:0,createdAt:new Date().toISOString()});
+    save();renderMaleDash();
+  }
+  // Also for female
+  if(S.curUser&&S.notifs[S.curUser]){
+    let ph2=getPhase(S.curUser);
+    if(ph2){
+      let cl=ph2.cl||28;
+      if(ph2.day===cl-3||ph2.day===cl-2){
+        if(!S.notifs[S.curUser])S.notifs[S.curUser]=[];
+        S.notifs[S.curUser].push({id:uid(),type:'phase',title:'Твое тело замедляется',
+          body:'Это нормально. Откажись от одного энергозатратного дела сегодня.',
+          read:0,createdAt:new Date().toISOString()});
+        save();
+      }
+      if(ph2.day===14||ph2.day===15){
+        S.notifs[S.curUser].push({id:uid(),type:'ritual',title:'Ритуал благодарности',
+          body:'Самое время сказать друг другу спасибо.',read:0,createdAt:new Date().toISOString()});
+        save();
+      }
+    }
+  }
+  renderMaleDash();
+}
+
+// ====== INIT ======
+function init(){
+  // Try auto-login from remembered session
+  if(!S.curUser){
+    let remembered=JSON.parse(localStorage.getItem('biosync_remember')||'null');
+    if(remembered&&remembered.userId){
+      let u=S.users.find(x=>x.id===remembered.userId);
+      if(u){S.curUser=u.id;save()}
+      else localStorage.removeItem('biosync_remember');
+    }
+  }
+  if(S.curUser){
+    let u=S.users.find(x=>x.id===S.curUser);
+    if(u)navigate(u.gender==='female'?'dash-female':'dash-male');
+    else{S.curUser=null;save();navigate('landing')}
+  } else navigate('landing');
+}
+init();
+</script>
+</body>
+</html>
