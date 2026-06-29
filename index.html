@@ -893,7 +893,7 @@ function navigate(page){
 }
 function show(id){document.getElementById(id).style.display=''}
 function hide(id){document.getElementById(id).style.display='none'}
-function err(id,msg){let e=document.getElementById(id);e.textContent=msg;e.style.display=msg?'':'none'}
+function err(id,msg){let e=document.getElementById(id);if(!e)return;e.textContent=msg;e.style.display=msg?'':'none'}
 
 // ====== AUTH ======
 function goToLogin(email){
@@ -947,7 +947,9 @@ function handleLogin(){
 }
 
 function socialLogin(provider){
-  var existing=S.users.find(x=>x.social&&x.social.provider===provider);
+  var id=uid();
+  var socialId=provider+'_'+id;
+  var existing=S.users.find(x=>x.social&&x.social.id===socialId);
   if(existing){
     S.curUser=existing.id;
     localStorage.setItem('biosync_remember',JSON.stringify({userId:existing.id,email:existing.email,name:existing.name}));
@@ -1028,12 +1030,12 @@ function handleConnect(){
   let code=(el?el.value:'').trim()||(S._pendingConnect||'');
   err('rm-err2','');
   if(!code){err('rm-err2',_('enter_code'));return}
-  let cp=S.couples.find(x=>x.code===code&&x.status==='pending');
+  let cp=S.couples.find(x=>x.code===code&&x.status==='pending'&&!x.mId);
   if(!cp){err('rm-err2',_('code_not_found'));return}
   if(S.couples.find(x=>x.mId===S.curUser)){err('rm-err2',_('already_paired'));return}
   cp.mId=S.curUser;
   let f=S.users.find(u=>u.id===cp.fId);
-  cp.status='pending';
+  cp.status='pending_approval';
   // Male gets 7-day Premium trial
   if(!S.subs[S.curUser]||S.subs[S.curUser].plan==='free')startTrial(S.curUser);
   delete S._pendingConnect;
@@ -1042,8 +1044,8 @@ function handleConnect(){
   // notify female
   if(!S.notifs[cp.fId])S.notifs[cp.fId]=[];
   let mu=S.users.find(u=>u.id===S.curUser);
-  S.notifs[cp.fId].push({id:uid(),type:'connection',title:`${mu.name} хочет подключиться`,
-    body:'Разрешите доступ к данным вашего цикла? Он увидит обобщенные фазы и подсказки по заботе.',
+  S.notifs[cp.fId].push({id:uid(),type:'connection',title:(mu?mu.name:'Партнёр')+' хочет подключиться',
+    body:'Разрешите доступ к данным вашего цикла? Он увидит обобщённые фазы и подсказки по заботе.',
     read:0,createdAt:new Date().toISOString()});
   save();
   finishMaleReg();
@@ -1356,7 +1358,7 @@ function fSelfCare(){
 
 function fCouple(){
   let cp=S.couples.find(x=>x.fId===S.curUser);
-  if(cp&&cp.status==='pending'&&cp.mId){
+  if(cp&&(cp.status==='pending'||cp.status==='pending_approval')&&cp.mId){
     let mu=S.users.find(u=>u.id===cp.mId);
     return `<div class="cs">
       <div style="font-size:3rem;margin-bottom:8px">💞</div>
@@ -1466,17 +1468,17 @@ function fNotifs(g){
 
 function handleConnectFromInvite(){
   if(!S._pendingConnect)return;
-  let cp=S.couples.find(x=>x.code===S._pendingConnect&&x.status==='pending');
+  let cp=S.couples.find(x=>x.code===S._pendingConnect&&x.status==='pending'&&!x.mId);
   if(!cp){alert(_('code_not_found'));delete S._pendingConnect;renderMaleDash();return}
   if(S.couples.find(x=>x.mId===S.curUser)){alert(_('already_paired'));return}
   cp.mId=S.curUser;
-  cp.status='pending';
+  cp.status='pending_approval';
   delete S._pendingConnect;
   location.hash='';
   let fu=S.users.find(u=>u.id===cp.fId);
   if(!S.notifs[cp.fId])S.notifs[cp.fId]=[];
   let mu=S.users.find(u=>u.id===S.curUser);
-  S.notifs[cp.fId].push({id:uid(),type:'connection',title:`${mu.name} хочет подключиться`,
+  S.notifs[cp.fId].push({id:uid(),type:'connection',title:(mu?mu.name:'Партнёр')+' хочет подключиться',
     body:'Разрешите доступ к данным вашего цикла?',read:0,createdAt:new Date().toISOString()});
   save();
   renderMaleDash();
@@ -1492,13 +1494,12 @@ function approveCouple(){
   let cp=S.couples.find(x=>x.fId===S.curUser);
   if(!cp)return;
   cp.status='active';
-  let u=S.users.find(x=>x.id===S.curUser);
-  if(u&&!u.priv)u.priv={showPhase:true,showDay:true,showCareTips:true,showMood:false};
-  // notify male
+  let fu=S.users.find(x=>x.id===S.curUser);
+  if(fu&&!fu.priv)fu.priv={showPhase:true,showDay:true,showCareTips:true,showMood:false};
   if(!S.notifs[cp.mId])S.notifs[cp.mId]=[];
-  u=S.users.find(x=>x.id===S.curUser);
-  S.notifs[cp.mId].push({id:uid(),type:'approved',title:`${u.name} принял подключение`,
-    body:'Данные о твоём цикле теперь доступны партнёру в его дэшборде.',read:0,createdAt:new Date().toISOString()});
+  let mu=S.users.find(x=>x.id===cp.mId);
+  S.notifs[cp.mId].push({id:uid(),type:'approved',title:(fu?fu.name:'Партнёрша')+' приняла подключение',
+    body:'Данные о её цикле теперь доступны тебе в дэшборде.',read:0,createdAt:new Date().toISOString()});
   save();renderFemaleDash();
 }
 function rejectCouple(){
@@ -1532,7 +1533,7 @@ function getCoupleForMale(){
 
 function mCompass(){
   let cp=getCoupleForMale();
-  if(!cp||cp.status==='pending'){
+  if(!cp||cp.status==='pending'||cp.status==='pending_approval'){
     let msg=cp?'Запрос отправлен. Ожидайте подтверждения от партнерши.':'Не подключен к паре. Запросите код пары у партнерши.';
     let connectBtn=S._pendingConnect?`
       <div style="margin-top:16px;padding:16px;background:linear-gradient(135deg,var(--roseL),transparent);border-radius:16px;border:1px solid rgba(224,168,168,.2)">
