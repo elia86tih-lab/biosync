@@ -1,0 +1,2617 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BioSync — Код пары</title>
+<style>
+:root {
+  --bg: #FCF8F6; --card: #FFFFFF; --text: #2C2825; --text2: #8A8580;
+  --text3: #B5B0AA; --rose: #E0A8A8; --roseD: #D08080; --roseL: #F5E6E6;
+  --green: #8FBFA8; --gold: #E8D08C; --brown: #D4A574; --lav: #C0B0D0;
+  --border: #F0EAE4; --border2: #E8E0D8;
+  --shadow: 0 2px 6px rgba(44,40,37,.05); --shadowH: 0 6px 20px rgba(44,40,37,.1);
+  --shadowL: 0 12px 40px rgba(44,40,37,.08);
+  --font: 'Inter',-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;
+  --coral: #E8826B; --indigo: #4A6FA5; --amber: #D4914A;
+  --sm: 12px; --md: 16px; --lg: 28px;
+  --icon-color: inherit;
+  --bg2: #F9F4F0; --bgDark: transparent;
+}
+[data-theme="dark"] {
+  --bg: #1A1716; --card: #252220; --text: #E8E2DC; --text2: #A09890;
+  --text3: #706860; --rose: #D09090; --roseD: #C07878; --roseL: rgba(208,144,144,.12);
+  --green: #6FA890; --gold: #C8B070; --brown: #B48C5C; --lav: #A890B8;
+  --border: #353028; --border2: #2D2823;
+  --shadow: 0 1px 3px rgba(0,0,0,.2); --shadowH: 0 4px 16px rgba(0,0,0,.3);
+  --shadowL: 0 8px 32px rgba(0,0,0,.25);
+  --bg2: #12100E; --bgDark: #1A1716;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;font-size:1.05rem;-webkit-font-smoothing:antialiased}
+.page{display:none;min-height:100vh;flex-direction:column;animation:fadeIn .25s ease}
+.page.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+input,button,select,textarea{font-family:inherit}
+::selection{background:var(--roseL);color:var(--text)}
+
+/* ====== BUTTONS ====== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 32px;
+  border:none;border-radius:50px;font-size:1rem;font-weight:600;cursor:pointer;
+  transition:all .25s cubic-bezier(.25,.8,.25,1);
+  letter-spacing:-.01em}
+.btn-p{background:linear-gradient(135deg,var(--rose),var(--roseD));color:#fff;box-shadow:0 2px 12px rgba(208,128,128,.3)}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(208,128,128,.35)}
+.btn-p:active{transform:translateY(0);box-shadow:0 2px 8px rgba(208,128,128,.25)}
+.btn-s{background:var(--card);color:var(--text2);border:1.5px solid var(--border);box-shadow:var(--shadow)}
+.btn-s:hover{border-color:var(--rose);color:var(--roseD);box-shadow:var(--shadowH)}
+.btn-o{background:transparent;color:var(--roseD);border:1.5px solid var(--roseD)}
+.btn-o:hover{background:var(--roseL);border-color:var(--rose)}
+.btn-g{background:transparent;color:var(--text2);padding:10px 18px;font-size:.95rem}
+.btn-g:hover{color:var(--text);background:var(--border)}
+.btn-sm{padding:10px 24px;font-size:.9rem}
+.btn-lg{padding:16px 40px;font-size:1.1rem}
+.btn-block{width:100%}
+
+/* ====== LANDING ====== */
+.landing{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:2.5rem;text-align:center;background:linear-gradient(135deg,var(--bg) 0%,var(--bg2) 50%,var(--bg2) 100%);
+  position:relative;overflow:hidden}
+.landing::before{content:'';position:absolute;width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle,rgba(224,168,168,.08) 0%,transparent 70%);top:-200px;right:-200px}
+.landing::after{content:'';position:absolute;width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(143,191,168,.08) 0%,transparent 70%);bottom:-150px;left:-150px}
+.landing-logo{font-size:4.2rem;margin-bottom:16px;animation:float 4s ease-in-out infinite;position:relative}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.landing h1{font-size:3.2rem;font-weight:800;margin-bottom:14px;letter-spacing:-.03em;position:relative}
+.landing h1 span{background:linear-gradient(135deg,var(--rose),var(--roseD));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.landing p{color:var(--text2);max-width:580px;margin-bottom:40px;line-height:1.7;font-size:1.15rem;position:relative}
+.landing-btns{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;position:relative}
+.landing-link{margin-top:32px;font-size:.95rem;color:var(--text3);position:relative}
+.landing-link a{color:var(--roseD);font-weight:600;cursor:pointer;border-bottom:1.5px solid transparent;transition:.2s}
+.landing-link a:hover{border-bottom-color:var(--roseD)}
+
+/* ====== AUTH ====== */
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2.5rem;
+  background:linear-gradient(135deg,var(--bg) 0%,var(--bg2) 50%,var(--bg2) 100%);position:relative;overflow:hidden}
+.auth-page::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(224,168,168,.06) 0%,transparent 70%);top:-150px;right:-150px}
+.auth-card{background:rgba(255,255,255,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-radius:32px;padding:44px 40px;width:100%;max-width:480px;
+  box-shadow:var(--shadowL),var(--shadow);
+  border:1px solid rgba(255,255,255,.8);position:relative}
+[data-theme="dark"] .auth-card{background:rgba(37,34,32,.9);border-color:rgba(255,255,255,.06)}
+.auth-card h2{font-size:1.7rem;font-weight:800;margin-bottom:6px;letter-spacing:-.02em}
+.auth-card>p{color:var(--text2);margin-bottom:28px;font-size:1rem}
+.fg{margin-bottom:20px}
+.fg label{display:block;font-size:.9rem;font-weight:600;color:var(--text2);margin-bottom:8px;letter-spacing:.01em}
+.fg input,.fg select{width:100%;padding:14px 18px;border:1.5px solid var(--border);border-radius:14px;
+  font-size:1rem;background:var(--card);color:var(--text);transition:all .2s;outline:none}
+.fg input::placeholder{color:var(--text3)}
+.fg input:focus,.fg select:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(224,168,168,.15)}
+.fg .hint{font-size:.85rem;color:var(--text3);margin-top:4px;padding-left:2px}
+.err{color:#D46060;font-size:.95rem;margin-bottom:16px;padding:12px 16px;background:#FDE8E8;border-radius:12px;border:1px solid rgba(212,96,96,.15)}
+[data-theme="dark"] .err{background:rgba(212,96,96,.15);border-color:rgba(212,96,96,.2)}
+.ok{color:#60A060;font-size:.95rem;margin-bottom:16px;padding:12px 16px;background:#E8F5E8;border-radius:12px;border:1px solid rgba(96,160,96,.15)}
+[data-theme="dark"] .ok{background:rgba(96,160,96,.15);border-color:rgba(96,160,96,.2)}
+.auth-link{text-align:center;margin-top:20px;font-size:.95rem;color:var(--text2)}
+.auth-link a{color:var(--roseD);font-weight:600;cursor:pointer;border-bottom:1.5px solid transparent;transition:.2s}
+.auth-link a:hover{border-bottom-color:var(--roseD)}
+.social-divider{display:flex;align-items:center;gap:14px;margin:20px 0 16px;color:var(--text3);font-size:.85rem}
+.social-divider::before,.social-divider::after{content:'';flex:1;height:1px;background:var(--text4)}
+.social-login-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.btn-social{width:48px;height:48px;border-radius:50%;border:1.5px solid var(--text4);background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;padding:10px}
+.btn-social:hover{border-color:var(--rose);background:var(--roseL);transform:translateY(-2px)}
+.btn-social svg{width:100%;height:100%}
+
+/* ====== GENDER CARDS ====== */
+.gc{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.gc-card{padding:28px 20px;border:1.5px solid var(--border);border-radius:22px;cursor:pointer;text-align:center;
+  transition:all .25s cubic-bezier(.25,.8,.25,1);background:var(--card)}
+.gc-card:hover{border-color:var(--roseL);transform:translateY(-2px);box-shadow:var(--shadowH)}
+.gc-card.sel{border-color:var(--rose);background:var(--roseL);box-shadow:0 0 0 4px rgba(224,168,168,.2)}
+.gc-icon{font-size:2.8rem;margin-bottom:10px;display:block}
+.gc-label{font-weight:600;font-size:1.05rem}
+
+/* ====== DASHBOARD ====== */
+.dash{min-height:100vh;display:flex;flex-direction:column;background:linear-gradient(180deg,var(--bg) 0%,#F9F4F0 100%)}
+.dash-hdr{background:rgba(255,255,255,.8);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  padding:16px 28px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.dash-logo{font-size:1.35rem;font-weight:800;letter-spacing:-.02em}
+.dash-logo span{background:linear-gradient(135deg,var(--rose),var(--roseD));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.dash-r{display:flex;align-items:center;gap:12px}
+.dash-user{font-size:.95rem;color:var(--text2);font-weight:500;padding:6px 14px;background:var(--bg);border-radius:50px}
+.dash-c{flex:1;padding:28px;max-width:880px;margin:0 auto;width:100%}
+
+/* ====== TABS ====== */
+.tabs{display:flex;gap:6px;margin-bottom:24px;overflow-x:auto;padding:6px 8px;
+  background:rgba(255,255,255,.6);border-radius:16px;border:1px solid var(--border);backdrop-filter:blur(8px);justify-content:center;
+  scrollbar-width:none;-ms-overflow-style:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{padding:8px 18px;border:none;border-radius:14px;font-size:.8rem;font-weight:600;cursor:pointer;
+  background:transparent;color:var(--text3);transition:all .25s cubic-bezier(.25,.8,.25,1);display:flex;flex-direction:column;align-items:center;gap:3px;line-height:1.3}
+.tab-btn:hover{color:var(--text);background:rgba(224,168,168,.1)}
+.tab-btn.act{background:var(--card);color:var(--roseD);box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.tab-icon{font-size:1.3rem;display:block}
+.tab-label{font-size:.68rem;white-space:nowrap}
+
+/* ====== PHASE WAVE CARD ====== */
+.pw{background:var(--card);border-radius:28px;padding:28px;margin-bottom:28px;
+  box-shadow:0 2px 6px rgba(44,40,37,.04);border:1px solid var(--border);overflow:hidden;
+  transition:box-shadow .25s}
+.pw:hover{box-shadow:0 6px 20px rgba(44,40,37,.06)}
+.ph{display:flex;align-items:center;gap:16px;margin-bottom:10px}
+.ph-sym{font-size:3.2rem;animation:float 4s ease-in-out infinite;filter:drop-shadow(0 2px 4px rgba(0,0,0,.06))}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.ph-i h3{font-size:1.4rem;font-weight:800;letter-spacing:-.02em}
+.ph-i p{color:var(--text2);font-size:1rem;margin-top:3px}
+.pd{display:flex;justify-content:space-between;margin-top:8px;font-size:.85rem;color:var(--text3);font-weight:500}
+
+/* ====== SVG WAVE ====== */
+.svg-wave{width:100%;height:200px;margin:8px 0 0;overflow:visible}
+.wave-dot{animation:wavePulse 2s ease-in-out infinite;transform-origin:center}
+@keyframes wavePulse{0%,100%{opacity:1}50%{opacity:.6}}
+.wave-ring{animation:waveRing 2s ease-in-out infinite}
+@keyframes waveRing{0%,100%{opacity:.3}50%{opacity:.15}}
+@keyframes voicePulse{0%,100%{transform:scale(1);box-shadow:0 8px 30px rgba(208,128,128,.4)}50%{transform:scale(1.05);box-shadow:0 8px 40px rgba(208,128,128,.55)}}
+.voice-waves{display:flex;gap:4px;align-items:center;justify-content:center;height:48px;margin:12px 0}
+.voice-waves span{width:5px;background:var(--rose);border-radius:4px;animation:voiceBar .8s ease-in-out infinite}
+.voice-waves span:nth-child(1){height:14px;animation-delay:0s}
+.voice-waves span:nth-child(2){height:28px;animation-delay:.1s}
+.voice-waves span:nth-child(3){height:42px;animation-delay:.2s}
+.voice-waves span:nth-child(4){height:32px;animation-delay:.3s}
+.voice-waves span:nth-child(5){height:20px;animation-delay:.4s}
+@keyframes voiceBar{0%,100%{transform:scaleY(.6)}50%{transform:scaleY(1)}}
+.wave-label{font-size:.85rem;fill:var(--text2);text-anchor:middle;font-weight:600;letter-spacing:.02em}
+.wave-icon{font-size:1.9rem;text-anchor:middle}
+
+/* ====== PHASE GARDEN ====== */
+.pg{display:flex;gap:10px;margin-top:16px;justify-content:center;flex-wrap:wrap}
+.pg-item{flex:1;min-width:84px;max-width:110px;text-align:center;padding:14px 8px;border-radius:18px;
+  cursor:pointer;transition:all .3s cubic-bezier(.25,.8,.25,1);position:relative;border:1px solid transparent}
+.pg-item:hover{transform:translateY(-3px)}
+.pg-item.act{background:var(--roseL);border-color:rgba(224,168,168,.3);
+  box-shadow:0 4px 12px rgba(224,168,168,.15)}
+.pg-item.act::after{content:'';position:absolute;bottom:-1px;left:30%;right:30%;height:4px;
+  border-radius:3px;background:var(--rose)}
+.pg-icon{font-size:2rem;display:block;margin-bottom:6px;transition:transform .3s}
+.pg-item.act .pg-icon{transform:scale(1.25)}
+.pg-name{font-size:.8rem;font-weight:600;display:block;color:var(--text)}
+.pg-name.sub{font-size:.68rem;font-weight:400;color:var(--text3);margin-top:2px}
+
+/* ====== TIPS ====== */
+.ts h3{font-size:1.15rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.tc{background:var(--card);border-radius:18px;padding:14px 20px;margin-bottom:12px;
+  border-left:5px solid var(--rose);transition:all .2s;box-shadow:var(--shadow);
+  border:1px solid var(--border);border-left-width:5px}
+.tc:hover{transform:translateX(4px);box-shadow:var(--shadowH)}
+.tc.av{border-left-color:#D46060}
+.tc.ps{border-left-color:var(--lav);background:linear-gradient(135deg,var(--card),#F5F0F8)}
+.tc.sc{border-left-color:var(--green)}
+.tc h4{font-size:1rem;font-weight:700;color:var(--roseD);margin-bottom:4px}
+.tc.av h4{color:#D46060}
+.tc.ps h4{color:var(--lav)}
+.tc p{font-size:.95rem;color:var(--text2);line-height:1.6}
+
+/* ====== STRATEGY CARDS ====== */
+.strat-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.strat-card{background:var(--card);border-radius:22px;padding:20px 24px;display:flex;align-items:flex-start;gap:16px;
+  box-shadow:var(--shadow);border:1px solid var(--border);transition:all .25s cubic-bezier(.25,.8,.25,1)}
+.strat-card:hover{border-color:var(--roseL);box-shadow:var(--shadowH);transform:translateY(-1px)}
+.strat-card .s-icon{font-size:1.9rem;min-width:42px;text-align:center}
+.strat-card .s-body h4{font-size:1rem;font-weight:700;margin-bottom:4px}
+.strat-card .s-body p{font-size:.95rem;color:var(--text2);line-height:1.6}
+.strat-card.do .s-body h4{color:var(--green)}
+.strat-card.avoid .s-body h4{color:#D46060}
+.strat-card.psych .s-body h4{color:var(--lav);background:linear-gradient(135deg,transparent,#F5F0F8)}
+
+/* ====== MOOD TRACKER ====== */
+.ms{background:var(--card);border-radius:28px;padding:28px;margin-bottom:28px;
+  box-shadow:var(--shadow);border:1px solid var(--border)}
+.ms h3{font-size:1.15rem;font-weight:700;margin-bottom:16px}
+.mg{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px}
+.mb{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border:1.5px solid var(--border);
+  border-radius:16px;background:transparent;cursor:pointer;font-size:.8rem;color:var(--text3);
+  transition:all .2s cubic-bezier(.25,.8,.25,1)}
+.mb:hover{border-color:var(--roseL);background:var(--roseL);transform:translateY(-2px)}
+.mb.sel{border-color:var(--rose);background:var(--roseL);color:var(--roseD);box-shadow:0 0 0 3px rgba(224,168,168,.15)}
+.mb-emoji{font-size:1.8rem}
+.sg{margin-top:14px;padding:6px 0}
+.sg label{display:flex;justify-content:space-between;font-size:.9rem;color:var(--text2);margin-bottom:6px;font-weight:500}
+.sg input[type=range]{width:100%;accent-color:var(--roseD);height:8px;border-radius:4px;background:var(--border);-webkit-appearance:none;appearance:none;outline:none}
+.sg input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--roseD);cursor:pointer;box-shadow:0 2px 6px rgba(208,128,128,.3)}
+
+/* ====== CONNECT ====== */
+.cs{background:var(--card);border-radius:28px;padding:36px 28px;text-align:center;
+  box-shadow:var(--shadow);border:1px solid var(--border)}
+.code{font-size:3.2rem;font-weight:800;letter-spacing:.4rem;background:linear-gradient(135deg,var(--rose),var(--roseD));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin:18px 0;padding:18px;background-color:var(--bg);border-radius:18px;font-family:SFMono,monospace;
+  border:1px dashed var(--border)}
+
+/* ====== PARTNER STATUS ====== */
+.ps-bar{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--card);border-radius:16px;
+  margin-bottom:18px;font-size:.95rem;box-shadow:var(--shadow);border:1px solid var(--border)}
+.ps-bar.conn{border-left:5px solid var(--green)}
+.ps-bar.disc{border-left:5px solid var(--text3);color:var(--text2)}
+
+/* ====== NOTIFICATIONS ====== */
+.nc{background:var(--card);border-radius:18px;padding:16px 20px;margin-bottom:10px;
+  display:flex;align-items:flex-start;gap:14px;border-left:5px solid var(--gold);
+  box-shadow:var(--shadow);border:1px solid var(--border);border-left-width:5px;transition:all .2s}
+.nc:hover{box-shadow:var(--shadowH)}
+.nc.rd{opacity:.55}
+.nc-ic{font-size:1.5rem;margin-top:2px}
+.nc-b h4{font-size:1rem;font-weight:700;margin-bottom:4px}
+.nc-b p{font-size:.92rem;color:var(--text2);line-height:1.5}
+.nc-t{font-size:.8rem;color:var(--text3);margin-top:6px;font-weight:500}
+
+/* ====== RITUAL ====== */
+.rc{background:linear-gradient(135deg,var(--roseL),#F7F0E8);border-radius:22px;padding:22px;
+  margin-bottom:12px;cursor:pointer;transition:all .25s cubic-bezier(.25,.8,.25,1);
+  border:1px solid rgba(224,168,168,.15)}
+.rc:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(224,168,168,.12)}
+
+/* ====== EMPTY STATE ====== */
+.emp{text-align:center;padding:56px 20px;color:var(--text3)}
+.emp-ic{font-size:4rem;margin-bottom:14px;display:block}
+.emp h3{color:var(--text2);font-weight:700;margin-bottom:10px}
+
+/* ====== MOOD INDICATOR ====== */
+.mi{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:50px;
+  font-size:.92rem;background:var(--bg);color:var(--text2);border:1px solid var(--border);font-weight:500}
+
+/* ====== PHASE LIST ====== */
+.pl-item{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid var(--border)}
+.pl-item:last-child{border-bottom:none}
+.pl-item .sym{font-size:1.5rem;width:32px;text-align:center}
+.pl-item .info{flex:1}
+.pl-item .name{font-size:1rem;font-weight:600}
+.pl-item .days{font-size:.85rem;color:var(--text3);margin-top:2px}
+
+/* ====== UTILITIES ====== */
+.mt-1{margin-top:12px}.mt-2{margin-top:20px}.mt-3{margin-top:32px}
+.mb-1{margin-bottom:12px}.mb-2{margin-bottom:20px}.mb-3{margin-bottom:32px}
+.flex{display:flex}.flex-1{flex:1}.gap-1{gap:12px}.gap-2{gap:20px}
+.w-full{width:100%}.text-center{text-align:center}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* ====== SPLASH SCREEN ====== */
+.splash-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;animation:splashFade .4s ease;pointer-events:none}
+.splash-overlay .splash-icon{font-size:6rem;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 4px 20px rgba(44,40,37,.1))}
+.splash-overlay .splash-name{font-size:1.1rem;font-weight:700;margin-top:12px;color:var(--text2)}
+.splash-overlay .splash-desc{font-size:.9rem;color:var(--text3)}
+@keyframes splashFade{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+
+/* ====== TOOLTIPS ====== */
+.tp-wrap{position:relative;display:inline-block}
+.tp-trig{cursor:help;transition:.2s}
+.tp-trig:hover{color:var(--roseD)}
+.tp-box{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--card);color:var(--text);padding:14px 18px;border-radius:16px;font-size:.85rem;line-height:1.6;min-width:260px;max-width:360px;box-shadow:0 8px 32px rgba(44,40,37,.12),0 2px 8px rgba(44,40,37,.06);border:1px solid var(--border);z-index:200;pointer-events:none;opacity:0;transition:all .2s cubic-bezier(.25,.8,.25,1);text-align:left;font-weight:400}
+.tp-wrap:hover .tp-box{opacity:1;bottom:calc(100% + 12px)}
+.tp-box::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--card)}
+.tp-box h4{font-weight:700;font-size:.9rem;margin-bottom:5px;color:var(--roseD)}
+.tp-box p{color:var(--text2)}
+
+/* ====== TUTORIAL ====== */
+.tut-overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;animation:fadeIn .3s ease}
+.tut-card{background:var(--card);border-radius:28px;padding:36px 32px;max-width:460px;width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center}
+.tut-card .tut-step{font-size:.8rem;color:var(--text3);margin-bottom:10px;font-weight:600;letter-spacing:.05em}
+.tut-card .tut-icon{font-size:4rem;margin-bottom:14px;display:block}
+.tut-card h3{font-size:1.35rem;font-weight:800;margin-bottom:10px}
+.tut-card p{font-size:.95rem;color:var(--text2);line-height:1.7;margin-bottom:24px}
+.tut-dots{display:flex;gap:10px;justify-content:center;margin-bottom:18px}
+.tut-dot{width:10px;height:10px;border-radius:50%;background:var(--border2);transition:.3s;cursor:pointer}
+.tut-dot.act{background:var(--roseD);width:28px;border-radius:4px}
+.tut-card .tut-nav{display:flex;gap:12px;justify-content:center}
+.tut-card .tut-skip{font-size:.85rem;color:var(--text3);cursor:pointer;margin-top:14px;display:inline-block;border-bottom:1px solid transparent;transition:.2s}
+.tut-card .tut-skip:hover{border-bottom-color:var(--text3)}
+
+/* ====== FLOWER SELECTOR ====== */
+.flower-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0}
+.flower-opt{padding:12px 6px;border:2px solid var(--border);border-radius:16px;cursor:pointer;text-align:center;transition:all .2s;background:var(--card)}
+.flower-opt:hover{border-color:var(--roseL);transform:translateY(-2px);box-shadow:var(--shadowH)}
+.flower-opt.sel{border-color:var(--roseD);background:var(--roseL);box-shadow:0 0 0 3px rgba(208,128,128,.15)}
+.flower-opt .f-icons{font-size:1.5rem;display:block;margin-bottom:4px}
+.flower-opt .f-name{font-size:.78rem;color:var(--text3);font-weight:500}
+
+/* ====== RESPONSIVE ====== */
+@media(max-width:640px){
+  .landing h1{font-size:2.2rem}
+  .landing .landing-logo{font-size:3.2rem}
+  .landing p{font-size:1rem}
+  .auth-card{padding:32px 24px;border-radius:26px}
+  .dash-c{padding:18px}
+  .dash-hdr{padding:14px 18px}
+  .pw{padding:20px;border-radius:22px}
+  .ms{padding:20px;border-radius:22px}
+  .mg{grid-template-columns:repeat(3,1fr)}
+  .gc{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .tabs{gap:4px}
+  .tab-btn{padding:6px 14px;font-size:.72rem}
+  .pg-item{min-width:68px;max-width:88px;padding:10px 6px}
+  body{font-size:1rem}
+}
+</style>
+<script src="https://unpkg.com/lucide@latest">
+</script>
+</head>
+<body>
+
+<div class="page active" id="p-landing">
+  <div class="landing">
+    <div style="position:absolute;top:20px;right:24px;z-index:10">
+      <button class="btn btn-g btn-sm" onclick="let t=S._theme||localStorage.getItem('biosync_theme')||'light';setTheme(t==='dark'?'light':'dark')" style="font-size:1.2rem;padding:8px 12px;border-radius:50%;width:40px;height:40px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow)" title="Сменить тему"><i data-lucide="moon" class="lx"></i></button>
+    </div>
+    <div style="font-size:3rem;margin-bottom:8px;color:var(--roseD)"><i data-lucide="heart-handshake" class="lx lx-xl"></i></div>
+    <h1>BioSync <span>Код пары</span></h1>
+    <p style="margin-bottom:16px">Превратите знание о цикле в инструмент бережного общения. Приложение синхронизирует гормональный трекер женщины с персонализированными подсказками для мужчины — через <strong>«Код пары»</strong> вы соединяете аккаунты и получаете единое пространство для отношений.</p>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:24px;font-size:.85rem;color:var(--text2)">
+      <span><i data-lucide="waves" class="lx"></i> Трекер цикла</span><span><i data-lucide="brain" class="lx"></i> ИИ-медиатор Соня</span><span><i data-lucide="heart" class="lx"></i> Парные ритуалы</span><span><i data-lucide="mic" class="lx"></i> Выговориться</span><span><i data-lucide="bar-chart-3" class="lx"></i> Аналитика пары</span>
+    </div>
+    <div style="margin-bottom:20px;text-align:center">
+      <label style="font-size:.8rem;color:var(--text2);display:block;margin-bottom:6px"><i data-lucide="globe" class="lx lx-sm"></i> Язык интерфейса</label>
+      <select id="lang-select" onchange="setLang(this.value)" style="padding:8px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--input);color:var(--text);font-size:.9rem;cursor:pointer;max-width:280px;width:100%">
+        <option value="ru">🇷🇺 Русский</option>
+        <option value="en">🇬🇧 English</option>
+        <option value="zh">🇨🇳 中文</option>
+        <option value="hi">🇮🇳 हिन्दी</option>
+        <option value="es">🇪🇸 Español</option>
+        <option value="ar">🇸🇦 العربية</option>
+        <option value="fr">🇫🇷 Français</option>
+        <option value="bn">🇧🇩 বাংলা</option>
+        <option value="pt">🇧🇷 Português</option>
+        <option value="ur">🇵🇰 اردو</option>
+        <option value="de">🇩🇪 Deutsch</option>
+        <option value="id">🇮🇩 Bahasa Indonesia</option>
+        <option value="ja">🇯🇵 日本語</option>
+        <option value="tr">🇹🇷 Türkçe</option>
+        <option value="ko">🇰🇷 한국어</option>
+      </select>
+    </div>
+    <div class="landing-btns">
+      <button class="btn btn-p btn-lg" onclick="navigate('register-female')"><i data-lucide="venus" class="lx lx-lg"></i> Я — женщина</button>
+      <button class="btn btn-o btn-lg" onclick="navigate('register-male')"><i data-lucide="mars" class="lx lx-lg"></i> Я — мужчина</button>
+    </div>
+    <div class="landing-link">Уже есть аккаунт? <a onclick="navigate('login')">Войти</a></div>
+  </div>
+</div>
+
+<div class="page" id="p-login">
+  <div class="auth-page">
+    <div class="auth-card">
+      <h2><i data-lucide="heart-handshake" class="lx lx-lg"></i> Добро пожаловать</h2>
+      <p>Войдите в свой аккаунт BioSync</p>
+      <div id="login-err" class="err" style="display:none"></div>
+      <div class="fg"><label>Email</label><input type="email" id="login-email" placeholder="email@example.com"></div>
+      <div class="fg"><label>Пароль</label><input type="password" id="login-pass" placeholder="Ваш пароль"></div>
+      <div class="fg" style="display:flex;align-items:center;gap:8px">
+        <input type="checkbox" id="login-remember" style="width:auto;accent-color:var(--rose);width:16px;height:16px" checked>
+        <label for="login-remember" style="font-weight:400;cursor:pointer;font-size:.9rem">Запомнить устройство</label>
+      </div>
+      <button class="btn btn-p btn-lg btn-block" onclick="handleLogin()">Войти</button>
+      <div class="social-divider"><span>или войти через</span></div>
+      <div class="social-login-row">
+        <button class="btn-social" onclick="socialLogin('google')" title="Google"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.54 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 0 0 0 24c0 3.77.87 7.35 2.56 10.56l7.98-5.97z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.97C6.51 42.62 14.62 48 24 48z"/></svg></button>
+        <button class="btn-social" onclick="socialLogin('vk')" title="VK"><svg viewBox="0 0 48 48"><path fill="#4C75A3" d="M24 0C10.74 0 0 10.74 0 24s10.74 24 24 24 24-10.74 24-24S37.26 0 24 0zm14.13 28.06c1.64 2.23 2.63 3.14 3.23 3.64.39.33.53.85.36 1.32-.22.63-.93 1.1-1.66 1.1h-3.53c-1.04.03-2.05-.35-2.84-1.05-2.02-1.85-3.92-3.38-5.95-5.81-.41-.49-1.06-.68-1.6-.47-.95.38-.98 1.54-.98 2.86v1.86c0 .89-.54 1.35-1.07 1.48-.73.18-1.73.24-3.31.24-4.18 0-7.84-2.55-9.89-6.49C9.03 23.02 6 11.9 6 11.9c-.09-.43.07-.86.4-1.14.36-.28.82-.38 1.25-.28L13 10.53c.44.05.83.28 1.06.62.69.97 1.5 1.96 2.57 2.93.24.22.57.26.85.1.29-.16.5-.45.57-.78l.36-2.3c.22-1.29.94-1.63 1.49-1.74.09-.02.19-.03.29-.03h7.17c.67-.04 1.3.27 1.6.84.31.57.28 1.24-.06 1.79-.64 1-1.6 2.29-2.54 3.6-1.15 1.61-2.27 3.06-2.13 4.13.06.48.32.94.79 1.31 2.14 1.7 4.06 4.28 5.89 7.04z"/></svg></button>
+        <button class="btn-social" onclick="socialLogin('mail')" title="Mail"><svg viewBox="0 0 48 48"><path fill="#005FF9" d="M24 0C10.74 0 0 10.74 0 24s10.74 24 24 24 24-10.74 24-24S37.26 0 24 0zm3.26 28.38l-1.64 1.14a7.43 7.43 0 0 1-4.07 1.2c-3.82 0-6.92-2.9-6.92-6.48s3.1-6.48 6.92-6.48c2.4 0 4.51 1.15 5.8 2.9l-5.72 3.97-4.15-2.88v-2.61l7.44 5.16 7.78-5.4v7.05c0 4.05-3.33 7.33-7.44 7.33-2.96 0-5.52-1.69-6.72-4.15l2.72-.97c.75 1.35 2.17 2.27 3.8 2.27 2.37 0 4.3-1.83 4.3-4.09v-.73z"/></svg></button>
+        <button class="btn-social" onclick="socialLogin('telegram')" title="Telegram"><svg viewBox="0 0 48 48"><path fill="#0088cc" d="M24 0C10.74 0 0 10.74 0 24s10.74 24 24 24 24-10.74 24-24S37.26 0 24 0zm12.63 16.17l-3.2 15.11c-.24 1.06-.86 1.32-1.74.82l-4.8-3.54-2.31 2.23c-.26.26-.48.48-1 .48l.36-5.03 9.16-8.27c.4-.36-.09-.56-.62-.2L18.2 28.24l-4.84-1.52c-1.06-.33-1.08-1.06.22-1.57l18.9-7.28c.88-.33 1.65.2 1.36 1.46z"/></svg></button>
+        <button class="btn-social" onclick="socialLogin('yandex')" title="Яндекс"><svg viewBox="0 0 48 48"><path fill="#FC3F1D" d="M24 0C10.74 0 0 10.74 0 24s10.74 24 24 24 24-10.74 24-24S37.26 0 24 0zm4.47 34.78h-3.5V24.7c0-2.57-1.66-4.24-4.07-4.24-2.42 0-4.74 1.8-4.74 4.62v9.7h-3.5V13.22h3.5v4.94h.08c1.28-1.86 3.43-3.04 5.96-3.04 4.18 0 7.27 3.16 7.27 8.05v11.61z"/></svg></button>
+      </div>
+      <div class="auth-link">Нет аккаунта? <a onclick="navigate('landing')">Зарегистрироваться</a></div>
+      <div id="login-quick" style="display:none;margin-top:16px;padding:16px;background:var(--roseL);border-radius:16px;text-align:center;border:1px solid rgba(224,168,168,.2)">
+        <p style="font-size:.9rem;color:var(--text2);margin-bottom:10px;font-weight:500"><i data-lucide="waves" class="lx lx-lg"></i> С возвращением!</p>
+        <button class="btn btn-p btn-sm" id="login-quick-btn" onclick="quickLogin()" style="padding:10px 24px">Войти как <span id="login-quick-name" style="font-weight:800"></span></button>
+        <br><button class="btn btn-g btn-sm mt-2" onclick="clearRemembered()" style="color:var(--text3);font-size:.8rem">Это не я — войти заново</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="p-register-female">
+  <div class="auth-page" id="rf-page1">
+    <div class="auth-card">
+      <h2><i data-lucide="sprout" class="lx lx-lg" style="color:var(--green)"></i> Регистрация</h2>
+      <p>Создайте аккаунт, чтобы начать отслеживать свой цикл.</p>
+      <div id="rf-err1" class="err" style="display:none"></div>
+      <div class="fg"><label>Имя</label><input type="text" id="rf-name" placeholder="Ваше имя"></div>
+      <div class="fg"><label>Email</label><input type="email" id="rf-email" placeholder="email@example.com"></div>
+      <div class="fg"><label>Пароль</label><input type="password" id="rf-pass" placeholder="Минимум 6 символов"></div>
+      <button class="btn btn-p btn-lg btn-block" onclick="handleRegFemale()">Создать аккаунт</button>
+      <div class="auth-link">Уже есть аккаунт? <a onclick="navigate('login')">Войти</a></div>
+    </div>
+  </div>
+  <div class="auth-page" id="rf-page2" style="display:none">
+    <div class="auth-card">
+      <h2><i data-lucide="bar-chart-3" class="lx lx-lg"></i> Настройка цикла</h2>
+      <p>Укажите параметры вашего цикла для точного прогноза фаз.</p>
+      <div id="rf-err2" class="err" style="display:none"></div>
+      <div class="fg"><label>Первый день последних месячных</label><input type="date" id="rf-last-period"></div>
+      <div class="form-row">
+        <div class="fg"><label>Длина цикла (дни)</label><input type="number" id="rf-cycle-len" value="28" min="21" max="45"><div class="hint">Обычно 21–35 дней</div></div>
+        <div class="fg"><label>Длина месячных (дни)</label><input type="number" id="rf-period-len" value="5" min="3" max="10"><div class="hint">Обычно 3–7 дней</div></div>
+      </div>
+      <button class="btn btn-p btn-lg btn-block mt-2" onclick="handleCycleSetup()">Сохранить и продолжить</button>
+      <div class="text-center mt-2"><button class="btn btn-g" onclick="skipCycleSetup()">Пропустить — настрою позже</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="p-register-male">
+  <div class="auth-page" id="rm-page1">
+    <div class="auth-card">
+      <h2><i data-lucide="handshake" class="lx lx-lg" style="color:var(--indigo)"></i> Регистрация</h2>
+      <p>Создайте аккаунт, чтобы подключиться к партнерше.</p>
+      <div id="rm-err1" class="err" style="display:none"></div>
+      <div class="fg"><label>Имя</label><input type="text" id="rm-name" placeholder="Ваше имя"></div>
+      <div class="fg"><label>Email</label><input type="email" id="rm-email" placeholder="email@example.com"></div>
+      <div class="fg"><label>Пароль</label><input type="password" id="rm-pass" placeholder="Минимум 6 символов"></div>
+      <button class="btn btn-p btn-lg btn-block" onclick="handleRegMale()">Создать аккаунт</button>
+      <div class="auth-link">Уже есть аккаунт? <a onclick="navigate('login')">Войти</a></div>
+    </div>
+  </div>
+  <div class="auth-page" id="rm-page2" style="display:none">
+    <div class="auth-card">
+      <h2><i data-lucide="link" class="lx lx-lg"></i> Подключение к паре</h2>
+      <p>Введите код пары, который передала вам партнерша.</p>
+      <div id="rm-err2" class="err" style="display:none"></div>
+      <div class="fg"><label>Код пары</label><input type="text" id="rm-code" placeholder="XXXXXX" style="text-align:center;font-size:1.3rem;letter-spacing:.3rem;font-family:monospace" maxlength="6" oninput="this.value=this.value.toUpperCase()"></div>
+      <button class="btn btn-p btn-lg btn-block" onclick="handleConnect()">Подключиться</button>
+      <div class="text-center mt-2"><button class="btn btn-g" onclick="finishMaleReg()">Пропустить — подключусь позже</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="dash" id="p-dash-female">
+  <header class="dash-hdr">
+    <div class="dash-logo">Bio<span>Sync</span></div>
+    <div class="dash-r"><span class="dash-user" id="df-user"></span>
+      <button class="btn btn-sm" id="df-voice-btn" onclick="openVoiceModal()" style="background:linear-gradient(135deg,var(--rose),var(--roseD));color:#fff;font-size:.85rem;padding:6px 14px;gap:6px;display:none" title="Выговориться"><i data-lucide="mic" class="lx lx-sm"></i></button>
+      <button class="btn btn-g btn-sm" onclick="logout()">Выйти</button>
+    </div>
+  </header>
+  <div class="dash-c">
+    <div class="tabs" id="df-tabs"></div>
+    <div id="df-content"></div>
+  </div>
+</div>
+
+<!-- ====== VOICE MODAL ====== -->
+<div id="voice-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.6);backdrop-filter:blur(12px);align-items:center;justify-content:center;animation:fadeIn .3s ease" onclick="if(event.target===this)closeVoiceModal()">
+  <div style="background:var(--card);border-radius:28px;padding:32px 28px;max-width:440px;width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);position:relative;text-align:center">
+    <button onclick="closeVoiceModal()" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text3)">✕</button>
+    <div id="voice-modal-content"></div>
+  </div>
+</div>
+
+<div class="dash" id="p-dash-male">
+  <header class="dash-hdr">
+    <div class="dash-logo">Bio<span>Sync</span></div>
+    <div class="dash-r"><span class="dash-user" id="dm-user"></span><button class="btn btn-g btn-sm" onclick="logout()">Выйти</button></div>
+  </header>
+  <div class="dash-c">
+    <div class="tabs" id="dm-tabs"></div>
+    <div id="dm-content"></div>
+  </div>
+</div>
+
+<style>
+.lx{display:inline-block;vertical-align:middle;width:1em;height:1em;stroke-width:1.5;stroke:currentColor;fill:none;flex-shrink:0;transition:all .2s ease}
+.lx-sm{width:.85em;height:.85em}
+.lg{width:1.15em;height:1.15em}
+.lx-lg{width:1.3em;height:1.3em}
+.lx-xl{width:1.8em;height:1.8em}
+button .lx, a .lx, .nav-item .lx{pointer-events:none}
+.tab-icon .lx{width:1.3rem;height:1.3rem}
+.tab-btn.act .lx{stroke:var(--roseD)}
+</style>
+<script>
+// ====== ICON HELPER ======
+function ic(name,cls=''){return `<i data-lucide="${name}" class="lx ${cls}"></i>`}
+// emoji → lucide name lookup
+const _EM={'🌊':'waves','🧘':'heart','🤍':'message-circle','🔗':'link','📝':'edit-3','🔔':'bell','⭐':'sparkles','⚙️':'settings','🧭':'compass','📋':'clipboard-list','📊':'bar-chart-3','🌐':'globe','💞':'heart-handshake','🎤':'mic','🧠':'brain','🆘':'alert-circle','🎯':'target','💬':'message-square','📅':'calendar','📈':'trending-up','📖':'book-open','💼':'briefcase','🏠':'home','🙏':'hands','🤝':'handshake','🔮':'sparkles','🎉':'party-popper','🔄':'refresh-cw','✅':'check','❌':'x','✨':'sparkles','🔥':'flame','💾':'save','📂':'folder','🔓':'unlock','🔒':'lock','🌙':'moon','💭':'message-circle','👂':'ear','🎁':'gift','🤗':'smile','📱':'smartphone','⏳':'hourglass','📍':'map-pin','🔑':'key','🗑️':'trash-2','🚪':'log-out','🌓':'moon','⚡':'zap','📌':'pin','🍵':'coffee','🌬️':'wind','💝':'heart','🚫':'ban','🎙️':'mic','👶':'baby','💡':'lightbulb','▶️':'play'};
+// replace icon emojis (only known icons, skips content emojis like moods & phase syms)
+function rI(s){return s.replace(/🌊|🧘|🤍|🔗|📝|🔔|⭐|⚙️|🧭|📋|📊|🌐|💞|🎤|🧠|🆘|🎯|💬|📅|📈|📖|💼|🏠|🙏|🤝|🔮|🎉|🔄|✅|❌|✨|🔥|💾|📂|🔓|🔒|🌙|💭|👂|🎁|🤗|📱|⏳|📍|🔑|🗑️|🚪|🌓|⚡|📌|🍵|🌬️|💝|🚫|🎙️|👶|💡|▶️/g, m=>ic(_EM[m]))}
+// ====== STATE ======
+const LS = 'biosync_data';
+const PHASES = [
+  { id:0, name:'Менструальная', cn:'Этап восстановления', desc:'Дни покоя и заботы', color:'#C4A4A4', sym:'🌰' },
+  { id:1, name:'Фолликулярная', cn:'Период энергии', desc:'Время новых идей и планов', color:'#A8C4A8', sym:'🌱' },
+  { id:2, name:'Овуляторная', cn:'Период близости', desc:'Пик энергии и общительности', color:'#F0D78C', sym:'🌸' },
+  { id:3, name:'Лютеиновая', cn:'Период чуткости', desc:'Время замедления и заботы', color:'#D4A574', sym:'🍂' },
+];
+const PC = ['#C4A4A4','#A8C4A8','#F0D78C','#D4A574'];
+const MOODS = [{e:'😊',l:'Отлично'},{e:'🙂',l:'Хорошо'},{e:'😐',l:'Нейтрально'},{e:'😔',l:'Грустно'},{e:'😤',l:'Раздражена'},{e:'😴',l:'Устала'}];
+const F_TIPS = [
+  [{t:'Техника заземления 5-4-3-2-1',b:'Назови 5 вещей, которые видишь, 4 — которые чувствуешь, 3 — которые слышишь, 2 — запах, 1 — вкус.',c:''},
+   {t:'Дыхательная практика',b:'Вдох на 4 счета, задержка на 7, выдох на 8. Повтори 4 раза.',c:'sc'},
+   {t:'Вечер кино без готовки',b:'Закажи любимую еду и устрой киновечер.',c:'sc'}],
+  [{t:'Мягкий старт разговора',b:'Начни с "Я хочу поговорить о..." вместо "Ты всегда...". Используй Я-высказывания.',c:''},
+   {t:'Движение и творчество',b:'Запишись на танцы или йогу. Новые движения дарят новую энергию.',c:'sc'}],
+  [{t:'Время ярких свиданий',b:'Вспомните ваши первые встречи. Энергия на пике — отличный момент для танцев.',c:''},
+   {t:'Флирт и игра',b:'Устрой романтический ужин. Твоя общительность сейчас на максимуме.',c:''}],
+  [{t:'Дневник "Выплеск эмоций"',b:'Запиши все, что накипело. Сам процесс письма снижает напряжение.',c:'sc'},
+   {t:'Техника КПТ',b:'"Он никогда меня не слушает" → "Я чувствую, что меня не слышат, потому что я устала".',c:''},
+   {t:'Замедление',b:'Откажись от одного энергозатратного дела сегодня. Твое тело замедляется — это нормально.',c:'sc'}]
+];
+const M_TIPS = [
+  [{t:'✅ Сделать',b:'Приготовь чай без просьбы и просто будь рядом. Предложи плед и тихий вечер.',c:''},
+   {t:'❌ Избегать',b:'Не предлагай активные занятия. Не спрашивай "что случилось?", если она молчит.',c:'av'},
+   {t:'👨‍⚕️ Совет психолога',b:'В дни восстановления женщине важно чувствовать безопасность. Твое спокойное присутствие — лучшая поддержка.',c:'ps'}],
+  [{t:'✅ Сделать',b:'Спланируй активный выезд на выходные. Её энергия на подъеме.',c:''},
+   {t:'✅ Поддержка',b:'Обсудите общие цели на месяц. Она открыта к диалогу.',c:''},
+   {t:'👨‍⚕️ Совет психолога',b:'Фолликулярная фаза — лучшее время для планирования и новых начинаний.',c:'ps'}],
+  [{t:'✅ Сделать',b:'Время ярких свиданий и легкого флирта. Вспомните ваши первые встречи.',c:''},
+   {t:'👨‍⚕️ Совет психолога',b:'Овуляторная фаза — пик женской энергии и общительности.',c:'ps'}],
+  [{t:'✅ Сделать',b:'Купи её любимый десерт. Телесный контакт без эротического подтекста.',c:''},
+   {t:'❌ Избегать',b:'Фраз-триггеров типа "Опять ты накручиваешь". Скажи: "Я вижу, тебе тяжело, давай я возьму ужин на себя".',c:'av'},
+   {t:'👨‍⚕️ Совет психолога',b:'В фазе ПМС мозг женщины иначе обрабатывает критику. Отложите разборы на 3-4 дня.',c:'ps'}]
+];
+
+function uid(){return Math.random().toString(36).substr(2,9)}
+function genCode(){return Math.random().toString(36).substr(2,6).toUpperCase()}
+
+function loadState(){
+  try{return JSON.parse(localStorage.getItem(LS))||defaultState()}catch(e){return defaultState()}
+}
+function defaultState(){
+  return {users:[],curUser:null,cycle:{},logs:{},couples:[],notifs:{},moodForm:{},subs:{},voice:{}}
+}
+// Deep auto-saving Proxy — every mutation (set, delete, push, etc.) auto-saves with 300ms debounce
+const _pxCache=new WeakMap();
+let _svTimer;
+function _debSv(){clearTimeout(_svTimer);_svTimer=setTimeout(save,300)}
+function _px(obj){
+  if(obj===null||typeof obj!=='object')return obj;
+  if(_pxCache.has(obj))return _pxCache.get(obj);
+  const MUT=new Set(['push','pop','splice','shift','unshift','sort','reverse']);
+  const hd={
+    get(t,p,r){
+      const v=Reflect.get(t,p,r);
+      if(typeof v==='function'&&Array.isArray(t)&&MUT.has(p))
+        return function(...a){const r=v.apply(t,a);_debSv();return r};
+      if(v!==null&&typeof v==='object')return _px(v);
+      return v;
+    },
+    set(t,p,v){const r=Reflect.set(t,p,v);_debSv();return r},
+    deleteProperty(t,p){const r=Reflect.deleteProperty(t,p);_debSv();return r}
+  };
+  const p=new Proxy(obj,hd);
+  _pxCache.set(obj,p);
+  return p;
+}
+let S=_px(loadState());
+const SVR='http://localhost:4000';
+function save(){let j=JSON.stringify(S);localStorage.setItem(LS,j);fetch(SVR+'/api/data',{method:'POST',headers:{'Content-Type':'application/json'},body:j}).catch(()=>{})}
+async function loadFromServer(){var loc=localStorage.getItem(LS);if(loc)return;try{let r=await fetch(SVR+'/api/data');if(!r.ok)return;let d=await r.json();if(d&&Object.keys(d).length){Object.assign(S,d);localStorage.setItem(LS,JSON.stringify(S))}}catch(e){}}
+async function checkGhStatus(){try{let r=await fetch(SVR+'/api/status');if(!r.ok)return;let d=await r.json();let dot=document.getElementById('gh-indicator'),lb=document.getElementById('gh-label'),cb=document.getElementById('gh-connect-btn'),db=document.getElementById('gh-disconnect-btn');if(!dot)return;if(!d.gh){dot.style.background='#888';lb.textContent='не настроен';if(cb)cb.style.display='';if(db)db.style.display='none'}else if(d.ghStatus==='synced'){dot.style.background='var(--green)';lb.textContent='✔ синхронизировано';if(cb)cb.style.display='none';if(db)db.style.display=''}else if(d.ghStatus==='syncing'){dot.style.background='var(--gold)';lb.textContent='⟳ синхронизация...';if(cb)cb.style.display='none';if(db)db.style.display=''}else if(d.ghStatus==='error'){dot.style.background='#D46060';lb.textContent='✘ ошибка';if(cb)cb.style.display='none';if(db)db.style.display=''}else{dot.style.background='var(--text3)';lb.textContent='ожидание';if(cb)cb.style.display='';if(db)db.style.display='none'}}catch(e){}}
+function showGhSetup(){document.getElementById('gh-status').style.display='none';document.getElementById('gh-setup').style.display='';document.getElementById('gh-connect-btn').style.display='none'}
+function cancelGhSetup(){document.getElementById('gh-status').style.display='';document.getElementById('gh-setup').style.display='none';checkGhStatus()}
+async function saveGhConfig(){let token=document.getElementById('gh-token-input').value.trim();let repo=document.getElementById('gh-repo-input').value.trim();if(!token||!repo){alert('Заполните оба поля');return}try{let r=await fetch(SVR+'/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,repo})});if(!r.ok)throw Error();cancelGhSetup();checkGhStatus()}catch(e){alert('Ошибка сохранения')}}
+async function disconnectGh(){try{await fetch(SVR+'/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:'',repo:''})});checkGhStatus()}catch(e){}}
+
+// ====== SUBSCRIPTIONS ======
+function getSub(uid){
+  let s=S.subs[uid];
+  if(!s)return {plan:'free',trial:0,expires:0};
+  if(s.expires&&Date.now()>s.expires){s.plan='free';s.trial=0;save()}
+  return s;
+}
+function setSub(uid,plan,months,isYearly){
+  let ms=months*30*86400000;
+  if(isYearly)ms=months*365*86400000/12*months;
+  S.subs[uid]={plan,trial:0,expires:Date.now()+ms,monthly:!isYearly};
+  save();
+}
+function startTrial(uid){
+  if(!S.subs[uid])S.subs[uid]={};
+  S.subs[uid].trial=1;
+  S.subs[uid].plan='premium';
+  S.subs[uid].expires=Date.now()+7*86400000;
+  save();
+}
+function voiceQuota(uid){
+  let s=getSub(uid);
+  if(s.plan==='unlimited'||s.plan==='premium')return 999;
+  if(s.trial)return 3;
+  let sessions=S.voice[uid]||[];
+  let thisMonth=sessions.filter(x=>{
+    let d=new Date(x.date);
+    let n=new Date();
+    return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();
+  }).length;
+  return Math.max(0,1-thisMonth);
+}
+function voiceUsed(uid){
+  return (S.voice[uid]||[]).length;
+}
+function femalePremiumBadge(){
+  let s=getSub(S.curUser);
+  if(s.plan==='premium'||s.plan==='unlimited')return '';
+  let trial=s.trial?': 7-дневный пробный':'';
+  return `<div class="ps-bar disc mt-2" style="font-size:.85rem;cursor:pointer" onclick="S._fTab='settings';renderFemaleDash()"><span>${ic('sparkles')}</span><span>Бесплатный тариф${trial} — перейти в Premium</span></div>`;
+}
+
+// ====== VOICE "ВЫГОВОРИТЬСЯ" ======
+const VOICE_EMOTIONS=['Обида','Усталость','Тревога','Радость','Грусть','Раздражение','Спокойствие','Благодарность','Страх','Надежда'];
+const VOICE_TRIGGERS=['он не ответил','работа','отношения','деньги','здоровье','семья','одиночество','будущее','прошлое','быт'];
+function simulateVoiceAnalysis(){
+  let stress=40+Math.floor(Math.random()*45);
+  let emotionCount=1+Math.floor(Math.random()*3);
+  let emotions=[];
+  for(let i=0;i<emotionCount;i++){
+    let e=VOICE_EMOTIONS[Math.floor(Math.random()*VOICE_EMOTIONS.length)];
+    if(!emotions.includes(e))emotions.push(e);
+  }
+  let triggers=[];
+  let tc=1+Math.floor(Math.random()*3);
+  for(let i=0;i<tc;i++){
+    let t=VOICE_TRIGGERS[Math.floor(Math.random()*VOICE_TRIGGERS.length)];
+    if(!triggers.includes(t))triggers.push(t);
+  }
+  let ph=getPhase(S.curUser);
+  let phaseId=ph?ph.phaseId:0;
+  let phaseTips=[
+    'В этой фазе чувствительность повышена — это абсолютно нормально.',
+    'Энергия на подъёме. Используйте это для приятных дел.',
+    'Перинод близости. Поделитесь чувствами с партнёром.',
+    'Тело замедляется. Разрешите себе отдых без угрызений.'
+  ];
+  let sosc=[
+    {t:'Дыхание по квадрату',d:'Вдох — задержка — выдох — задержка по 4 секунды',a:'breath'},
+    {t:'Техника заземления 5-4-3-2-1',d:'Назови 5 вещей вокруг, 4 звука, 3 ощущения, 2 запаха, 1 вкус',a:'ground'},
+    {t:'Отпускание мысли',d:'Представь, что каждая тревога — облако. Наблюдай, как оно уплывает.',a:'cloud'}
+  ];
+  let reco=[
+    'Попробуй сегодня вечером технику «Я-высказывания» вместо обвинений.',
+    'Напиши партнеру 3 вещи, за которые ты благодарна сегодня.',
+    'Удели 10 минут тишине — без телефона, без задач.',
+  ];
+  return {
+    stress,emotions,triggers,phaseId,
+    phaseTip:phaseTips[phaseId],
+    sosc:sosc[Math.floor(Math.random()*sosc.length)],
+    reco:reco[Math.floor(Math.random()*reco.length)],
+    text:'...'
+  };
+}
+function saveVoiceSession(analysis,duration){
+  if(!S.voice[S.curUser])S.voice[S.curUser]=[];
+  let ph=getPhase(S.curUser);
+  S.voice[S.curUser].push({
+    id:uid(),date:new Date().toISOString(),duration,
+    stress:analysis.stress,emotions:analysis.emotions,
+    triggers:analysis.triggers,phaseId:ph?ph.phaseId:0,
+    reco:analysis.reco,sosc:analysis.sosc,
+    text:analysis.text
+  });
+  save();
+  // If high stress and partnered, send anonymized signal to male
+  if(analysis.stress>65){
+    let cp=S.couples.find(x=>x.fId===S.curUser&&x.status==='active');
+    if(cp&&cp.mId){
+      let u=S.users.find(x=>x.id===S.curUser);
+      if(u&&(!u.priv||u.priv.showSignal!==false)){
+        if(!S.notifs[cp.mId])S.notifs[cp.mId]=[];
+        S.notifs[cp.mId].push({id:uid(),type:'signal',
+          title:`Сегодня был непростой день у ${u.name}`,
+          body:'Хорошее время проявить нежность без лишних слов.',
+          read:0,createdAt:new Date().toISOString()});
+        if(analysis.triggers.some(t=>t==='отношения'||t==='он не ответил')){
+          S.notifs[cp.mId].push({id:uid(),type:'signal',
+            title:`${u.name} размышляет о ваших отношениях`,
+            body:'Если она захочет поделиться — просто выслушай.',
+            read:0,createdAt:new Date().toISOString()});
+        }
+        save();
+      }
+    }
+  }
+}
+function openVoiceModal(){
+  let q=voiceQuota(S.curUser);
+  let s=getSub(S.curUser);
+  document.getElementById('voice-modal').style.display='flex';
+  if(s.plan==='free'&&!s.trial&&q<=0){
+    document.getElementById('voice-modal-content').innerHTML=rI(`
+      <div style="font-size:3rem;margin-bottom:12px">🎤</div>
+      <h3 style="font-size:1.2rem;margin-bottom:6px">Лимит исчерпан</h3>
+      <p style="color:var(--text2);font-size:.9rem;margin-bottom:16px">На бесплатном тарифе — 1 сессия в месяц. Оформите Premium для безлимитного доступа.</p>
+      <button class="btn btn-p" onclick="closeVoiceModal();S._fTab='settings';renderFemaleDash()">${ic('sparkles')} Перейти в Premium</button>`);
+    lucide.createIcons(document.getElementById('voice-modal-content'));
+    return;
+  }
+  document.getElementById('voice-modal-content').innerHTML=rI(`
+    <div style="font-size:2.5rem;margin-bottom:10px">🎙️</div>
+    <h3 style="font-size:1.2rem;margin-bottom:4px">Я слушаю</h3>
+    <p style="color:var(--text2);font-size:.85rem;margin-bottom:20px">Говори сколько хочешь. Я никуда не спешу.</p>
+    <div style="width:120px;height:120px;border-radius:50%;margin:0 auto 20px;background:linear-gradient(135deg,var(--rose),var(--roseD));display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 30px rgba(208,128,128,.4);animation:voicePulse 1.5s ease-in-out infinite" id="voice-record-btn" onclick="startVoiceRecord()">
+      <span style="font-size:3rem;color:#fff;line-height:1">🎤</span>
+    </div>
+    <p style="font-size:.8rem;color:var(--text3)" id="voice-status">Нажми, чтобы начать</p>
+    <div style="margin-top:20px;display:flex;gap:10px;justify-content:center">
+      <button class="btn btn-g btn-sm" onclick="closeVoiceModal()">Отмена</button>
+    </div>`);
+  lucide.createIcons(document.getElementById('voice-modal-content'));
+}
+function closeVoiceModal(){
+  document.getElementById('voice-modal').style.display='none';
+}
+function startVoiceRecord(){
+  let btn=document.getElementById('voice-record-btn');
+  let status=document.getElementById('voice-status');
+  if(!btn||!status)return;
+  btn.onclick=null;
+  let sec=0;
+  status.textContent='0:00 · Говорите...';
+  let interval=setInterval(()=>{
+    sec++;
+    let m=Math.floor(sec/60),s=sec%60;
+    status.textContent=`${m}:${s.toString().padStart(2,'0')} · Говорите...`;
+    if(sec>=300){clearInterval(interval);stopVoiceRecord(sec)}
+  },1000);
+  S._voiceTimer=interval;
+  S._voiceSec=0;
+  // Override next click to stop
+  btn.onclick=function(){clearInterval(interval);stopVoiceRecord(sec)};
+  btn.style.animation='none';
+  btn.style.transform='scale(.95)';
+  btn.style.boxShadow='0 4px 20px rgba(208,128,128,.6)';
+}
+function stopVoiceRecord(duration){
+  let status=document.getElementById('voice-status');
+  let btn=document.getElementById('voice-record-btn');
+  if(status)status.textContent='🧠 Анализирую...';
+  if(btn){btn.style.animation='none';btn.style.background='linear-gradient(135deg,var(--green),#6FA890)'}
+  // Simulate AI analysis
+  setTimeout(()=>showVoiceResult(duration),800);
+}
+function showVoiceResult(duration){
+  let analysis=simulateVoiceAnalysis();
+  saveVoiceSession(analysis,duration);
+  let ph=getPhase(S.curUser);
+  let stressColor=analysis.stress>70?'#D46060':analysis.stress>40?'#E8B84C':'var(--green)';
+  let stressLabel=analysis.stress>70?'Высокий':analysis.stress>40?'Средний':'Низкий';
+  let q=voiceQuota(S.curUser);
+  let m=Math.floor(duration/60),s=duration%60;
+  let vc=document.getElementById('voice-modal-content');
+  vc.innerHTML=rI(`
+    <div style="text-align:left">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <span style="font-size:2rem">🎙️</span>
+        <div><div style="font-weight:700">Сессия ${new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'long'})}</div>
+        <div style="color:var(--text2);font-size:.8rem">${m}:${s.toString().padStart(2,'0')}</div></div>
+        ${q<3?`<span style="margin-left:auto;font-size:.75rem;color:var(--text3)">Осталось: ${q} сессии</span>`:''}
+      </div>
+      <!-- Stress level -->
+      <div style="background:var(--bg);border-radius:16px;padding:16px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:6px">
+          <span style="color:var(--text2)">Уровень напряжения</span>
+          <span style="font-weight:700;color:${stressColor}">${stressLabel} · ${analysis.stress}%</span>
+        </div>
+        <div style="height:8px;background:var(--border2);border-radius:8px;overflow:hidden">
+          <div style="height:100%;width:${analysis.stress}%;background:${stressColor};border-radius:8px;transition:width 1s ease"></div>
+        </div>
+        ${analysis.triggers.length?`<div style="font-size:.75rem;color:var(--text3);margin-top:6px">Пик: «${analysis.triggers[0]}»</div>`:''}
+      </div>
+      <!-- Emotions -->
+      <div style="background:var(--bg);border-radius:16px;padding:16px;margin-bottom:12px">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:6px">${ic('brain')} Что чувствуется в речи:</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">${analysis.emotions.map(e=>`<span style="background:var(--roseL);color:var(--roseD);padding:4px 12px;border-radius:50px;font-size:.8rem">${e}</span>`).join('')}</div>
+      </div>
+      <!-- Phase context -->
+      ${ph?`
+      <div style="background:var(--bg);border-radius:16px;padding:16px;margin-bottom:12px">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:4px">${ic('waves')} ${WAVE_NAMES[ph.phaseId]} фаза</div>
+        <p style="font-size:.8rem;color:var(--text2)">${analysis.phaseTip}</p>
+      </div>`:''}
+      <!-- SOS -->
+      <div style="background:var(--bg);border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid rgba(212,96,96,.15)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:1.2rem">${ic('alert-circle')}</span>
+          <span style="font-weight:600;font-size:.85rem">SOS: здесь и сейчас</span>
+        </div>
+        <div style="background:var(--card);border-radius:12px;padding:12px;margin-bottom:6px">
+          <div style="font-weight:600;font-size:.85rem">${analysis.sosc.t}</div>
+          <p style="font-size:.75rem;color:var(--text2);margin-bottom:8px">${analysis.sosc.d}</p>
+          <button class="btn btn-s btn-sm" onclick="alert('${ic('heart')} Практика запущена. Дышите спокойно.')" style="font-size:.8rem">▶ Запустить</button>
+        </div>
+      </div>
+      <!-- Recommendation -->
+      <div style="background:var(--bg);border-radius:16px;padding:16px;margin-bottom:12px">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:4px">${ic('edit-3')} Рекомендация на сегодня</div>
+        <p style="font-size:.82rem;color:var(--text2)">${analysis.reco}</p>
+      </div>
+      <!-- Actions -->
+      <div style="display:flex;gap:10px;margin-top:6px">
+        <button class="btn btn-p btn-sm" style="flex:1" onclick="alert('${ic('check')} Сессия сохранена')">${ic('save')} Сохранить</button>
+        <button class="btn btn-g btn-sm" onclick="closeVoiceModal()">Закрыть</button>
+      </div>
+    </div>`);
+  lucide.createIcons(vc);
+}
+
+// ====== CYCLE ENGINE ======
+function getPhaseIdx(day,cl){
+  if(!day||day<1)return 0;
+  let d=Math.min(day,cl||28);
+  if(d<=5)return 0;if(d<=13)return 1;if(d<=16)return 2;return 3;
+}
+function getPhase(uid){
+  let c=S.cycle[uid];if(!c)return null;
+  let start=new Date(c.lps),now=new Date();
+  let day=Math.floor((now-start)/(86400000))+1;
+  let cl=c.cl||28,pl=c.pl||5;
+  let pi=getPhaseIdx(day,cl);
+  let ph=PHASES[pi];
+  return {...ph,phaseId:pi,day,cl,dnu:cl-day+1};
+}
+
+// ====== NAVIGATION ======
+function navigate(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  let el=document.getElementById('p-'+page);
+  if(el){el.classList.add('active');window.scrollTo(0,0);if(!page.startsWith('dash-'))lucide.createIcons(el)}
+  if(page==='login'){setTimeout(checkRemembered,100)}
+  if(page==='dash-female'&&S.curUser)renderFemaleDash();
+  if(page==='dash-male'&&S.curUser)renderMaleDash();
+}
+function show(id){document.getElementById(id).style.display=''}
+function hide(id){document.getElementById(id).style.display='none'}
+function err(id,msg){let e=document.getElementById(id);e.textContent=msg;e.style.display=msg?'':'none'}
+
+// ====== AUTH ======
+function goToLogin(email){
+  document.getElementById('login-email').value=email||'';
+  document.getElementById('login-pass').value='';
+  navigate('login');
+}
+
+function quickLogin(){
+  try{var remembered=JSON.parse(localStorage.getItem('biosync_remember')||'null')}catch(e){localStorage.removeItem('biosync_remember');return}
+  if(!remembered)return;
+  let u=S.users.find(x=>x.id===remembered.userId);
+  if(!u){localStorage.removeItem('biosync_remember');return}
+  S.curUser=u.id;save();
+  showPhaseSplash(S.curUser,()=>navigate(u.gender==='female'?'dash-female':'dash-male'));
+}
+
+function clearRemembered(){
+  localStorage.removeItem('biosync_remember');
+  document.getElementById('login-quick').style.display='none';
+  document.getElementById('login-email').value='';
+  document.getElementById('login-pass').value='';
+}
+
+function checkRemembered(){
+  try{var remembered=JSON.parse(localStorage.getItem('biosync_remember')||'null')}catch(e){localStorage.removeItem('biosync_remember');return}
+  if(!remembered||!remembered.userId)return;
+  let u=S.users.find(x=>x.id===remembered.userId);
+  if(!u){localStorage.removeItem('biosync_remember');return}
+  document.getElementById('login-email').value=remembered.email||u.email||'';
+  document.getElementById('login-quick-name').textContent=u.name||'';
+  document.getElementById('login-quick').style.display='block';
+}
+
+function handleLogin(){
+  let email=document.getElementById('login-email').value.trim();
+  let pass=document.getElementById('login-pass').value;
+  let remember=document.getElementById('login-remember').checked;
+  err('login-err','');
+  if(!email||!pass){err('login-err','Заполните все поля');return}
+  let u=S.users.find(x=>x.email===email);
+  if(!u||u.pass!==pass){err('login-err','Неверный email или пароль');return}
+  S.curUser=u.id;
+  if(remember){
+    localStorage.setItem('biosync_remember',JSON.stringify({userId:u.id,email:u.email,name:u.name}));
+  } else {
+    localStorage.removeItem('biosync_remember');
+  }
+  save();
+  showPhaseSplash(S.curUser,()=>navigate(u.gender==='female'?'dash-female':'dash-male'));
+}
+
+function socialLogin(provider){
+  var existing=S.users.find(x=>x.social&&x.social.provider===provider);
+  if(existing){
+    S.curUser=existing.id;
+    localStorage.setItem('biosync_remember',JSON.stringify({userId:existing.id,email:existing.email,name:existing.name}));
+    save();
+    showPhaseSplash(S.curUser,()=>navigate(existing.gender==='female'?'dash-female':'dash-male'));
+    return
+  }
+  var id=uid();
+  var labels={google:'Google',vk:'VK',mail:'Mail',telegram:'Telegram',yandex:'Яндекс'};
+  var name=labels[provider]||provider;
+  S.users.push({id,email:provider+'_'+id.slice(0,8)+'@social.biosync',pass:'',name,gender:'female',social:{provider,id:provider+'_'+id},priv:{showPhase:true,showDay:true,showCareTips:true,showMood:false}});
+  S.curUser=id;
+  localStorage.setItem('biosync_remember',JSON.stringify({userId:id,email:provider+'_'+id.slice(0,8)+'@social.biosync',name}));
+  save();
+  showPhaseSplash(S.curUser,()=>navigate('dash-female'));
+}
+
+function handleRegFemale(){
+  let name=document.getElementById('rf-name').value.trim();
+  let email=document.getElementById('rf-email').value.trim();
+  let pass=document.getElementById('rf-pass').value;
+  err('rf-err1','');
+  if(!name||!email||!pass){err('rf-err1','Заполните все поля');return}
+  if(pass.length<6){err('rf-err1','Пароль минимум 6 символов');return}
+   if(S.users.find(x=>x.email===email)){
+    err('rf-err1','Этот email уже зарегистрирован.');
+    let e=document.getElementById('rf-err1');
+    e.innerHTML+=' <a style="color:var(--rose);font-weight:600;cursor:pointer;text-decoration:underline" onclick="goToLogin(\''+email+'\')">Войти в аккаунт</a>';
+    return}
+  let id=uid();
+  S.users.push({id,email,pass,name,gender:'female',priv:{showPhase:true,showDay:true,showCareTips:true,showMood:false}});
+  S.curUser=id;
+  save();
+  hide('rf-page1');show('rf-page2');
+}
+
+function handleCycleSetup(){
+  let lps=document.getElementById('rf-last-period').value;
+  let cl=parseInt(document.getElementById('rf-cycle-len').value)||28;
+  let pl=parseInt(document.getElementById('rf-period-len').value)||5;
+  err('rf-err2','');
+  if(!lps){err('rf-err2','Укажите первый день последних месячных');return}
+  if(cl<21||cl>45){err('rf-err2','Некорректная длина цикла');return}
+  S.cycle[S.curUser]={lps,cl,pl};
+  save();
+  S._showTutorial=1;save();
+  showPhaseSplash(S.curUser,()=>{navigate('dash-female');setTimeout(()=>{if(S._showTutorial){showTutorial();delete S._showTutorial;save()}},600)});
+}
+function skipCycleSetup(){
+  S._showTutorial=1;save();
+  showPhaseSplash(S.curUser,()=>{navigate('dash-female');setTimeout(()=>{if(S._showTutorial){showTutorial();delete S._showTutorial;save()}},600)});
+}
+
+function handleRegMale(){
+  let name=document.getElementById('rm-name').value.trim();
+  let email=document.getElementById('rm-email').value.trim();
+  let pass=document.getElementById('rm-pass').value;
+  err('rm-err1','');
+  if(!name||!email||!pass){err('rm-err1','Заполните все поля');return}
+  if(pass.length<6){err('rm-err1','Пароль минимум 6 символов');return}
+  if(S.users.find(x=>x.email===email)){
+    err('rm-err1','Этот email уже зарегистрирован.');
+    let e=document.getElementById('rm-err1');
+    e.innerHTML+=' <a style="color:var(--rose);font-weight:600;cursor:pointer;text-decoration:underline" onclick="goToLogin(\''+email+'\')">Войти в аккаунт</a>';
+    return}
+  let id=uid();
+  S.users.push({id,email,pass,name,gender:'male'});
+  S.curUser=id;save();
+  hide('rm-page1');show('rm-page2');
+  if(S._pendingConnect){
+    let el=document.getElementById('rm-code');
+    if(el){el.value=S._pendingConnect;el.dispatchEvent(new Event('input'))}
+  }
+}
+
+function handleConnect(){
+  let el=document.getElementById('rm-code');
+  let code=(el?el.value:'').trim()||(S._pendingConnect||'');
+  err('rm-err2','');
+  if(!code){err('rm-err2','Введите код пары');return}
+  let cp=S.couples.find(x=>x.code===code&&x.status==='pending');
+  if(!cp){err('rm-err2','Код не найден или уже использован');return}
+  if(S.couples.find(x=>x.mId===S.curUser)){err('rm-err2','Вы уже в другой паре');return}
+  cp.mId=S.curUser;
+  let f=S.users.find(u=>u.id===cp.fId);
+  cp.status='pending';
+  // Male gets 7-day Premium trial
+  if(!S.subs[S.curUser]||S.subs[S.curUser].plan==='free')startTrial(S.curUser);
+  delete S._pendingConnect;
+  location.hash='';
+  save();
+  // notify female
+  if(!S.notifs[cp.fId])S.notifs[cp.fId]=[];
+  let mu=S.users.find(u=>u.id===S.curUser);
+  S.notifs[cp.fId].push({id:uid(),type:'connection',title:`${mu.name} хочет подключиться`,
+    body:'Разрешите доступ к данным вашего цикла? Он увидит обобщенные фазы и подсказки по заботе.',
+    read:0,createdAt:new Date().toISOString()});
+  save();
+  finishMaleReg();
+}
+
+function finishMaleReg(){
+  S._showTutorial=1;save();
+  showPhaseSplash(S.curUser,()=>{navigate('dash-male');setTimeout(()=>{if(S._showTutorial){showTutorial();delete S._showTutorial;save()}},600)});
+}
+
+// ====== FLOWER ICON SETS ======
+const WAVE_FLOWER_SETS = [
+  { id:0, name:'Классика', icons:['🌰','🌱','🌸','🍂'], colors:['#C4A4A4','#A8C4A8','#F0D78C','#D4A574'] },
+  { id:1, name:'Цветы', icons:['🌷','🌿','🌺','🍁'], colors:['#E8A0B0','#80C080','#F0A0D0','#C08050'] },
+  { id:2, name:'Самоцветы', icons:['🤍','💚','💛','🧡'], colors:['#C0C0D0','#80C0A0','#E0C060','#E0A060'] },
+  { id:3, name:'Небеса', icons:['🌙','⛅','☀️','🌧️'], colors:['#A0B0D0','#90C8E0','#F0E080','#8080A0'] },
+  { id:4, name:'Валентинки', icons:['💜','💚','💛','🧡'], colors:['#C080D0','#80C0A0','#F0D060','#E0A060'] },
+];
+function getUserFlowerSet(uid){
+  let s=getSub(uid);
+  let idx=s.flowerSet||0;
+  return WAVE_FLOWER_SETS[idx]||WAVE_FLOWER_SETS[0];
+}
+function setFlowerSet(uid,idx){
+  let s=getSub(uid);
+  s.flowerSet=idx;save();
+}
+
+// ====== TOOLTIP HELPER ======
+function tooltip(inner, title, desc){
+  let id='tt-'+uid();
+  return `<div class="tp-wrap"><div class="tp-trig">${inner}</div><div class="tp-box" id="${id}"><h4>${title}</h4><p>${desc}</p></div></div>`;
+}
+
+// ====== PHASE SPLASH ======
+function showPhaseSplash(uid, cb){
+  let ph=getPhase(uid);
+  if(!ph){if(cb)cb();return}
+  let fs=getUserFlowerSet(uid);
+  let icon=fs.icons[ph.phaseId];
+  let name=PHASES[ph.phaseId].name;
+  let desc=PHASES[ph.phaseId].desc;
+  let div=document.createElement('div');
+  div.className='splash-overlay';
+  div.id='phase-splash';
+  div.innerHTML=rI(`<div class="splash-icon">${icon}</div><div class="splash-name">${name}</div><div class="splash-desc">${desc}</div>`);
+  document.body.appendChild(div);lucide.createIcons(div);
+  setTimeout(()=>{
+    let el=document.getElementById('phase-splash');
+    if(el){el.style.opacity='0';el.style.transition='opacity .5s';setTimeout(()=>{el.remove();if(cb)cb()},500)}
+    else{if(cb)cb()}
+  },1000);
+}
+
+// ====== TUTORIAL ======
+const TUTORIAL_STEPS = [
+  {icon:'waves',title:'Ваша волна',desc:'Здесь отображается текущая фаза вашего цикла: день, прогноз, иконка фазы. Наводите на разделы — всплывают подсказки.'},
+  {icon:'heart',title:'Саморегуляция',desc:'Практики и техники, которые подобраны под вашу текущую фазу. Помогают чувствовать себя лучше.'},
+  {icon:'message-circle',title:'ИИ-медиатор Соня',desc:'Соня помогает общаться бережнее: даёт прогнозы, медиации, отчёты и SOS-успокоение.'},
+  {icon:'link',title:'Код пары',desc:'Подключите партнёра через код пары — он будет видеть фазу цикла и получать подсказки по заботе.'},
+  {icon:'edit-3',title:'Дневник',desc:'Отмечайте настроение и самочувствие каждый день — это помогает отслеживать цикл.'},
+];
+function showTutorial(onDone){
+  let step=S._tutStep||0;
+  let s=TUTORIAL_STEPS[step];
+  if(!s){delete S._tutStep;if(onDone)onDone();return}
+  let div=document.createElement('div');
+  div.id='tut-overlay';
+  div.className='tut-overlay';
+  let dots=TUTORIAL_STEPS.map((_,i)=>`<span class="tut-dot ${i===step?'act':''}" onclick="gotoTutStep(${i})"></span>`).join('');
+  let prevBtn=step>0?`<button class="btn btn-s btn-sm" onclick="gotoTutStep(${step-1})">← Назад</button>`:'';
+  let nextBtn=step<TUTORIAL_STEPS.length-1?`<button class="btn btn-p btn-sm" onclick="gotoTutStep(${step+1})">Далее →</button>`:`<button class="btn btn-p btn-sm" onclick="finishTut()">👌 Понятно!</button>`;
+  div.innerHTML=rI(`
+    <div class="tut-card">
+      <div class="tut-step">${step+1} / ${TUTORIAL_STEPS.length}</div>
+      <div class="tut-icon">${ic(s.icon,'lx-xl')}</div>
+      <h3>${s.title}</h3>
+      <p>${s.desc}</p>
+      <div class="tut-dots">${dots}</div>
+      <div class="tut-nav">${prevBtn}${nextBtn}</div>
+      <div class="tut-skip" onclick="finishTut()">Пропустить обучение</div>
+    </div>`);
+  document.body.appendChild(div);lucide.createIcons(div);
+}
+function gotoTutStep(n){
+  S._tutStep=n;
+  let el=document.getElementById('tut-overlay');
+  if(el)el.remove();
+  showTutorial();
+}
+function finishTut(){
+  delete S._tutStep;
+  delete S._showTutorial;save();
+  let el=document.getElementById('tut-overlay');
+  if(el)el.remove();
+}
+
+
+
+// ====== FEMALE DASHBOARD ======
+function renderFemaleDash(){
+  let u=S.users.find(x=>x.id===S.curUser);
+  document.getElementById('df-user').textContent=u?u.name:'';
+  let vb=document.getElementById('df-voice-btn');
+  if(vb)vb.style.display=u&&u.gender==='female'?'inline-flex':'none';
+  let tabs=['wave','selfcare','sonya','couple','mood','notif','tariffs','settings'];
+  let tabIcons=['waves','heart','message-circle','link','edit-3','bell','sparkles','settings'];
+  let tabNames=['Моя волна','Саморегуляция','Соня','Код пары','Дневник','Уведомления','Тарифы','Настройки'];
+  let activeTab=S._fTab||'wave';
+  let th=document.getElementById('df-tabs');
+  th.innerHTML=tabs.map((t,i)=>`<button class="tab-btn ${t===activeTab?'act':''}" onclick="S._fTab='${t}';renderFemaleDash()" title="${tabNames[i]}"><span class="tab-icon">${ic(tabIcons[i],'lx-lg')}</span><span class="tab-label">${tabNames[i]}</span></button>`).join('');
+  lucide.createIcons(th);
+  let c=document.getElementById('df-content');
+  let cf={'wave':fWave,'selfcare':fSelfCare,'couple':fCouple,'mood':fMood,'notif':()=>fNotifs('f'),'tariffs':fTariffs,'settings':()=>fSettings('f'),'sonya':fSonya};
+  let fn=cf[activeTab];
+  if(fn){c.innerHTML=rI(fn());lucide.createIcons(c)}
+  else c.innerHTML='';
+  let hdr=document.querySelector('.dash-hdr .dash-r');
+  if(hdr)lucide.createIcons(hdr);
+}
+
+// ====== NEW SVG WAVE ENGINE ======
+const WAVE_COLORS = ['#C4A4A4','#A8C4A8','#F0D78C','#D4A574'];
+const WAVE_ICONS = ['🌰','🌱','🌸','🍂'];
+const WAVE_NAMES = ['Покой','Рост','Цветение','Увядание'];
+const WAVE_DESC = ['Семя в земле','Первые всходы','Прекрасный цветок','Листопады'];
+const WAVE_BN = [0,5/28,13/28,16/28,1]; // phase boundaries as fraction
+const WAVE_BY = [82,76,18,24,80]; // y at each boundary
+
+function waveY(x,W){
+  for(let i=0;i<4;i++){
+    if(x>=WAVE_BN[i]*W&&x<=WAVE_BN[i+1]*W){
+      let t=(x-WAVE_BN[i]*W)/((WAVE_BN[i+1]-WAVE_BN[i])*W);
+      return WAVE_BY[i]+(WAVE_BY[i+1]-WAVE_BY[i])*t;
+    }
+  }
+  return 80;
+}
+function renderWaveSVG(ph, uid){
+  const W=560,H=140,bn=WAVE_BN,by=WAVE_BY;
+  let fs=getUserFlowerSet(uid||S.curUser);
+  let cols=fs.colors;
+  let icons=fs.icons;
+  let svg=`<svg class="svg-wave" viewBox="0 0 ${W} ${H}">`;
+  let startDate=S.cycle[uid||S.curUser];
+  if(startDate&&startDate.lps){
+    let sd=new Date(startDate.lps);
+    let cl=ph.cl||28;
+    let dayW=W/cl;
+    for(let d=1;d<=cl;d+=7){
+      let x=(d-1)*dayW;
+      let dt=new Date(sd);
+      dt.setDate(dt.getDate()+d-1);
+      let dayName=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][dt.getDay()];
+      let dateNum=dt.getDate();
+      svg+=`<line x1="${x}" y1="0" x2="${x}" y2="105" stroke="var(--border2)" stroke-width=".5" stroke-dasharray="2,3" opacity=".4"/>`;
+      svg+=`<text x="${x}" y="14" fill="var(--text3)" font-size="7" text-anchor="middle" opacity=".5">${dayName}</text>`;
+      svg+=`<text x="${x}" y="25" fill="var(--text3)" font-size="7" text-anchor="middle" opacity=".4">${dateNum}</text>`;
+    }
+    for(let d=1;d<=cl;d++){
+      let dt=new Date(sd);
+      dt.setDate(dt.getDate()+d-1);
+      if(dt.getDay()===0||dt.getDay()===6){
+        let x=(d-1)*dayW;
+        svg+=`<rect x="${x}" y="27" width="${dayW}" height="78" fill="var(--bg)" opacity=".15" rx="1"/>`;
+      }
+    }
+  }
+  let cl=ph.cl||28;
+  let dayW=W/cl;
+  if(startDate&&startDate.lps){
+    let sd=new Date(startDate.lps);
+    let fwStart=Math.max(1,Math.round(10/28*cl));
+    let fwEnd=Math.min(cl,Math.round(16/28*cl));
+    let fwx1=(fwStart-1)*dayW;
+    let fwx2=(fwEnd-1)*dayW;
+    svg+=`<rect x="${fwx1}" y="30" width="${fwx2-fwx1}" height="12" fill="var(--green)" opacity=".18" rx="4"/>`;
+    svg+=`<text x="${(fwx1+fwx2)/2}" y="48" fill="var(--green)" font-size="8" text-anchor="middle" font-weight="600" opacity=".7">🟢 Фертильное окно</text>`;
+    let ovDay=Math.round(14/28*cl);
+    let ovx=(ovDay-1)*dayW;
+    svg+=`<line x1="${ovx}" y1="30" x2="${ovx}" y2="103" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="3,3" opacity=".7"/>`;
+    svg+=`<circle cx="${ovx}" cy="27" r="7" fill="var(--gold)" opacity=".8"/>`;
+    svg+=`<text x="${ovx}" y="30" fill="#fff" font-size="7" text-anchor="middle" font-weight="700">🟡</text>`;
+    let pmsStart=Math.round(24/28*cl);
+    let pmsEnd=cl;
+    if(pmsStart<=cl){
+      let px1=(pmsStart-1)*dayW;
+      let px2=(pmsEnd-1)*dayW;
+      svg+=`<rect x="${px1}" y="30" width="${px2-px1}" height="12" fill="var(--roseD)" opacity=".12" rx="4"/>`;
+      svg+=`<text x="${(px1+px2)/2}" y="48" fill="var(--roseD)" font-size="8" text-anchor="middle" font-weight="600" opacity=".65">🔴 Повыш. эмоцион.</text>`;
+    }
+    let dtOv=new Date(sd);
+    dtOv.setDate(dtOv.getDate()+ovDay-1);
+    let ovLabel=dtOv.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
+    svg+=`<text x="${ovx}" y="85" fill="var(--gold)" font-size="7" text-anchor="middle" font-weight="600" opacity=".7">Овуляция</text>`;
+    svg+=`<text x="${ovx}" y="95" fill="var(--gold)" font-size="6" text-anchor="middle" opacity=".5">${ovLabel}</text>`;
+  }
+  for(let i=0;i<4;i++){
+    let x1=bn[i]*W,x2=bn[i+1]*W,y1=by[i],y2=by[i+1];
+    let c1x=x1+(x2-x1)*0.4,c2x=x1+(x2-x1)*0.6;
+    let op=i===ph.phaseId?'.85':'.45';
+    let col=cols[i];
+    svg+=`<linearGradient id="wg${i}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${col}" stop-opacity=".9"/>
+      <stop offset="100%" stop-color="${col}" stop-opacity=".3"/>
+    </linearGradient>`;
+    svg+=`<path d="M ${x1},${H} L ${x1},${y1} C ${c1x},${y1} ${c2x},${y2} ${x2},${y2} L ${x2},${H} Z"
+      fill="url(#wg${i})" opacity="${op}"/>`;
+    if(i>0){
+      svg+=`<circle cx="${x1}" cy="${y1}" r="3" fill="${cols[i-1]}" opacity=".4"/>`;
+    }
+  }
+  let d=`M 0,${by[0]}`;
+  for(let i=0;i<4;i++){
+    let x1=bn[i]*W,x2=bn[i+1]*W,y1=by[i],y2=by[i+1];
+    let c1x=x1+(x2-x1)*0.4,c2x=x1+(x2-x1)*0.6;
+    d+=` C ${c1x},${y1} ${c2x},${y2} ${x2},${y2}`;
+  }
+  svg+=`<path d="${d}" fill="none" stroke="#2D2A26" stroke-width="1.5" opacity=".15"/>`;
+  let cx=(ph.day/ph.cl)*W,cy=waveY(cx,W);
+  svg+=`<circle class="wave-ring" cx="${cx}" cy="${cy}" r="16" fill="none" stroke="${cols[ph.phaseId]}" stroke-width="2.5"/>`;
+  svg+=`<circle class="wave-dot" cx="${cx}" cy="${cy}" r="8" fill="${cols[ph.phaseId]}" stroke="#fff" stroke-width="3"/>`;
+  let phaseLabels=['Покой','Рост','Расцвет','Увяд.'];
+  for(let i=0;i<4;i++){
+    let lx=(bn[i]+bn[i+1])/2*W;
+    svg+=`<text x="${lx}" y="132" class="wave-icon">${icons[i]}</text>`;
+    svg+=`<text x="${lx}" y="148" class="wave-label">${phaseLabels[i]}</text>`;
+  }
+  svg+=`</svg>`;
+  return svg;
+}
+function renderPhaseGarden(ph, uid){
+  let fs=getUserFlowerSet(uid||S.curUser);
+  let html='<div class="pg">';
+  let days=[{s:1,e:5},{s:6,e:13},{s:14,e:16},{s:17,e:ph.cl}];
+  for(let i=0;i<4;i++){
+    let act=i===ph.phaseId;
+    html+=`<div class="pg-item ${act?'act':''}" style="${act?`background:${fs.colors[i]}15;box-shadow:0 2px 8px ${fs.colors[i]}30`:''}">
+      <span class="pg-icon">${fs.icons[i]}</span>
+      <span class="pg-name">${WAVE_NAMES[i]}</span>
+      <span class="pg-name sub">${WAVE_DESC[i]}</span>
+      <span class="pg-name sub">Дни ${days[i].s}–${days[i].e}</span>
+    </div>`;
+  }
+  html+='</div>';
+  return html;
+}
+
+function fWave(){
+  let ph=getPhase(S.curUser);
+  if(!ph) return `<div class="emp"><div class="emp-ic">📊</div><h3>Настройте свой цикл</h3><p>Для отображения фаз укажите параметры цикла.</p></div>`;
+  let fs=getUserFlowerSet(S.curUser);
+  let lastMood=(S.logs[S.curUser]||[]).length?S.logs[S.curUser][S.logs[S.curUser].length-1]:null;
+  let moodEm=lastMood?((MOODS.find(m=>m.l===lastMood.mood)||{}).e||'😐'):'—';
+  let today=`<div style="background:linear-gradient(135deg,rgba(224,168,168,.08),rgba(143,191,168,.06));border-radius:20px;padding:18px 20px;margin-bottom:20px;border:1px solid rgba(224,168,168,.15)">
+    <div style="font-size:.85rem;font-weight:700;color:var(--roseD);margin-bottom:10px;letter-spacing:.03em;text-transform:uppercase">⭐ Главное на сегодня</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:var(--card);border-radius:14px;padding:14px;box-shadow:var(--shadow);text-align:center">
+        <div style="font-size:2rem">${ph?PHASES[ph.phaseId].sym:'🌊'}</div>
+        <div style="font-size:.78rem;color:var(--text2);margin-top:4px;font-weight:600">${ph?WAVE_NAMES[ph.phaseId]:'—'} фаза</div>
+      </div>
+      <div style="background:var(--card);border-radius:14px;padding:14px;box-shadow:var(--shadow);text-align:center">
+        <div style="font-size:2rem">${moodEm}</div>
+        <div style="font-size:.78rem;color:var(--text2);margin-top:4px;font-weight:600">${lastMood?lastMood.mood:'Нет записи'}</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;font-size:.85rem;color:var(--text2);line-height:1.5;padding:10px 14px;background:rgba(255,255,255,.5);border-radius:12px;border:1px solid var(--border)">
+      ${ph?`🌊 День ${ph.day} из ${ph.cl} · ${WAVE_DESC[ph.phaseId]}`:'📊 Настройте цикл'}
+    </div>
+  </div>`;
+  let html=today+`<div class="pw">
+    <div class="ph"><div class="ph-sym">${PHASES[ph.phaseId].sym}</div>
+      <div class="ph-i"><h3>${tooltip(PHASES[ph.phaseId].name,PHASES[ph.phaseId].name,'Текущая фаза вашего менструального цикла. Каждая фаза имеет свои особенности самочувствия и энергии.')}</h3><p>${PHASES[ph.phaseId].desc}</p></div></div>
+    ${renderWaveSVG(ph, S.curUser)}
+    <div class="pd"><span>🌊 День ${ph.day} из ${ph.cl}</span><span>📍 ${WAVE_NAMES[ph.phaseId]} — ${WAVE_DESC[ph.phaseId]}</span></div>
+    ${renderPhaseGarden(ph, S.curUser)}
+  </div>`;
+  // Prediction
+  html+=`<div class="pw" style="padding:14px"><h3 style="font-size:.95rem;margin-bottom:8px;color:var(--text2)">📅 Прогноз фаз на цикл</h3>`;
+  PHASES.forEach((p,i)=>{
+    let sd=i===0?1:[6,14,17][i-1],ed=[5,13,16,ph.cl][i];
+    let act=i===ph.phaseId?'font-weight:700;color:var(--text)':'';
+    html+=`<div class="pl-item" style="${act}"><span class="sym">${fs.icons[i]}</span>
+      <div class="info"><div class="name">${p.name} <span style="font-weight:400;color:var(--text3);font-size:.8rem">«${WAVE_NAMES[i]}»</span></div>
+      <div class="days">Дни ${sd}–${ed} · ${WAVE_DESC[i]}</div></div></div>`;
+  });
+  html+=`</div>`;
+  return html;
+}
+
+function fSelfCare(){
+  let ph=getPhase(S.curUser);
+  if(!ph)return `<div class="emp"><div class="emp-ic">🧘</div><h3>Настройте цикл</h3><p>Чтобы получать практики, укажите данные цикла.</p></div>`;
+  let tips=F_TIPS[ph.phaseId]||[];
+  let html=`<div class="ts"><h3>${tooltip('🧘 Практики для '+ph.name,'Практики саморегуляции','Техники заботы о себе, подобранные под вашу текущую фазу цикла. Помогают снизить стресс и улучшить самочувствие.')}</h3>`;
+  tips.forEach(t=>{
+    let cls='tc'+(t.c?' '+t.c:'');
+    html+=`<div class="${cls}"><h4>${t.t}</h4><p>${t.b}</p></div>`;
+  });
+  html+=`</div>`;
+  return html;
+}
+
+function fCouple(){
+  let cp=S.couples.find(x=>x.fId===S.curUser);
+  if(cp&&cp.status==='pending'&&cp.mId){
+    let mu=S.users.find(u=>u.id===cp.mId);
+    return `<div class="cs">
+      <div style="font-size:3rem;margin-bottom:8px">💞</div>
+      <h3>Запрос от ${mu?mu.name:'партнера'}</h3>
+      <p>${mu?mu.name:''} хочет подключиться к вашему циклу.</p>
+      <div class="ps-bar disc mt-2"><span>⏳</span><span>Ожидает вашего подтверждения</span></div>
+      <div class="flex gap-2 mt-3">
+        <button class="btn btn-p flex-1" onclick="approveCouple()">✅ Подтвердить</button>
+        <button class="btn btn-s flex-1" onclick="rejectCouple()">Отклонить</button>
+      </div>
+      <div style="background:var(--bg);border-radius:16px;padding:16px;margin-top:16px;text-align:left;border:1px solid var(--border)">
+        <h4 style="font-size:.9rem;font-weight:700;margin-bottom:8px">🔒 Что увидит партнер:</h4>
+        <ul style="font-size:.85rem;color:var(--text2);padding-left:1.2rem;line-height:1.8">
+          ${renderPrivList(S.curUser)}
+        </ul>
+      </div>
+    </div>`;
+  }
+  if(cp&&cp.status==='active'){
+    let mu=S.users.find(u=>u.id===cp.mId);
+    return `<div class="cs">
+      <div style="font-size:3rem;margin-bottom:8px">💞</div>
+      <h3>Вы в паре с ${mu?mu.name:'партнером'}</h3>
+      <div class="ps-bar conn mt-2"><span>✅</span><span>Код пары активен. Партнер видит: ${renderPrivSummary(S.curUser)}</span></div>
+      <div class="ts mt-3" style="text-align:left">
+        <h3>${tooltip('💝 Ритуалы связи','Ритуалы для пары','Простые ежедневные практики, которые укрепляют эмоциональную связь. Выполняйте их вместе — это сближает.')}</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="rc"><h4>🙏 Благодарность дня</h4><p>Напиши партнеру 3 вещи, за которые ты ему благодарна сегодня.</p></div>
+        <div class="rc"><h4>📱 Свидание без телефонов</h4><p>Запланируйте свидание на выходные без гаджетов.</p></div>
+        <div class="rc" style="grid-column:1/-1"><h4>💬 Я-высказывание</h4><p>Начни разговор с "Я чувствую..." вместо "Ты всегда...".</p></div>
+        </div>
+      </div>
+      <div class="ts mt-3" style="text-align:left">
+        <h3>📚 Библиотека статей</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="rc"><h4>💬 Я-высказывания</h4><p>Как говорить о чувствах без обвинений.</p></div>
+        <div class="rc"><h4>👂 Активное слушание</h4><p>Слышать, а не ждать ответа.</p></div>
+        <div class="rc" style="grid-column:1/-1"><h4>🤝 Управление конфликтами</h4><p>Как ссориться конструктивно.</p></div>
+        </div>
+      </div>
+    </div>`;
+  }
+  if(cp&&cp.code){
+    return `<div class="cs"><div style="font-size:3rem;margin-bottom:8px">🔗</div>
+      <h3>Код пары создан</h3>
+      <p>Отправьте этот код партнеру:</p>
+      <div class="code">${cp.code}</div>
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn btn-s btn-sm" onclick="navigator.clipboard.writeText('${cp.code}');this.textContent='✅ Скопировано'" style="flex:1">📋 Копировать код</button>
+        <button class="btn btn-p btn-sm" onclick="navigator.clipboard.writeText(buildConnectLink());alert('🔗 Ссылка скопирована! Отправьте её партнеру.')" style="flex:1">🔗 Ссылка</button>
+      </div>
+      <p style="font-size:.85rem;color:var(--text3)">После подключения придет запрос на подтверждение.</p></div>`;
+  }
+  return `<div class="cs"><div style="font-size:3rem;margin-bottom:8px">🔗</div>
+    <h3>Подключение партнера</h3>
+    <p>Создайте код пары и отправьте его партнеру.</p>
+    <button class="btn btn-p btn-lg mt-2" onclick="createCoupleCode()">Создать код пары</button></div>`;
+}
+
+function fMood(){
+  let mf=S.moodForm[S.curUser]||{mood:'',energy:5,pain:0};
+  let saved=S._moodSaved;
+  let html=`<div class="ms"><h3>${tooltip('📝 Как ты сегодня?','Дневник настроения','Отмечайте настроение и самочувствие каждый день — это помогает отслеживать цикл и лучше понимать себя.')}</h3>
+    <div class="mg">${MOODS.map(m=>`<button class="mb ${mf.mood===m.l?'sel':''}" onclick="setMood('${m.l}')">
+      <span class="mb-emoji">${m.e}</span><span>${m.l}</span></button>`).join('')}</div>
+    <div class="sg"><label><span>🔋 Энергия</span><span id="m-energy">${mf.energy}</span>/10</label>
+      <input type="range" min="1" max="10" value="${mf.energy}" oninput="S.moodForm['${S.curUser}']=S.moodForm['${S.curUser}']||{mood:'',energy:5,pain:0};S.moodForm['${S.curUser}'].energy=parseInt(this.value);document.getElementById('m-energy').textContent=this.value;save()"></div>
+    <div class="sg"><label><span>😣 Болевые ощущения</span><span id="m-pain">${mf.pain}</span>/10</label>
+      <input type="range" min="0" max="10" value="${mf.pain}" oninput="S.moodForm['${S.curUser}']=S.moodForm['${S.curUser}']||{mood:'',energy:5,pain:0};S.moodForm['${S.curUser}'].pain=parseInt(this.value);document.getElementById('m-pain').textContent=this.value;save()"></div>
+    <button class="btn btn-p btn-block mt-2" onclick="saveMood()">${saved?'✅ Сохранено!':'Сохранить'}</button>
+  </div>`;
+  return html;
+}
+
+function setMood(l){
+  if(!S.moodForm[S.curUser])S.moodForm[S.curUser]={mood:'',energy:5,pain:0};
+  S.moodForm[S.curUser].mood=l;save();
+  renderFemaleDash();
+}
+function saveMood(){
+  let mf=S.moodForm[S.curUser];if(!mf||!mf.mood)return;
+  let today=new Date().toISOString().split('T')[0];
+  if(!S.logs[S.curUser])S.logs[S.curUser]=[];
+  let ex=S.logs[S.curUser].findIndex(l=>l.date===today);
+  let entry={date:today,mood:mf.mood,energy:mf.energy,pain:mf.pain};
+  if(ex>=0)S.logs[S.curUser][ex]=entry;else S.logs[S.curUser].push(entry);
+  S._moodSaved=true;save();
+  setTimeout(()=>{S._moodSaved=false;renderFemaleDash()},2000);
+}
+
+function fNotifs(g){
+  let uid=S.curUser;
+  let ns=S.notifs[uid]||[];
+  let html=`<h3 style="margin-bottom:12px">${tooltip('🔔 Уведомления','Уведомления','Здесь отображаются важные события: смена фаз, напоминания о ритуалах, сигналы от партнёра и системные подсказки.')}</h3>`;
+  if(!ns.length)html+=`<div class="emp"><div class="emp-ic">🔔</div><h3>Нет уведомлений</h3></div>`;
+  else ns.forEach(n=>{
+    let ic=n.type==='phase'?'🌊':n.type==='ritual'?'💝':n.type==='warning'?'⚠️':'💬';
+    html+=`<div class="nc ${n.read?'rd':''}"><div class="nc-ic">${ic}</div>
+      <div class="nc-b"><h4>${n.title}</h4><p>${n.body}</p>
+      <div class="nc-t">${new Date(n.createdAt).toLocaleDateString('ru-RU')}</div></div></div>`;
+  });
+  if(g==='m'){
+    html+=`<button class="btn btn-sm btn-s mt-2" onclick="genNotifs()">🔄 Сгенерировать подсказки</button>`;
+  }
+  return html;
+}
+
+function handleConnectFromInvite(){
+  if(!S._pendingConnect)return;
+  let cp=S.couples.find(x=>x.code===S._pendingConnect&&x.status==='pending');
+  if(!cp){alert('Код не найден или уже использован');delete S._pendingConnect;renderMaleDash();return}
+  if(S.couples.find(x=>x.mId===S.curUser)){alert('Вы уже в другой паре');return}
+  cp.mId=S.curUser;
+  cp.status='pending';
+  delete S._pendingConnect;
+  location.hash='';
+  let fu=S.users.find(u=>u.id===cp.fId);
+  if(!S.notifs[cp.fId])S.notifs[cp.fId]=[];
+  let mu=S.users.find(u=>u.id===S.curUser);
+  S.notifs[cp.fId].push({id:uid(),type:'connection',title:`${mu.name} хочет подключиться`,
+    body:'Разрешите доступ к данным вашего цикла?',read:0,createdAt:new Date().toISOString()});
+  save();
+  renderMaleDash();
+}
+
+function createCoupleCode(){
+  if(S.couples.find(x=>x.fId===S.curUser))return;
+  let code=genCode();
+  S.couples.push({code,fId:S.curUser,mId:null,status:'pending'});
+  save();renderFemaleDash();
+}
+function approveCouple(){
+  let cp=S.couples.find(x=>x.fId===S.curUser);
+  if(!cp)return;
+  cp.status='active';
+  let u=S.users.find(x=>x.id===S.curUser);
+  if(u&&!u.priv)u.priv={showPhase:true,showDay:true,showCareTips:true,showMood:false};
+  // notify male
+  if(!S.notifs[cp.mId])S.notifs[cp.mId]=[];
+  u=S.users.find(x=>x.id===S.curUser);
+  S.notifs[cp.mId].push({id:uid(),type:'approved',title:`${u.name} принял подключение`,
+    body:'Данные о твоём цикле теперь доступны партнёру в его дэшборде.',read:0,createdAt:new Date().toISOString()});
+  save();renderFemaleDash();
+}
+function rejectCouple(){
+  let cp=S.couples.find(x=>x.fId===S.curUser);
+  if(!cp)return;
+  S.couples=S.couples.filter(x=>x.fId!==S.curUser);
+  save();renderFemaleDash();
+}
+
+// ====== MALE DASHBOARD ======
+function renderMaleDash(){
+  let u=S.users.find(x=>x.id===S.curUser);
+  document.getElementById('dm-user').textContent=u?u.name:'';
+  let tabs=['compass','strategy','sonya','history','notif','tariffs','settings'];
+  let tabIcons=['compass','clipboard-list','message-circle','bar-chart-3','bell','sparkles','settings'];
+  let tabNames=['Компас партнёра','Стратегия дня','Соня','История цикла','Подсказки','Тарифы','Настройки'];
+  let activeTab=S._mTab||'compass';
+  let th=document.getElementById('dm-tabs');
+  th.innerHTML=tabs.map((t,i)=>`<button class="tab-btn ${t===activeTab?'act':''}" onclick="S._mTab='${t}';renderMaleDash()" title="${tabNames[i]}"><span class="tab-icon">${ic(tabIcons[i],'lx-lg')}</span><span class="tab-label">${tabNames[i]}</span></button>`).join('');
+  lucide.createIcons(th);
+  let c=document.getElementById('dm-content');
+  let cf={'compass':mCompass,'strategy':mStrategy,'history':mHistory,'notif':mNotifs,'tariffs':fTariffs,'settings':()=>fSettings('m'),'sonya':mSonya};
+  let fn=cf[activeTab];
+  if(fn){c.innerHTML=rI(fn());lucide.createIcons(c)}
+  else c.innerHTML='';
+}
+
+function getCoupleForMale(){
+  return S.couples.find(x=>x.mId===S.curUser);
+}
+
+function mCompass(){
+  let cp=getCoupleForMale();
+  if(!cp||cp.status==='pending'){
+    let msg=cp?'Запрос отправлен. Ожидайте подтверждения от партнерши.':'Не подключен к паре. Запросите код пары у партнерши.';
+    let connectBtn=S._pendingConnect?`
+      <div style="margin-top:16px;padding:16px;background:linear-gradient(135deg,var(--roseL),transparent);border-radius:16px;border:1px solid rgba(224,168,168,.2)">
+        <p style="font-size:.95rem;font-weight:600;margin-bottom:10px">🔗 Обнаружена ссылка-приглашение</p>
+        <p style="font-size:.85rem;color:var(--text2);margin-bottom:12px">Код: <strong style="font-family:monospace;letter-spacing:2px;color:var(--roseD)">${S._pendingConnect}</strong></p>
+        <button class="btn btn-p btn-sm" onclick="handleConnectFromInvite()">✅ Подключиться сейчас</button>
+        <button class="btn btn-g btn-sm" onclick="delete S._pendingConnect;renderMaleDash()" style="margin-left:8px">Отклонить</button>
+      </div>`:'';
+    return `<div class="ps-bar disc"><span>⏳</span><span>${msg}</span></div>
+      <div class="emp"><div class="emp-ic">🔗</div><h3>Подключитесь к партнерше</h3>
+      <p>Попросите у партнерши код пары.</p></div>${connectBtn}`;
+  }
+  if(cp.status!=='active')return `<div class="emp"><div class="emp-ic">🔗</div><h3>Ожидание</h3></div>`;
+  let fu=S.users.find(x=>x.id===cp.fId);
+  let ph=getPhase(cp.fId);
+  if(!ph)return `<div class="ps-bar conn"><span>💞</span><span>Подключен к ${fu?fu.name:'партнерше'}</span></div>
+    <div class="emp"><div class="emp-ic">📊</div><h3>Партнерша еще не настроила цикл</h3></div>`;
+  let priv=getUserPriv(cp.fId);
+  if(!priv.showPhase)return `<div class="ps-bar conn"><span>💞</span><span>Подключен к ${fu?fu.name:'партнерше'}</span></div>
+    <div class="emp"><div class="emp-ic">🔒</div><h3>Доступ ограничен</h3>
+    <p>Партнерша ограничила доступ к данным цикла.</p></div>`;
+  // mood summary
+  let logs=S.logs[cp.fId]||[];
+  let lastLog=logs.length?logs[logs.length-1]:null;
+  let moodHtml='';
+  if(lastLog&&priv.showMood){
+    let mo=MOODS.find(m=>m.l===lastLog.mood);
+    moodHtml=`<div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap">
+      <div class="mi"><span>${mo?mo.e:'😐'}</span><span>Настроение: ${lastLog.mood||'—'}</span></div>
+      ${lastLog.energy?`<div class="mi"><span>🔋</span><span>Энергия: ${lastLog.energy}/10</span></div>`:''}
+    </div>`;
+  }
+    let fs=getUserFlowerSet(cp.fId);
+    let tips=(M_TIPS[ph.phaseId]||[]).filter(t=>t.c==='');
+    let mainTip=tips.length?tips[0].b:'Будь рядом — это лучшее, что ты можешь сделать сегодня.';
+    let today=`<div style="background:linear-gradient(135deg,rgba(143,191,168,.08),rgba(224,168,168,.06));border-radius:20px;padding:18px 20px;margin-bottom:20px;border:1px solid rgba(143,191,168,.15)">
+      <div style="font-size:.85rem;font-weight:700;color:var(--green);margin-bottom:10px;letter-spacing:.03em;text-transform:uppercase">⭐ Главное на сегодня</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:var(--card);border-radius:14px;padding:14px;box-shadow:var(--shadow);text-align:center">
+          <div style="font-size:2rem">${WAVE_ICONS[ph.phaseId]}</div>
+          <div style="font-size:.78rem;color:var(--text2);margin-top:4px;font-weight:600">${WAVE_NAMES[ph.phaseId]} · ${ph.cn}</div>
+        </div>
+        <div style="background:var(--card);border-radius:14px;padding:14px;box-shadow:var(--shadow);text-align:center">
+          <div style="font-size:2rem">💡</div>
+          <div style="font-size:.78rem;color:var(--text2);margin-top:4px;font-weight:600">Совет дня</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:.85rem;color:var(--text2);line-height:1.5;padding:10px 14px;background:rgba(255,255,255,.5);border-radius:12px;border:1px solid var(--border)">
+        ${mainTip}
+      </div>
+    </div>`;
+    let html=today+`<div class="ps-bar conn"><span>💞</span><span>Подключен к ${fu?fu.name:'партнерше'}</span></div>
+    <div class="pw">
+    <div class="ph"><div class="ph-sym" style="font-size:2rem">${fs.icons[ph.phaseId]}</div>
+      <div class="ph-i"><h3>${ph.cn}</h3><p>${ph.desc}${priv.showDay?' · День '+ph.day:''}</p></div></div>
+    ${moodHtml}
+    ${renderWaveSVG(ph, cp.fId)}
+    <div class="pd"><span>🌊 ${priv.showDay?'День '+ph.day+' из '+ph.cl:'Фаза '+WAVE_NAMES[ph.phaseId]}</span><span>📍 ${WAVE_NAMES[ph.phaseId]} — ${WAVE_DESC[ph.phaseId]}</span></div>
+    ${renderPhaseGarden(ph, cp.fId)}
+    </div>
+    <div class="text-center mb-2"><button class="btn btn-g btn-sm" onclick="genNotifs()">🔄 Сгенерировать подсказки</button></div>`;
+}
+
+function mStrategy(){
+  let cp=getCoupleForMale();
+  if(!cp||cp.status!=='active'){
+    return `<div class="emp"><div class="emp-ic">📋</div><h3>Нет стратегии</h3>
+      <p>Подключитесь к партнерше, чтобы получать стратегии поддержки.</p></div>`;
+  }
+  let ph=getPhase(cp.fId);
+  if(!ph)return `<div class="emp"><div class="emp-ic">📋</div><h3>Данные цикла недоступны</h3></div>`;
+  let priv=getUserPriv(cp.fId);
+  let tips=priv.showCareTips?(M_TIPS[ph.phaseId]||[]):[];
+  let html='';
+  // Phase banner (respects privacy)
+  if(priv.showPhase){
+    html+=`<div class="pw" style="padding:18px;background:linear-gradient(135deg,${ph.color}18,transparent);border-left:4px solid ${ph.color};margin-bottom:18px">
+      <div class="ph" style="margin-bottom:0"><div class="ph-sym" style="font-size:2rem">${WAVE_ICONS[ph.phaseId]}</div>
+      <div class="ph-i"><h3 style="font-size:1.05rem">${ph.cn}</h3><p style="font-size:.85rem">${ph.desc}${priv.showDay?' · День '+ph.day:''}</p></div></div>
+    </div>`;
+  } else {
+    html+=`<div class="pw" style="padding:18px;background:var(--border);border-left:4px solid var(--text3);margin-bottom:18px;opacity:.7">
+      <div class="ph" style="margin-bottom:0"><div class="ph-sym" style="font-size:2rem">🔒</div>
+      <div class="ph-i"><h3 style="font-size:1.05rem">Фаза скрыта</h3><p style="font-size:.85rem">Партнерша ограничила доступ к данным цикла</p></div></div>
+    </div>`;
+  }
+  // Strategy cards
+  if(tips.length){
+    html+=`<h3 style="font-size:1rem;font-weight:700;margin-bottom:10px">📋 Рекомендации на сегодня</h3>
+      <div class="strat-grid">`;
+    let icons={'':'✅','av':'🚫','ps':'🧠'};
+    let classes={'':'do','av':'avoid','ps':'psych'};
+    let labels={'':'Сделать','av':'Избегать','ps':'Совет психолога'};
+    tips.forEach(t=>{
+      let c=classes[t.c]||'do';
+      html+=`<div class="strat-card ${c}"><div class="s-icon">${icons[t.c]||'✅'}</div>
+        <div class="s-body"><h4>${labels[t.c]||''}</h4><p>${t.b}</p></div></div>`;
+    });
+    html+=`</div>`;
+  } else if(priv.showPhase&&!priv.showCareTips) {
+    html+=`<div style="padding:16px;text-align:center;color:var(--text3);font-size:.9rem">💭 Партнерша отключила подсказки по заботе</div>`;
+  }
+  // Rituals
+  html+=`<div class="ts mt-3"><h3>💑 Ритуалы для двоих</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">`;
+  let rituals=[
+    {i:'🙏',t:'Благодарность',b:'Скажи 3 вещи, которые ценишь в ней.'},
+    {i:'👂',t:'Активное слушание',b:'10 минут слушать, не перебивая.'},
+    {i:'🎁',t:'Сюрприз',b:'Купи любимый десерт без повода.'},
+    {i:'🤗',t:'Объятия',b:'Обними без слов — просто будь рядом.'},
+  ];
+  rituals.forEach(r=>{
+    html+=`<div class="strat-card" style="flex-direction:column;text-align:center;padding:12px;gap:4px">
+      <div style="font-size:1.5rem">${r.i}</div>
+      <div class="s-body"><h4>${r.t}</h4><p>${r.b}</p></div></div>`;
+  });
+  html+=`</div></div>`;
+  return html;
+}
+
+function mHistory(){
+  let cp=getCoupleForMale();
+  if(!cp||cp.status!=='active'){
+    return `<div class="emp"><div class="emp-ic">📊</div><h3>Нет данных</h3><p>Подключитесь к партнерше.</p></div>`;
+  }
+  let fu=S.users.find(x=>x.id===cp.fId);
+  return `<div class="pw"><h3 class="mb-2">📊 Как прошел цикл</h3>
+    <p style="color:var(--text2);font-size:.9rem">Обобщенная информация о циклах, которой партнерша решила поделиться.</p>
+    <div class="flex gap-1 mt-2" style="flex-wrap:wrap">
+      <span class="mi">🌰 Этап восстановления</span>
+      <span class="mi">🌱 Период энергии</span>
+      <span class="mi">🌸 Период близости</span>
+      <span class="mi">🍂 Период чуткости</span>
+    </div>
+    <p class="mt-2" style="color:var(--text3);font-size:.85rem">Статистика будет доступна после завершения первого полного цикла.</p>
+  </div>`;
+}
+
+function mNotifs(){
+  let cp=getCoupleForMale();
+  let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <h3>🔔 Подсказки</h3>
+    <button class="btn btn-g btn-sm" onclick="genNotifs()">🔄 Обновить</button></div>`;
+  let ns=S.notifs[S.curUser]||[];
+  if(!ns.length){
+    html+=`<div class="emp"><div class="emp-ic">🔔</div><h3>Нет подсказок</h3>
+      <button class="btn btn-p btn-sm mt-2" onclick="genNotifs()">Сгенерировать тестовые</button></div>`;
+  } else {
+    ns.forEach(n=>{
+      let ic=n.type==='warning'?'⚠️':n.type==='phase'?'🌊':n.type==='ritual'?'💝':'💬';
+      html+=`<div class="nc ${n.read?'rd':''}"><div class="nc-ic">${ic}</div>
+        <div class="nc-b"><h4>${n.title}</h4><p>${n.body}</p>
+        <div class="nc-t">${new Date(n.createdAt).toLocaleDateString('ru-RU')}</div></div></div>`;
+    });
+  }
+  if(cp&&cp.status==='active'){
+    let ph=getPhase(cp.fId);
+    if(ph){
+      let tips=M_TIPS[ph.phaseId]||[];
+      html+=`<div class="pw mt-2" style="padding:14px;background:linear-gradient(135deg,${WAVE_COLORS[ph.phaseId]}15,transparent)"><h4 class="mb-1">📌 Текущие рекомендации</h4>
+        <ul style="font-size:.85rem;color:var(--text2);padding-left:1.2rem;line-height:1.8">
+        <li><strong>${WAVE_ICONS[ph.phaseId]} Фаза:</strong> ${ph.cn} (${WAVE_NAMES[ph.phaseId]})</li>
+        <li><strong>📅 День:</strong> ${ph.day} из ${ph.cl}</li>
+        <li><strong>💡 Совет дня:</strong> ${tips.length?tips[0].b:'Будьте внимательны и заботливы'}</li></ul></div>`;
+    }
+  }
+  return html;
+}
+
+function genNotifs(){
+  let cp=getCoupleForMale();
+  if(!cp||cp.status!=='active')return;
+  let ph=getPhase(cp.fId);
+  if(!ph)return;
+  if(!S.notifs[S.curUser])S.notifs[S.curUser]=[];
+  let lutealStart=17;
+  if(ph.day>=lutealStart-2&&ph.day<lutealStart){
+    let fu=S.users.find(x=>x.id===cp.fId);
+    S.notifs[S.curUser].push({id:uid(),type:'warning',
+      title:'Приближается период чуткости',
+      body:`${fu?fu.name:'Партнерша'} будет особенно нуждаться в сочувствии. Запланируйте освободить вечер.`,
+      read:0,createdAt:new Date().toISOString()});
+    save();renderMaleDash();
+  }
+  // Also for female
+  if(S.curUser&&S.notifs[S.curUser]){
+    let ph2=getPhase(S.curUser);
+    if(ph2){
+      let cl=ph2.cl||28;
+      if(ph2.day===cl-3||ph2.day===cl-2){
+        if(!S.notifs[S.curUser])S.notifs[S.curUser]=[];
+        S.notifs[S.curUser].push({id:uid(),type:'phase',title:'Твое тело замедляется',
+          body:'Это нормально. Откажись от одного энергозатратного дела сегодня.',
+          read:0,createdAt:new Date().toISOString()});
+        save();
+      }
+      if(ph2.day===14||ph2.day===15){
+        S.notifs[S.curUser].push({id:uid(),type:'ritual',title:'Ритуал благодарности',
+          body:'Самое время сказать друг другу спасибо.',read:0,createdAt:new Date().toISOString()});
+        save();
+      }
+    }
+  }
+  renderMaleDash();
+}
+
+// ====== THEME ======
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  localStorage.setItem('biosync_theme',t);
+  S._theme=t;
+}
+function loadTheme(){
+  let t=localStorage.getItem('biosync_theme')||'light';
+  setTheme(t);
+}
+
+// ====== LANGUAGES ======
+const LANG_NAMES={ru:'Русский',en:'English',zh:'中文',hi:'हिन्दी',es:'Español',ar:'العربية',fr:'Français',bn:'বাংলা',pt:'Português',ur:'اردو',de:'Deutsch',id:'Bahasa Indonesia',ja:'日本語',tr:'Türkçe',ko:'한국어'};
+const LANG_FLAGS={ru:'🇷🇺',en:'🇬🇧',zh:'🇨🇳',hi:'🇮🇳',es:'🇪🇸',ar:'🇸🇦',fr:'🇫🇷',bn:'🇧🇩',pt:'🇧🇷',ur:'🇵🇰',de:'🇩🇪',id:'🇮🇩',ja:'🇯🇵',tr:'🇹🇷',ko:'🇰🇷'};
+let _lang=localStorage.getItem('biosync_lang')||'ru';
+function setLang(l){_lang=l;localStorage.setItem('biosync_lang',l);document.getElementById('lang-select').value=l}
+function _(ru){return ru}
+
+// ====== PRIVACY HELPERS ======
+function getUserPriv(uid){
+  let u=S.users.find(x=>x.id===uid);
+  if(!u||!u.priv)return {showPhase:true,showDay:true,showCareTips:true,showMood:false};
+  return {
+    showPhase:u.priv.showPhase!==undefined?u.priv.showPhase:true,
+    showDay:u.priv.showDay!==undefined?u.priv.showDay:true,
+    showCareTips:u.priv.showCareTips!==undefined?u.priv.showCareTips:true,
+    showMood:u.priv.showMood!==undefined?u.priv.showMood:false
+  };
+}
+function renderPrivList(fid){
+  let p=getUserPriv(fid);
+  let items=[];
+  items.push(p.showPhase?'<li style="margin:3px 0">✅ Фазу цикла</li>':'<li style="margin:3px 0;color:var(--text3)">❌ Фаза цикла — скрыта</li>');
+  items.push(p.showDay?'<li style="margin:3px 0">✅ День цикла</li>':'<li style="margin:3px 0;color:var(--text3)">❌ День цикла — скрыт</li>');
+  items.push(p.showCareTips?'<li style="margin:3px 0">✅ Подсказки по заботе</li>':'<li style="margin:3px 0;color:var(--text3)">❌ Подсказки — скрыты</li>');
+  items.push(p.showMood?'<li style="margin:3px 0">✅ Историю настроения</li>':'<li style="margin:3px 0;color:var(--text3)">❌ Настроение — скрыто</li>');
+  items.push('<li style="margin:3px 0;color:var(--text3)">❌ Медицинские подробности</li>');
+  items.push('<li style="margin:3px 0;color:var(--text3)">❌ Точный день овуляции</li>');
+  return items.join('');
+}
+function renderPrivSummary(fid){
+  let p=getUserPriv(fid);
+  let parts=[];
+  if(p.showPhase)parts.push('фазу');
+  if(p.showDay)parts.push('день');
+  if(p.showCareTips)parts.push('подсказки');
+  if(p.showMood)parts.push('настроение');
+  return parts.length?parts.join(', '):'только базовую информацию';
+}
+
+// ====== SETTINGS ======
+function fSettings(g){
+  let u=S.users.find(x=>x.id===S.curUser);
+  if(!u)return'';
+  let cpF=S.couples.find(x=>x.fId===S.curUser);
+  let cpM=S.couples.find(x=>x.mId===S.curUser);
+  let isF=g==='f';
+  let theme=S._theme||localStorage.getItem('biosync_theme')||'light';
+  let partnerName='';
+  let c=S.cycle[S.curUser]||{lps:'',cl:28,pl:5};
+  let s=getSub(S.curUser);
+  let trialDays=s.trial?Math.max(0,Math.ceil((s.expires-Date.now())/86400000)):0;
+  if(isF&&cpF){
+    let mu=S.users.find(x=>x.id===cpF.mId);
+    if(mu)partnerName=mu.name;
+  }
+  if(!isF&&cpM){
+    let fu=S.users.find(x=>x.id===cpM.fId);
+    if(fu)partnerName=fu.name;
+  }
+
+  return `<div style="max-width:600px;margin:0 auto;padding:0 4px">
+    <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:6px">⚙️ Настройки</h2>
+    <p style="color:var(--text2);font-size:.9rem;margin-bottom:24px">Профиль, тема оформления и управление</p>
+
+    <!-- Profile card -->
+    <div class="rc" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:6px">
+        <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--roseD));
+          display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#fff;font-weight:700;flex-shrink:0">
+          ${(u.name?u.name[0]:'?').toUpperCase()}
+        </div>
+        <div style="flex:1;text-align:left"><div style="font-weight:700;font-size:1.05rem">${u.name||'Пользователь'}</div>
+        <div style="color:var(--text2);font-size:.85rem">${u.email||''}</div></div>
+        <div style="background:${isF?'var(--roseL)':'rgba(143,191,168,.15)'};padding:4px 12px;border-radius:50px;
+          font-size:.75rem;font-weight:600;color:${isF?'var(--roseD)':'var(--green)'}">
+          ${isF?'🌸 Женский':'🌲 Мужской'}
+        </div>
+      </div>
+    </div>
+
+    ${partnerName?`
+    <div class="rc" style="margin-bottom:16px;padding:14px 18px;display:flex;align-items:center;gap:12px">
+      <span style="font-size:1.4rem">💑</span>
+      <div style="text-align:left;flex:1"><div style="font-weight:600;font-size:.9rem">В паре с</div>
+      <div style="color:var(--text2);font-size:.85rem">${partnerName}</div></div>
+      <span style="background:var(--green);width:8px;height:8px;border-radius:50%;display:inline-block;
+        box-shadow:0 0 6px rgba(143,191,168,.4)"></span>
+    </div>`:''}
+
+    <!-- Theme -->
+    <div class="rc" style="margin-bottom:16px;text-align:left">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div><div style="font-weight:600;font-size:.95rem">🌓 Тема оформления</div>
+        <div style="color:var(--text2);font-size:.8rem;margin-top:2px">Светлая / Тёмная</div></div>
+        <label style="position:relative;display:inline-block;width:52px;height:28px;cursor:pointer">
+          <input type="checkbox" ${theme==='dark'?'checked':''} onchange="setTheme(this.checked?'dark':'light');renderFemaleDash();renderMaleDash();"
+            style="opacity:0;width:0;height:0;position:absolute">
+          <span style="position:absolute;inset:0;background:${theme==='dark'?'var(--rose)':'var(--border2)'};
+            border-radius:28px;transition:.3s">
+            <span style="position:absolute;width:22px;height:22px;border-radius:50%;background:#fff;
+              top:3px;left:${theme==='dark'?'27px':'3px'};transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,.15)"></span>
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Language -->
+    <div class="rc" style="margin-bottom:16px;text-align:left">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <div><div style="font-weight:600;font-size:.95rem">🌐 Язык интерфейса</div>
+        <div style="color:var(--text2);font-size:.8rem;margin-top:2px">${LANG_FLAGS[_lang]} ${LANG_NAMES[_lang]}</div></div>
+        <select onchange="setLang(this.value);renderFemaleDash();renderMaleDash()" style="padding:6px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--input);color:var(--text);font-size:.85rem;cursor:pointer">
+          ${Object.keys(LANG_NAMES).map(k=>`<option value="${k}" ${k===_lang?'selected':''}>${LANG_FLAGS[k]} ${LANG_NAMES[k]}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+
+    ${isF?`
+    <!-- Female: cycle data -->
+    <div class="rc" style="margin-bottom:16px;text-align:left">
+      <div style="font-weight:600;font-size:.95rem;margin-bottom:4px">📊 Данные цикла</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+        <div style="background:var(--bg);border-radius:12px;padding:12px;text-align:center">
+          <div style="color:var(--text2);font-size:.75rem">Длина цикла</div>
+          <div style="font-size:1.2rem;font-weight:800;color:var(--roseD)">${c.cl||28} дн</div>
+        </div>
+        <div style="background:var(--bg);border-radius:12px;padding:12px;text-align:center">
+          <div style="color:var(--text2);font-size:.75rem">День цикла</div>
+          <div style="font-size:1.2rem;font-weight:800;color:var(--roseD)">${getPhase(S.curUser)?getPhase(S.curUser).day:'—'}</div>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <label style="font-size:.8rem;color:var(--text2);display:block;margin-bottom:4px">Дата начала последних месячных</label>
+        <input type="date" class="sv" value="${(c).lps||''}" onchange="let c=S.cycle[S.curUser];if(!c)return;c.lps=this.value;save();renderFemaleDash();this.style.borderColor='var(--green)';setTimeout(()=>this.style.borderColor='',1500)"
+          style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:.9rem;background:var(--card);color:var(--text);cursor:pointer;transition:border-color .5s">
+      </div>
+      <div style="margin-top:8px">
+        <label style="font-size:.8rem;color:var(--text2);display:block;margin-bottom:4px">Длина цикла (дни)</label>
+        <input id="cl-input" class="sv" type="number" value="${(c).cl||28}" min="20" max="45"
+          onchange="let c=S.cycle[S.curUser];if(!c)return;c.cl=parseInt(this.value)||28;save();renderFemaleDash();this.style.borderColor='var(--green)';setTimeout(()=>this.style.borderColor='',1500)"
+          style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:.9rem;background:var(--card);color:var(--text);transition:border-color .5s">
+      </div>
+    </div>
+
+    <!-- Female: couple code -->
+    <div class="rc" style="margin-bottom:16px;text-align:left">
+      <div style="font-weight:600;font-size:.95rem;margin-bottom:4px">🔑 Код пары</div>
+      <p style="color:var(--text2);font-size:.8rem;margin-bottom:10px">
+        ${cpF?`Пара подключена. Вы можете сгенерировать новый код.`:`Код ещё не создан. Сгенерируйте и передайте партнеру.`}
+      </p>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div id="settings-couple-code" style="font-family:monospace;font-size:1.1rem;font-weight:800;
+          letter-spacing:4px;background:var(--bg);padding:10px 16px;border-radius:12px;border:1.5px dashed var(--border2);
+          flex:1;text-align:center;color:var(--roseD)">${cpF?cpF.code:'------'}</div>
+        <button class="btn btn-s btn-sm" onclick="genCoupleCode()" style="flex-shrink:0">${cpF?'🔄 Новый':'🔑 Создать'}</button>
+      </div>
+      ${cpF?`
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-s btn-sm" onclick="let e=document.getElementById('settings-couple-code');if(e)navigator.clipboard.writeText(e.textContent);this.textContent='✅ Скопировано'" style="flex:1" title="Копировать код">📋 Копировать код</button>
+        <button class="btn btn-p btn-sm" onclick="navigator.clipboard.writeText(buildConnectLink());alert('Ссылка скопирована! Отправьте её партнеру.')" style="flex:2">🔗 Отправить ссылку</button>
+      </div>
+      <p style="color:var(--text3);font-size:.75rem;margin-top:8px">По ссылке партнер автоматически перейдет к подключению</p>`:''}
+    </div>
+
+    <!-- Female: privacy toggles -->
+    <div class="rc" style="margin-bottom:16px;text-align:left">
+      <div style="font-weight:600;font-size:.95rem;margin-bottom:10px">👁️ Доступ партнера</div>
+      ${[
+        {k:'showPhase',l:'Фаза цикла (🌸 Цветение)',d:'Партнер видит текущую фазу',def:true},
+        {k:'showDay',l:'День цикла (12 / 28)',d:'Партнер видит номер дня',def:true},
+        {k:'showCareTips',l:'Подсказки по заботе',d:'Партнер получает рекомендации',def:true},
+        {k:'showMood',l:'История настроения',d:'Партнер видит ваши записи настроения',def:false},
+        {k:'showSignal',l:'Сигналы после «Выговориться»',d:'Партнер получает обезличенные уведомления если день тяжёлый',def:true}
+      ].map(o=>{
+        if(!u.priv)u.priv={};
+        let val=u.priv[o.k]!==undefined?u.priv[o.k]:o.def;
+        return `<label class="priv-row" style="display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer;border-bottom:1px solid var(--border)">
+          <div style="position:relative;min-width:40px;height:22px">
+            <input type="checkbox" ${val?'checked':''} onchange="S.users.find(x=>x.id===S.curUser).priv['${o.k}']=this.checked;save();renderFemaleDash()"
+              style="opacity:0;width:0;height:0;position:absolute">
+            <span class="priv-track" style="position:absolute;inset:0;background:${val?'var(--rose)':'var(--border2)'};border-radius:22px;transition:background .3s">
+              <span class="priv-thumb" style="position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:3px;left:${val?'21px':'3px'};transition:left .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 1px 3px rgba(0,0,0,.12)"></span>
+            </span>
+          </div>
+          <div style="flex:1"><div style="font-size:.88rem;font-weight:500">${o.l}</div>
+          <div style="font-size:.75rem;color:var(--text3)">${o.d}</div></div>
+          <span class="priv-label" style="font-size:.7rem;color:${val?'var(--green)':'var(--text3)'}">${val?'✅ Вкл':'❌ Выкл'}</span>
+        </label>`
+      }).join('')}
+      <p style="font-size:.75rem;color:var(--text3);margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+        🔒 Медицинские подробности и точный день овуляции всегда скрыты.
+      </p>
+    </div>
+    `:`
+    <!-- Male: couple status + code explanation -->
+    <div class="rc" style="margin-bottom:16px;text-align:left">
+      <div style="font-weight:600;font-size:.95rem;margin-bottom:4px">💞 Код пары</div>
+      ${cpM?`
+        <p style="color:var(--green);font-size:.85rem">✅ Вы подключены к ${partnerName?'<strong>'+partnerName+'</strong>':'партнерше'}.</p>
+        <p style="color:var(--text2);font-size:.78rem;margin-top:6px;line-height:1.6">Код пары — это ваш персональный ключ синхронизации. Через него Соня получает данные о фазах цикла партнёрши и настраивает стратегии заботы специально под вас.</p>
+      `:`
+        <p style="color:var(--text2);font-size:.85rem;margin-bottom:8px">⏳ Вы ещё не подключены к паре.</p>
+        <div style="background:var(--bg);border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid var(--border)">
+          <p style="font-size:.85rem;font-weight:600;margin-bottom:6px">🔑 Что такое код пары?</p>
+          <p style="font-size:.78rem;color:var(--text2);line-height:1.7">${u.name}, код пары — это 6-символьный код, который создаёт женщина в приложении. Вы вводите его при регистрации — и ваши аккаунты синхронизируются.</p>
+          <p style="font-size:.78rem;color:var(--text2);line-height:1.7;margin-top:6px">После синхронизации вы получаете:</p>
+          <ul style="font-size:.78rem;color:var(--text2);padding-left:1.2rem;line-height:1.9;margin-top:4px">
+            <li>🌊 Компас партнёрши с фазой цикла и днём</li>
+            <li>📋 Ежедневные стратегии заботы от психологов</li>
+            <li>🤍 Рекомендации ИИ-медиатора Сони</li>
+            <li>📊 Аналитику и прогнозы на цикл</li>
+            <li>💑 Парные ритуалы на сближение</li>
+          </ul>
+        </div>
+      `}
+    </div>`}
+
+    <!-- Tariff -->
+    <div class="rc" style="margin-bottom:16px;text-align:left">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div><div style="font-weight:600;font-size:.95rem">⭐ Тариф</div>
+        <div style="color:var(--text2);font-size:.8rem;margin-top:2px">${s.trial?'Пробный Premium':s.plan==='premium'?'Premium':s.plan==='unlimited'?'IAP Безлимит':'Бесплатный'}</div></div>
+        ${s.plan==='premium'||s.plan==='unlimited'?`<span style="background:linear-gradient(135deg,var(--gold),#D4A040);color:#fff;padding:4px 14px;border-radius:50px;font-size:.75rem;font-weight:700">${s.plan==='unlimited'?'⚡':'✨'} Активен</span>`:s.trial?`<span style="background:rgba(232,208,140,.2);color:var(--gold);padding:4px 14px;border-radius:50px;font-size:.75rem;font-weight:600">🔥 ${trialDays} дн.</span>`:`<span style="background:var(--border2);color:var(--text2);padding:4px 14px;border-radius:50px;font-size:.75rem">Бесплатный</span>`}
+      </div>
+      <button class="btn btn-s btn-sm btn-block mt-2" onclick="var g=document.querySelector('#p-dash-female.active')?'f':'m';if(g==='f'){S._fTab='tariffs';renderFemaleDash()}else{S._mTab='tariffs';renderMaleDash()}" style="font-size:.82rem">📋 Сравнить тарифы и подписки</button>
+      ${(s.plan==='premium'||s.plan==='unlimited'||s.trial)?`
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:8px">🌸 Иконки волны</div>
+        <p style="font-size:.75rem;color:var(--text2);margin-bottom:10px">Выберите набор иконок для отображения фаз цикла.</p>
+        <div class="flower-grid">
+          ${WAVE_FLOWER_SETS.map(f=>`
+            <div class="flower-opt ${f.id===s.flowerSet?'sel':''}" onclick="setFlowerSet(S.curUser,${f.id});renderFemaleDash();renderMaleDash()">
+              <span class="f-icons">${f.icons.join('')}</span>
+              <span class="f-name">${f.name}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>`:''}
+    </div>
+
+    <!-- Danger zone -->
+    <div class="rc" style="margin-bottom:16px;text-align:left;border:1px solid rgba(212,96,96,.2)">
+      <div style="font-weight:600;font-size:.95rem;margin-bottom:4px;color:#D46060">⚠️ Опасная зона</div>
+      <p style="color:var(--text2);font-size:.8rem;margin-bottom:12px">Все данные будут удалены без возможности восстановления.</p>
+      <button class="btn btn-o btn-sm" onclick="if(confirm('Вы уверены? Все данные будут удалены.')){localStorage.removeItem('biosync_data');localStorage.removeItem('biosync_remember');localStorage.removeItem('biosync_theme');location.reload()}">
+        🗑️ Сбросить все данные
+      </button>
+    </div>
+
+    <!-- Logout -->
+    <button class="btn btn-g btn-block" onclick="logout()" style="margin-top:4px;padding:14px;justify-content:center">
+      🚪 Выйти из аккаунта
+    </button>
+  </div>`;
+}
+
+// ====== SONYA AI ======
+function sonyaIntro(){
+  let u=S.users.find(x=>x.id===S.curUser);
+  let sessions=(S.voice[S.curUser]||[]).length;
+  let moodDays=(S.logs[S.curUser]||[]).length;
+  let ritCount=Math.min(12,Math.floor(Math.random()*6)+3);
+  return {
+    greet:`Привет, ${u?u.name:'друг'}! Я Соня — твой ИИ-медиатор пары.`,
+    stats:`Я уже заметила: ${moodDays} дневниковых записей, ${sessions} сессий «Выговориться», ${ritCount} ритуалов на сближение за это время.`,
+    ctx:moodDays>5?'Хорошая привычка вести дневник — это помогает мне точнее подбирать практики.':sessions>2?'Ты пользуешься «Выговориться» — это отличный способ снять напряжение.':'Я здесь, чтобы помочь вам слышать друг друга.'
+  };
+}
+function sonyaPredict(){
+  let ph=getPhase(S.curUser);
+  if(!ph)return {alert:null,advice:'Настройте цикл, и я смогу давать прогнозы.'};
+  let phaseAlerts=[
+    {alert:'🌙 Покой',advice:'В ближайшие дни — энергия на спаде. Отличное время для тихих вечеров и заботы о себе.'},
+    {alert:'🌱 Рост',advice:'Энергия растёт! Лучшее время для свиданий, новых идей и активного отдыха вдвоём.'},
+    {alert:'🌸 Цветение',advice:'Пик общительности и близости. Сегодня отличный день для откровенного разговора.'},
+    {alert:'🍂 Увядание',advice:'Чувствительность повышается. Будьте мягче друг к другу. Избегайте критики.'}
+  ];
+  let pa=phaseAlerts[ph.phaseId];
+  let couple=S.couples.find(x=>x.fId===S.curUser||x.mId===S.curUser);
+  let partnerN='';
+  if(couple){
+    let pu=S.users.find(x=>x.id===(couple.fId===S.curUser?couple.mId:couple.fId));
+    if(pu)partnerN=pu.name;
+  }
+  let moods=(S.logs[S.curUser]||[]).slice(-3);
+  let stress=moods.some(m=>m.mood==='Раздражение'||m.mood==='Грусть');
+  let extra=stress?` Заметила, что последние дни были непростыми. ${partnerN?'Попробуйте сегодня вечером ритуал благодарности — он особенно эффективен в этой фазе.':'Попробуй технику дыхания по квадрату — 4-4-4-4.'}`:' Чудесное время побыть вдвоём 🌸';
+  return {alert:pa.alert,moodAdvice:pa.advice+extra};
+}
+function sonyaMediation(topic){
+  let ph=getPhase(S.curUser);
+  let phaseContexts=[
+    'В текущей фазе цикла тебе особенно важна безопасность и покой.',
+    'Сейчас энергия на подъёме — хорошее время для диалога.',
+    'Пик открытости. Ты готова говорить о чувствах.',
+    'В этой фазе мир воспринимается острее. Это нормально.'
+  ];
+  let ctx=phaseContexts[ph?ph.phaseId:0];
+  let tips={
+    'отношения':{her:'Попробуй начать с «Я чувствую», а не с «Ты всегда».',him:'За её словами стоит потребность в контакте. Не предлагай решений — просто слушай.'},
+    'работа':{her:'Ты много берёшь на себя. Помни, что отдых — не роскошь.',him:'Она устала не от тебя — от нагрузки. Твоя задача: взять что-то на себя сегодня.'},
+    'семья':{her:'Твои чувства важны. Скажи партнёру, какая поддержка нужна тебе сейчас.',him:'За её беспокойством стоит забота. Покажи, что вы — команда.'},
+    'быт':{her:'Иногда проще сделать, чем просить. Но просить — нормально.',him:'Разделить быт — значит разделить заботу. Начни с малого.'}
+  };
+  let t=tips[topic]||tips['отношения'];
+  return {ctx,herTip:t.her,himTip:t.him};
+}
+
+// random help
+function rnd(a){return a[Math.floor(Math.random()*a.length)]}
+const SOOTHE=[
+  {name:'Дыхание по квадрату',desc:'Вдох 4с — задержка 4с — выдох 4с — задержка 4с',em:'🌬️'},
+  {name:'Заземление 5-4-3-2-1',desc:'Назови 5 вещей вокруг, 4 звука, 3 ощущения, 2 запаха, 1 вкус',em:'🌍'},
+  {name:'Сканирование тела',desc:'Мысленно пройдись от макушки до пят — где живёт напряжение?',em:'🧘'},
+  {name:'Чашка чая',desc:'Завари травяной чай. Держи кружку двумя руками. 3 минуты тишины.',em:'🍵'}
+];
+
+function fSonya(){
+  let s=getSub(S.curUser);
+  let isPremium=s.plan==='premium'||s.plan==='unlimited'||s.trial;
+  let intro=sonyaIntro();
+  let pred=sonyaPredict();
+  let ph=getPhase(S.curUser);
+  let cp=S.couples.find(x=>x.fId===S.curUser);
+  let cpActive=cp&&cp.status==='active';
+  let sessionsLeft=voiceQuota(S.curUser);
+  let mode=S._sonyaMode||'home';
+  let u=S.users.find(x=>x.id===S.curUser);
+
+  if(mode==='home'){
+  return `<div style="max-width:600px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--lav),#A890B8);display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 12px;box-shadow:0 6px 24px rgba(192,176,208,.35);border:3px solid rgba(255,255,255,.3)">🤍</div>
+      <div style="font-size:1.3rem;font-weight:800;letter-spacing:-.02em">Соня — ваш семейный ИИ-психолог</div>
+      <div style="font-size:.82rem;color:var(--text3);margin-top:4px;font-weight:500">24/7 от BioSync</div>
+    </div>
+    <div style="background:linear-gradient(135deg,rgba(192,176,208,.12),transparent);border-radius:24px;padding:20px;margin-bottom:16px;border:1px solid rgba(192,176,208,.15)">
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--lav),#A890B8);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 4px 12px rgba(192,176,208,.3)">🤍</div>
+        <div style="flex:1"><div style="font-weight:700;font-size:1rem">${tooltip(intro.greet,'ИИ-медиатор Соня','Соня помогает вам слышать друг друга: даёт прогнозы фаз, медиации для сложных разговоров, отчёты и SOS-успокоение. Всё конфиденциально.')}</div>
+        <p style="font-size:.82rem;color:var(--text2);margin-top:4px;line-height:1.6">${intro.stats}<br>${intro.ctx}</p></div>
+      </div>
+    </div>
+
+    ${pred.alert?`
+    <div style="background:linear-gradient(135deg,rgba(224,168,168,.1),transparent);border-radius:18px;padding:16px;margin-bottom:16px;border-left:4px solid var(--rose)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="font-size:1.2rem">🔮</span><span style="font-weight:600;font-size:.9rem">Предиктор Сони</span>
+      </div>
+      <p style="font-size:.85rem;color:var(--text2);line-height:1.6">${pred.alert} · ${pred.moodAdvice}</p>
+    </div>`:''}
+
+    ${!isPremium?`
+    <div class="rc" style="margin-bottom:16px;padding:14px 16px;text-align:left;border:1px solid rgba(192,176,208,.2);background:linear-gradient(135deg,rgba(192,176,208,.06),transparent)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.5rem">🤍</span>
+        <div style="flex:1"><div style="font-weight:600;font-size:.85rem">Попробуй Соню в деле</div>
+        <p style="font-size:.78rem;color:var(--text2)">Медиатор, предиктор, тренер — полный доступ в Premium. Уже ${s.trial?'пробный период активен':'есть бесплатный пробный на 7 дней'}.</p></div>
+        <button class="btn btn-p btn-sm" onclick="showTariffs()">⭐ ${s.trial?'Оформить':'Попробовать'}</button>
+      </div>
+    </div>`:''}
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div class="rc" style="padding:16px;text-align:center;cursor:pointer" onclick="S._sonyaMode='mediate';renderFemaleDash()">
+        <span style="font-size:1.6rem;display:block;margin-bottom:4px">💬</span>
+        <div style="font-weight:600;font-size:.82rem">Медиатор</div>
+        <div style="font-size:.7rem;color:var(--text3)">Помогу поговорить</div>
+        ${!isPremium?'<div style="font-size:.6rem;color:var(--roseD);margin-top:2px">Premium</div>':''}
+      </div>
+      <div class="rc" style="padding:16px;text-align:center;cursor:pointer" onclick="S._sonyaMode='report';renderFemaleDash()">
+        <span style="font-size:1.6rem;display:block;margin-bottom:4px">📊</span>
+        <div style="font-weight:600;font-size:.82rem">Отчёт пары</div>
+        <div style="font-size:.7rem;color:var(--text3)">Как прошёл месяц</div>
+        ${!isPremium?'<div style="font-size:.6rem;color:var(--roseD);margin-top:2px">Premium</div>':''}
+      </div>
+      <div class="rc" style="padding:16px;text-align:center;cursor:pointer" onclick="S._sonyaMode='soothe';renderFemaleDash()">
+        <span style="font-size:1.6rem;display:block;margin-bottom:4px">🆘</span>
+        <div style="font-weight:600;font-size:.82rem">SOS-успокоение</div>
+        <div style="font-size:.7rem;color:var(--text3)">Здесь и сейчас</div>
+      </div>
+      <div class="rc" style="padding:16px;text-align:center;cursor:pointer" onclick="S._sonyaMode='challenge';renderFemaleDash()">
+        <span style="font-size:1.6rem;display:block;margin-bottom:4px">🎯</span>
+        <div style="font-weight:600;font-size:.82rem">Челлендж</div>
+        <div style="font-size:.7rem;color:var(--text3)">Задание на неделю</div>
+        ${!isPremium?'<div style="font-size:.6rem;color:var(--roseD);margin-top:2px">Premium</div>':''}
+      </div>
+    </div>
+
+    ${cpActive?`
+    <div class="rc" style="margin-bottom:16px;text-align:left;padding:14px 16px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.3rem">💞</span>
+        <div><div style="font-weight:600;font-size:.85rem">Соня-Переводчик</div>
+        <p style="font-size:.78rem;color:var(--text2)">Сегодня партнёр видит твои стратегии через призму фазы — я помогаю ему понимать тебя без слов.</p></div>
+      </div>
+    </div>`:''}
+
+    <div style="text-align:center;padding:12px 0;font-size:.75rem;color:var(--text3)">
+      🤍 Соня (от греч. Σοφία — мудрость). Я не решаю за вас — я помогаю услышать друг друга.
+    </div>
+  </div>`;
+  }
+
+  if(mode==='mediate'){
+    let topics=['отношения','работа','семья','быт'];
+    return `<div style="max-width:600px;margin:0 auto;text-align:left">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <button class="btn btn-g btn-sm" onclick="delete S._sonyaMode;renderFemaleDash()" style="padding:6px 10px">←</button>
+        <span style="font-weight:700;font-size:1rem">💬 Соня-Медиатор</span>
+      </div>
+      <p style="color:var(--text2);font-size:.85rem;margin-bottom:14px">Выберите тему, которую хотите обсудить. Я помогу построить диалог.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+        ${topics.map(t=>{
+          let res=sonyaMediation(t);
+          return `<div class="rc" style="padding:14px;cursor:pointer;text-align:left" onclick="S._sonyaTopic='${t}';S._sonyaMode='mediate-result';renderFemaleDash()">
+            <div style="font-weight:600;font-size:.85rem;margin-bottom:4px">${t==='отношения'?'💕 Отношения':t==='работа'?'💼 Работа':t==='семья'?'👨‍👩‍👧‍👦 Семья':'🏠 Быт'}</div>
+            <p style="font-size:.75rem;color:var(--text3)">${res.ctx.substring(0,40)}...</p>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="background:var(--bg);border-radius:16px;padding:16px;border-left:4px solid var(--lav)">
+        <p style="font-size:.78rem;color:var(--text2);line-height:1.6">🤍 Я не передаю ваши слова дословно. Я помогаю перевести чувства в бережные формулировки. Всё конфиденциально.</p>
+      </div>
+    </div>`;
+  }
+
+  if(mode==='mediate-result'){
+    let topic=S._sonyaTopic||'отношения';
+    let res=sonyaMediation(topic);
+    return `<div style="max-width:600px;margin:0 auto;text-align:left">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <button class="btn btn-g btn-sm" onclick="S._sonyaMode='mediate';renderFemaleDash()" style="padding:6px 10px">←</button>
+        <span style="font-weight:700;font-size:1rem">💬 Медиация · ${topic}</span>
+      </div>
+      <div style="background:var(--bg);border-radius:16px;padding:16px;margin-bottom:12px">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:6px">🧠 Контекст</div>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.6">${res.ctx}</p>
+      </div>
+      <div style="background:rgba(224,168,168,.08);border-radius:16px;padding:16px;margin-bottom:12px;border-left:4px solid var(--rose)">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:4px">🌸 Тебе</div>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.6">«${res.herTip}»</p>
+      </div>
+      <div style="background:rgba(143,191,168,.08);border-radius:16px;padding:16px;margin-bottom:16px;border-left:4px solid var(--green)">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:4px">🌲 Ему (увидит в своём интерфейсе)</div>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.6">«${res.himTip}»</p>
+      </div>
+      <div style="background:var(--bg);border-radius:14px;padding:14px;margin-bottom:12px">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:6px">🤝 Предлагаемый сценарий диалога</div>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.7">«Мне важно поделиться. Можешь просто послушать 5 минут?»<br>→ После паузы: «Спасибо, что выслушал. Для меня это важно.»</p>
+      </div>
+      <button class="btn btn-s btn-block btn-sm" onclick="delete S._sonyaMode;renderFemaleDash()">✅ Вернуться к Соне</button>
+    </div>`;
+  }
+
+  if(mode==='report'){
+    // Generate simulated monthly report
+    let logs=S.logs[S.curUser]||[];
+    let sessions=(S.voice[S.curUser]||[]).length;
+    let rits=Math.floor(Math.random()*5)+2;
+    let conflicts=Math.floor(Math.random()*3);
+    let moodAvg=logs.length?Math.round((logs.filter(l=>l.mood==='Спокойствие'||l.mood==='Радость'||l.mood==='Благодарность').length/logs.length)*100):'—';
+    return `<div style="max-width:600px;margin:0 auto;text-align:left">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <button class="btn btn-g btn-sm" onclick="delete S._sonyaMode;renderFemaleDash()" style="padding:6px 10px">←</button>
+        <span style="font-weight:700;font-size:1rem">📊 Ваш месяц глазами Сони</span>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(192,176,208,.08),transparent);border-radius:20px;padding:20px;margin-bottom:12px">
+        <div style="font-weight:700;font-size:1rem;margin-bottom:12px">📊 ${new Date().toLocaleDateString('ru-RU',{month:'long',year:'numeric'})}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+          <div style="background:var(--card);border-radius:14px;padding:14px;text-align:center">
+            <div style="font-size:1.3rem">📝</div>
+            <div style="font-size:1.1rem;font-weight:800;color:var(--roseD)">${logs.length}</div>
+            <div style="font-size:.7rem;color:var(--text3)">записей в дневнике</div>
+          </div>
+          <div style="background:var(--card);border-radius:14px;padding:14px;text-align:center">
+            <div style="font-size:1.3rem">🎤</div>
+            <div style="font-size:1.1rem;font-weight:800;color:var(--roseD)">${sessions}</div>
+            <div style="font-size:.7rem;color:var(--text3)">сессий «Выговориться»</div>
+          </div>
+          <div style="background:var(--card);border-radius:14px;padding:14px;text-align:center">
+            <div style="font-size:1.3rem">💑</div>
+            <div style="font-size:1.1rem;font-weight:800;color:var(--roseD)">${rits}</div>
+            <div style="font-size:.7rem;color:var(--text3)">ритуалов выполнено</div>
+          </div>
+          <div style="background:var(--card);border-radius:14px;padding:14px;text-align:center">
+            <div style="font-size:1.3rem">😊</div>
+            <div style="font-size:1.1rem;font-weight:800;color:var(--roseD)">${moodAvg}%</div>
+            <div style="font-size:.7rem;color:var(--text3)">спокойных дней</div>
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <div style="font-weight:600;font-size:.85rem;margin-bottom:4px">✅ Что было хорошо</div>
+          <p style="font-size:.8rem;color:var(--text2);margin-bottom:8px">${rits>=3?'Вы выполнили большинство ритуалов — это укрепляет связь.':'Попробуйте чаще уделять время парным практикам.'}</p>
+          <div style="font-weight:600;font-size:.85rem;margin-bottom:4px">📈 Зона роста</div>
+          <p style="font-size:.8rem;color:var(--text2);margin-bottom:8px">${ph?`В ${WAVE_NAMES[ph.phaseId].toLowerCase()} фазе ваша чувствительность повышается. Я подобрала 2 техники на следующий цикл.`:''}</p>
+          <div style="font-weight:600;font-size:.85rem;margin-bottom:4px">🔮 Прогноз на следующий цикл</div>
+          <p style="font-size:.8rem;color:var(--text2)">${ph?`Сложные дни: ${Math.max(1,ph.day)}–${Math.min(ph.cl,ph.day+5)}. Лучшее время для свидания: ${Math.max(1,ph.phaseId===0?10:14)}–${Math.min(ph.cl,ph.phaseId===0?12:16)}.`:''}</p>
+        </div>
+      </div>
+      <div style="text-align:center;padding:10px;font-size:.8rem;color:var(--lav)">🤍 Я горжусь вами. Каждый цикл — шаг к гармонии.</div>
+    </div>`;
+  }
+
+  if(mode==='soothe'){
+    let s=rnd(SOOTHE);
+    return `<div style="max-width:600px;margin:0 auto;text-align:left">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <button class="btn btn-g btn-sm" onclick="delete S._sonyaMode;renderFemaleDash()" style="padding:6px 10px">←</button>
+        <span style="font-weight:700;font-size:1rem">🆘 SOS-успокоение</span>
+      </div>
+      <div style="background:var(--bg);border-radius:20px;padding:24px;text-align:center;margin-bottom:12px">
+        <div style="font-size:3rem;margin-bottom:8px">${s.em}</div>
+        <div style="font-weight:700;font-size:1.05rem;margin-bottom:4px">${s.name}</div>
+        <p style="font-size:.85rem;color:var(--text2);line-height:1.6">${s.desc}</p>
+        <button class="btn btn-p btn-sm mt-2" onclick="alert('🧘 Практика запущена. Дышите спокойно.')">▶ Начать</button>
+        <button class="btn btn-g btn-sm mt-2" onclick="renderFemaleDash()" style="margin-left:8px">🔄 Другую</button>
+      </div>
+      <p style="font-size:.75rem;color:var(--text3);text-align:center">${ph?`🌊 ${WAVE_NAMES[ph.phaseId]} фаза — ${['отдыхай','действуй','общайся','замедляйся'][ph.phaseId]}.`:''}</p>
+    </div>`;
+  }
+
+  if(mode==='challenge'){
+    let challenges=[
+      {t:'30 дней спасибо',d:'Каждый день пишите друг другу одну благодарность. Можно в заметках, можно вслух.',e:'🙏'},
+      {t:'Неделя без критики',d:'7 дней — ни одного замечания. Только поддержка и принятие.',e:'🤐'},
+      {t:'5 языков любви',d:'Каждый день — один «язык»: слова, время, подарки, помощь, прикосновения.',e:'💕'},
+      {t:'Вечерние 10 минут',d:'Каждый вечер 10 минут говорить о прошедшем дне. Без телефонов.',e:'🌅'}
+    ];
+    let c=rnd(challenges);
+    return `<div style="max-width:600px;margin:0 auto;text-align:left">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <button class="btn btn-g btn-sm" onclick="delete S._sonyaMode;renderFemaleDash()" style="padding:6px 10px">←</button>
+        <span style="font-weight:700;font-size:1rem">🎯 Челлендж недели</span>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(232,208,140,.1),transparent);border-radius:20px;padding:24px;text-align:center;margin-bottom:12px;border:1px solid rgba(232,208,140,.2)">
+        <div style="font-size:3rem;margin-bottom:8px">${c.e}</div>
+        <div style="font-weight:700;font-size:1.1rem;margin-bottom:6px">${c.t}</div>
+        <p style="font-size:.85rem;color:var(--text2);line-height:1.6">${c.d}</p>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:14px">
+          <button class="btn btn-p btn-sm" onclick="S._sonyaMode='challenge-active';renderFemaleDash()">✅ Начинаем!</button>
+          <button class="btn btn-g btn-sm" onclick="renderFemaleDash()">🔄 Другой</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  if(mode==='challenge-active'){
+    setTimeout(()=>{delete S._sonyaMode;renderFemaleDash()},3000);
+    return `<div style="max-width:600px;margin:0 auto;text-align:center;padding:40px 0">
+      <div style="font-size:4rem;margin-bottom:12px">🎉</div>
+      <div style="font-weight:700;font-size:1.1rem;margin-bottom:8px">Челлендж запущен!</div>
+      <p style="color:var(--text2);font-size:.9rem">Я буду напоминать каждый вечер.<br>В конце недели подведём итоги.</p>
+    </div>`;
+  }
+  return '';
+}
+
+function mSonya(){
+  let cp=S.couples.find(x=>x.mId===S.curUser);
+  let u=S.users.find(x=>x.id===S.curUser);
+  if(!cp||cp.status!=='active')return `<div class="emp"><div class="emp-ic">🤍</div><h3>Соня пока не активна</h3><p>Подключитесь к партнерше, чтобы Соня начала помогать.</p></div>`;
+  let fu=S.users.find(x=>x.id===cp.fId);
+  let ph=getPhase(cp.fId);
+  let s=getSub(S.curUser);
+  let isPremium=s.plan==='premium'||s.plan==='unlimited'||s.trial;
+
+  let mode=S._sonyaMode||'home';
+  if(mode==='home'){
+  return `<div style="max-width:600px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--lav),#A890B8);display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 12px;box-shadow:0 6px 24px rgba(192,176,208,.35);border:3px solid rgba(255,255,255,.3)">🤍</div>
+      <div style="font-size:1.3rem;font-weight:800;letter-spacing:-.02em">Соня — ваш семейный ИИ-психолог</div>
+      <div style="font-size:.82rem;color:var(--text3);margin-top:4px;font-weight:500">24/7 от BioSync</div>
+    </div>
+    <div style="background:linear-gradient(135deg,rgba(192,176,208,.08),transparent);border-radius:24px;padding:20px;margin-bottom:16px;border:1px solid rgba(192,176,208,.1)">
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--lav),#A890B8);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 4px 12px rgba(192,176,208,.3)">🤍</div>
+        <div style="flex:1"><div style="font-weight:700;font-size:1rem">${tooltip('Соня · переводчик пары','ИИ-медиатор Соня','Переводит фазы цикла партнерши на язык заботы: подсказывает, какие слова и действия будут наиболее уместны в текущей фазе.')}</div>
+        <p style="font-size:.82rem;color:var(--text2);margin-top:4px;line-height:1.6">Привет, ${u?u.name:'друг'}! Я помогаю тебе понимать ${fu?fu.name:'партнершу'} через призму её цикла. ${ph?`Сейчас ${WAVE_NAMES[ph.phaseId].toLowerCase()} фаза — ${WAVE_DESC[ph.phaseId]}.`:''}</p></div>
+      </div>
+    </div>
+
+    ${!isPremium?`
+    <div class="rc" style="margin-bottom:16px;padding:14px 16px;text-align:left;border:1px solid rgba(192,176,208,.2)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.3rem">⭐</span>
+        <div style="flex:1"><div style="font-weight:600;font-size:.85rem">Premium-доступ</div>
+        <p style="font-size:.78rem;color:var(--text2)">Соня-переводчик, предиктор и тренер доступны ${s.trial?'в пробном периоде':'с Premium'}</p></div>
+        <button class="btn btn-p btn-sm" onclick="showTariffs()">⭐ ${s.trial?'Оформить':'Попробовать'}</button>
+      </div>
+    </div>`:''}
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div class="rc" style="padding:16px;text-align:center;cursor:pointer" onclick="S._sonyaMode='translate';renderMaleDash()">
+        <span style="font-size:1.6rem;display:block;margin-bottom:4px">🌊</span>
+        <div style="font-weight:600;font-size:.82rem">Переводчик фаз</div>
+        <div style="font-size:.7rem;color:var(--text3)">Что стоит за её mood</div>
+      </div>
+      <div class="rc" style="padding:16px;text-align:center;cursor:pointer" onclick="S._sonyaMode='tips';renderMaleDash()">
+        <span style="font-size:1.6rem;display:block;margin-bottom:4px">💡</span>
+        <div style="font-weight:600;font-size:.82rem">Совет дня</div>
+        <div style="font-size:.7rem;color:var(--text3)">От Сони лично тебе</div>
+      </div>
+    </div>
+
+    ${ph?`
+    <div style="background:var(--bg);border-radius:16px;padding:16px;margin-bottom:12px;border-left:4px solid ${ph.color}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:1.2rem">${WAVE_ICONS[ph.phaseId]}</span>
+        <span style="font-weight:600;font-size:.85rem">Соня-Переводчик · ${WAVE_NAMES[ph.phaseId]}</span>
+      </div>
+      <p style="font-size:.82rem;color:var(--text2);line-height:1.6">${u?u.name:''}, сегодня у ${fu?fu.name:'партнерши'} ${WAVE_NAMES[ph.phaseId].toLowerCase()} фаза. Это не про тебя — это про гормоны. Лучшее, что ты можешь сделать: ${['приготовить чай и просто быть рядом','предложить активность на свежем воздухе','устроить романтический вечер','не предлагать решений, просто обнять'][ph.phaseId]}.</p>
+    </div>`:''}
+
+    <div style="text-align:center;padding:12px 0;font-size:.75rem;color:var(--text3)">🤍 Соня хранит тайну обоих и никогда не передаёт слова дословно.</div>
+  </div>`;
+  }
+
+  if(mode==='translate'){
+    if(!ph)return `<p>Нет данных цикла</p>`;
+    let phaseMeanings=[
+      {today:'Она может быть тихой и замкнутой. Это нормально — ей нужно восстановление.',do:'Предложи чай, плед и фильм. Без вопросов.',avoid:'Не требуй активности и не спрашивай "что случилось".'},
+      {today:'Энергия бьёт ключом! Она полна идей и планов.',do:'Поддержи её идеи. Предложи активное свидание.',avoid:'Не критикуй и не гаси энтузиазм.'},
+      {today:'Она открыта к близости и общению. Лучшее время для важных разговоров.',do:'Говори о чувствах. Сделай комплимент.',avoid:'Не избегай разговоров и не отмалчивайся.'},
+      {today:'Мир для неё стал острее. Она может быть ранимой. Это пройдёт.',do:'Будь мягким. Обними без повода. Скажи "я рядом".',avoid:'Не спорь, не критикуй, не предлагай решений.'}
+    ];
+    let pm=phaseMeanings[ph.phaseId];
+    return `<div style="max-width:600px;margin:0 auto;text-align:left">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <button class="btn btn-g btn-sm" onclick="delete S._sonyaMode;renderMaleDash()" style="padding:6px 10px">←</button>
+        <span style="font-weight:700;font-size:1rem">🌊 ${WAVE_NAMES[ph.phaseId]}</span>
+      </div>
+      <div style="background:var(--bg);border-radius:16px;padding:16px;margin-bottom:12px;border-left:4px solid ${ph.color}">
+        <p style="font-size:.85rem;color:var(--text2);line-height:1.6">${pm.today}</p>
+      </div>
+      <div style="background:rgba(143,191,168,.08);border-radius:16px;padding:16px;margin-bottom:12px;border-left:4px solid var(--green)">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:4px">✅ Сделать</div>
+        <p style="font-size:.82rem;color:var(--text2)">${pm.do}</p>
+      </div>
+      <div style="background:rgba(212,96,96,.08);border-radius:16px;padding:16px;margin-bottom:12px;border-left:4px solid #D46060">
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:4px">🚫 Избегать</div>
+        <p style="font-size:.82rem;color:var(--text2)">${pm.avoid}</p>
+      </div>
+      <button class="btn btn-s btn-block btn-sm" onclick="delete S._sonyaMode;renderMaleDash()">← К Соне</button>
+    </div>`;
+  }
+
+  if(mode==='tips'){
+    return `<div style="max-width:600px;margin:0 auto;text-align:left">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <button class="btn btn-g btn-sm" onclick="delete S._sonyaMode;renderMaleDash()" style="padding:6px 10px">←</button>
+        <span style="font-weight:700;font-size:1rem">💡 Совет Сони на сегодня</span>
+      </div>
+      <div style="background:var(--bg);border-radius:20px;padding:24px;text-align:center;margin-bottom:12px">
+        <div style="font-size:2.5rem;margin-bottom:8px">🤍</div>
+        <p style="font-size:.9rem;color:var(--text2);line-height:1.7">${u?u.name:''}, сегодня просто будь рядом. Не для галочки — для неё. ${ph?`В ${WAVE_NAMES[ph.phaseId].toLowerCase()} фазе ей особенно важно чувствовать твоё присутствие без слов.`:''}</p>
+        <div style="margin-top:14px;padding:12px;background:var(--card);border-radius:14px;font-size:.82rem;color:var(--text2)">
+          🔔 Вечером: спроси «Как прошёл твой день?» и правда выслушай ответ.
+        </div>
+      </div>
+      <button class="btn btn-s btn-block btn-sm" onclick="delete S._sonyaMode;renderMaleDash()">← К Соне</button>
+    </div>`;
+  }
+  return '';
+}
+
+function genCoupleCode(){
+  let cp=S.couples.find(x=>x.fId===S.curUser);
+  let code=genCode();
+  if(cp){cp.code=code;cp.status='pending';}
+  else S.couples.push({fId:S.curUser,code,status:'pending'});
+  save();
+  let el=document.getElementById('settings-couple-code');
+  if(el)el.textContent=code;
+  renderFemaleDash();
+}
+
+function logout(){
+  S.curUser=null;save();
+  localStorage.removeItem('biosync_remember');
+  navigate('landing');
+}
+
+// ====== TARIFFS PAGE ======
+const PREMIUM_TIPS=[
+  {emoji:'🎯',text:'Попробуйте <a href="https://alice.yandex.ru/prompthub/c/family" target="_blank" style="color:var(--roseD);text-decoration:underline">Алису Семья</a> — она поможет синхронизировать расписание и напомнит о важном.'},
+  {emoji:'🤖',text:'<a href="https://alice.yandex.ru/prompthub/c/family" target="_blank" style="color:var(--roseD);text-decoration:underline">Яндекс Алиса</a> умеет зачитывать вслух стратегии заботы — попросите её.'},
+  {emoji:'🎵',text:'Включите <a href="https://alice.yandex.ru/prompthub/c/family" target="_blank" style="color:var(--roseD);text-decoration:underline">Алису</a> на кухне во время ужина — пусть расскажет ваш ритуал на сегодня.'},
+  {emoji:'📅',text:'Подключите <a href="https://alice.yandex.ru/prompthub/c/family" target="_blank" style="color:var(--roseD);text-decoration:underline">Алису Семья</a>, чтобы получать утренние сводки по циклу.'},
+  {emoji:'💡',text:'<a href="https://alice.yandex.ru/prompthub/c/family" target="_blank" style="color:var(--roseD);text-decoration:underline">Алиса</a> может напомнить о начале фертильного окна — настройте сценарий.'},
+  {emoji:'🌙',text:'Попросите <a href="https://alice.yandex.ru/prompthub/c/family" target="_blank" style="color:var(--roseD);text-decoration:underline">Алису</a> запустить ваш вечерний ритуал расслабления перед сном.'},
+  {emoji:'💬',text:'Используйте <a href="https://alice.yandex.ru/prompthub/c/family" target="_blank" style="color:var(--roseD);text-decoration:underline">Алису Семья</a> как семейный органайзер — записывайте идеи ритуалов голосом.'}
+];
+function fTariffs(){
+  let s=getSub(S.curUser);
+  let isPremium=s.plan==='premium';
+  let isUnlimited=s.plan==='unlimited';
+  let trialDays=s.trial?Math.max(0,Math.ceil((s.expires-Date.now())/86400000)):0;
+  let trialActive=!!s.trial;
+  let tip=PREMIUM_TIPS[Math.floor(Math.random()*PREMIUM_TIPS.length)];
+  return `<div style="max-width:600px;margin:0 auto">
+    <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:4px">⭐ Тарифы</h2>
+    <p style="color:var(--text2);font-size:.9rem;margin-bottom:20px">Выберите подходящий план</p>
+    ${trialActive?`<div style="background:linear-gradient(135deg,var(--roseL),transparent);border-radius:14px;padding:14px 18px;margin-bottom:16px;border:1px solid rgba(224,168,168,.2);display:flex;align-items:center;gap:10px;font-size:.85rem">
+      <span style="font-size:1.4rem">🔥</span><span><strong>Пробный Premium</strong> · осталось ${trialDays} ${['день','дня','дней'][trialDays%10===1&&trialDays%100!==11?0:trialDays%10>=2&&trialDays%10<=4&&(trialDays%100<10||trialDays%100>=20)?1:2]}</span></div>`:''}
+    <div class="rc" style="margin-bottom:12px;text-align:left;padding:18px;${s.plan==='free'&&!s.trial?'border:2px solid var(--rose);background:var(--roseL)':'border:1px solid var(--border)'}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div><span style="font-weight:700;font-size:1.05rem">📦 Бесплатный</span>
+        <div style="font-size:.78rem;color:var(--text2)">Базовый набор инструментов</div></div>
+        <span style="font-weight:800;font-size:1.2rem;color:var(--green)">0 ₽</span>
+      </div>
+      <ul style="font-size:.8rem;color:var(--text2);padding-left:1.2rem;line-height:1.9;margin-top:8px">
+        <li>🌊 Полный трекер цикла и прогноз фаз</li>
+        <li>😊 Дневник настроения и самочувствия</li>
+        <li>📖 5 статей по саморегуляции</li>
+        <li>🔗 Создание кода пары</li>
+        <li>🎤 1 сессия «Выговориться» в месяц</li>
+      </ul>
+      ${s.plan==='free'&&!s.trial?'<div style="margin-top:8px;font-size:.82rem;color:var(--green);font-weight:600">✅ Текущий тариф</div>':''}
+    </div>
+    <div class="rc" style="margin-bottom:12px;text-align:left;padding:18px;position:relative;overflow:hidden;${isPremium||trialActive?'border:2px solid var(--gold);background:rgba(232,208,140,.1)':'border:1px solid var(--border)'}">
+      <div style="position:absolute;top:8px;right:-26px;background:linear-gradient(135deg,var(--gold),#D4A040);color:#fff;padding:3px 30px;font-size:.65rem;font-weight:700;transform:rotate(45deg)">ХИТ</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div><span style="font-weight:700;font-size:1.05rem">✨ Premium</span>
+        <div style="font-size:.78rem;color:var(--text2)">Полная версия для пары</div></div>
+        <div style="text-align:right"><span style="font-weight:800;font-size:1.1rem">749 ₽</span><span style="font-size:.75rem;color:var(--text2)">/мес</span></div>
+      </div>
+      <ul style="font-size:.8rem;color:var(--text2);padding-left:1.2rem;line-height:1.9;margin-top:8px">
+        <li>🧭 Стратегии заботы для мужчины под фазу цикла</li>
+        <li>🧘 Полная библиотека техник и практик</li>
+        <li>💑 Еженедельные ритуалы для пары</li>
+        <li>📊 Ежемесячная аналитика цикла</li>
+        <li>🆘 Безлимитный SOS-конфликт</li>
+        <li>🎤 10 сессий «Выговориться» с AI-анализом</li>
+      </ul>
+      <div style="margin-top:10px;padding:10px 12px;background:rgba(208,128,128,.08);border-radius:10px;border-left:3px solid var(--rose);font-size:.78rem;color:var(--text2);line-height:1.5">
+        <span style="font-size:1rem;margin-right:4px">${tip.emoji}</span> ${tip.text}
+      </div>
+      ${isPremium?`<div style="margin-top:8px;font-size:.82rem;color:var(--gold);font-weight:600">⭐ Текущий тариф</div>`:trialActive?`<div style="margin-top:8px;font-size:.82rem;color:var(--gold)">🔥 Пробный период · осталось ${trialDays} дн.</div>
+      <button class="btn btn-p btn-sm btn-block mt-2" onclick="setSub(S.curUser,'premium',12,true);save();renderFemaleDash();renderMaleDash()">📅 Оформить Premium — 3990 ₽/год</button>`:`
+      <button class="btn btn-p btn-sm btn-block mt-2" onclick="startTrial(S.curUser);renderFemaleDash();renderMaleDash()">🔥 Попробовать 7 дней бесплатно</button>
+      <button class="btn btn-s btn-sm btn-block mt-1" onclick="showTariffs()">📅 Все способы оплаты</button>`}
+    </div>
+    <div class="rc" style="margin-bottom:16px;text-align:left;padding:18px;${isUnlimited?'border:2px solid var(--rose);background:var(--roseL)':'border:1px solid var(--border)'}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div><span style="font-weight:700;font-size:1.05rem">⚡ IAP Безлимит</span>
+        <div style="font-size:.78rem;color:var(--text2)">Дополнение к Premium</div></div>
+        <div style="text-align:right"><span style="font-weight:800;font-size:1.1rem">199 ₽</span><span style="font-size:.75rem;color:var(--text2)">/мес</span></div>
+      </div>
+      <ul style="font-size:.8rem;color:var(--text2);padding-left:1.2rem;line-height:1.9;margin-top:8px">
+        <li>🎤 Безлимитные сессии «Выговориться»</li>
+        <li>🧠 Расширенный AI-анализ речи</li>
+        <li>📂 Архив всех записей</li>
+        <li>📈 Сравнительная аналитика по циклам</li>
+      </ul>
+      ${isUnlimited?`<div style="margin-top:8px;font-size:.82rem;color:var(--roseD);font-weight:600">⚡ Текущий тариф</div>`:isPremium?`
+      <button class="btn btn-p btn-sm btn-block mt-2" onclick="setSub(S.curUser,'unlimited',1,false);save();renderFemaleDash();renderMaleDash()">⚡ Подключить — 199 ₽/мес</button>`:`<p style="font-size:.78rem;color:var(--text3);margin-top:6px">Доступно только с Premium</p>`}
+    </div>
+    <p style="font-size:.7rem;color:var(--text3);text-align:center">Подписка продлевается автоматически. Отменить можно в любой момент.</p>
+  </div>`;
+}
+function showTariffs(){
+  document.getElementById('voice-modal').style.display='flex';
+  let s=getSub(S.curUser);
+  let isPremium=s.plan==='premium';
+  let isUnlimited=s.plan==='unlimited';
+  let trialDays=s.trial?Math.max(0,Math.ceil((s.expires-Date.now())/86400000)):0;
+  let tip=PREMIUM_TIPS[Math.floor(Math.random()*PREMIUM_TIPS.length)];
+  let vm=document.getElementById('voice-modal-content');
+  vm.innerHTML=rI(`
+    <div style="text-align:left;max-width:520px;margin:0 auto">
+      <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:4px">${ic('sparkles')} Выберите тариф</h3>
+      <p style="color:var(--text2);font-size:.85rem;margin-bottom:16px">BioSync для вас и вашей пары</p>
+      ${s.trial?`<div style="background:linear-gradient(135deg,var(--roseL),transparent);border-radius:14px;padding:12px 16px;margin-bottom:16px;border:1px solid rgba(224,168,168,.2);font-size:.85rem">${ic('flame')} Пробный Premium · осталось ${trialDays} дн.</div>`:''}
+      <!-- Free tier -->
+      <div style="border:2px solid ${s.plan==='free'&&!s.trial?'var(--rose)':'var(--border)'};border-radius:20px;padding:18px;margin-bottom:12px;transition:.2s;background:${s.plan==='free'&&!s.trial?'var(--roseL)':'var(--card)'}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div><span style="font-weight:700;font-size:1.05rem">🔓 Бесплатный</span>
+          <div style="font-size:.75rem;color:var(--text2)">Стартовый набор</div></div>
+          <span style="font-weight:800;color:var(--green)">0 ₽</span>
+        </div>
+        <ul style="font-size:.8rem;color:var(--text2);padding-left:1.2rem;line-height:1.9">
+          <li>📅 Трекер цикла и прогноз фаз</li>
+          <li>😊 Базовый дневник настроения</li>
+          <li>📖 5 статей по саморегуляции</li>
+          <li>🔗 Приглашение партнёру</li>
+          <li>🎤 1 сессия «Выговориться» в месяц</li>
+        </ul>
+        ${s.plan==='free'&&!s.trial?'<div style="margin-top:10px;font-size:.8rem;color:var(--green);font-weight:600">✅ Текущий тариф</div>':''}
+      </div>
+      <!-- Premium tier -->
+      <div style="border:2px solid ${isPremium||trialDays?'var(--gold)':'var(--border)'};border-radius:20px;padding:18px;margin-bottom:12px;transition:.2s;background:${(isPremium||trialDays)?'rgba(232,208,140,.1)':'var(--card)'};position:relative;overflow:hidden">
+        <div style="position:absolute;top:10px;right:-28px;background:linear-gradient(135deg,var(--gold),#D4A040);color:#fff;padding:4px 32px;font-size:.7rem;font-weight:700;transform:rotate(45deg)">ХИТ</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div><span style="font-weight:700;font-size:1.05rem">✨ Premium «Соня»</span>
+          <div style="font-size:.75rem;color:var(--text2)">Полный доступ для пары</div></div>
+          <div style="text-align:right"><span style="font-weight:800;font-size:1.1rem">749 ₽</span><span style="font-size:.75rem;color:var(--text2)">/мес</span>
+          <div style="font-size:.75rem;color:var(--text3)">или 3990 ₽/год</div></div>
+        </div>
+        <ul style="font-size:.8rem;color:var(--text2);padding-left:1.2rem;line-height:1.9">
+          <li>🧭 Ежедневные стратегии для мужчины</li>
+          <li>🧘 Полная библиотека техник саморегуляции</li>
+          <li>💑 Еженедельные парные ритуалы</li>
+          <li>📊 Аналитика «Как прошёл месяц»</li>
+          <li>🆘 Безлимитный SOS-конфликт для обоих</li>
+          <li>👶 Режимы жизни (беременность / после родов / перименопауза)</li>
+          <li>🎤 10 сессий «Выговориться» с AI-анализом</li>
+          <li>🎁 Скидки у партнёров (витамины, спа, цветы)</li>
+        </ul>
+        <div style="margin-top:10px;padding:10px 12px;background:rgba(208,128,128,.08);border-radius:10px;border-left:3px solid var(--rose);font-size:.78rem;color:var(--text2);line-height:1.5">
+          <span style="font-size:1rem;margin-right:4px">${tip.emoji}</span> ${tip.text}
+        </div>
+        ${isPremium?`<div style="margin-top:10px;font-size:.85rem;color:var(--gold);font-weight:600">⭐ Текущий тариф</div>`:trialDays?`<div style="margin-top:10px;font-size:.8rem;color:var(--gold)">🔥 Пробный период · осталось ${trialDays} дн.</div>`:`
+        <button class="btn btn-p btn-sm btn-block mt-2" onclick="setSub(S.curUser,'premium',1,false);save();showTariffs();renderFemaleDash()">✨ Оформить — 749 ₽/мес</button>
+        <button class="btn btn-s btn-sm btn-block mt-1" onclick="setSub(S.curUser,'premium',12,true);save();showTariffs();renderFemaleDash()">📅 На год — 3990 ₽ <span style="color:var(--green);font-weight:600">(скидка 56%)</span></button>
+        `}
+      </div>
+      <!-- IAP tier -->
+      <div style="border:2px solid ${isUnlimited?'var(--rose)':'var(--border)'};border-radius:20px;padding:18px;margin-bottom:12px;background:${isUnlimited?'var(--roseL)':'var(--card)'}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div><span style="font-weight:700;font-size:1.05rem">⚡ IAP «Соня Безлимит»</span>
+          <div style="font-size:.75rem;color:var(--text2)">Дополнение к Premium</div></div>
+          <div style="text-align:right"><span style="font-weight:800;font-size:1.1rem">199 ₽</span><span style="font-size:.75rem;color:var(--text2)">/мес</span>
+          <div style="font-size:.75rem;color:var(--text3)">или 990 ₽/год</div></div>
+        </div>
+        <ul style="font-size:.8rem;color:var(--text2);padding-left:1.2rem;line-height:1.9">
+          <li>🎤 Безлимитные аудиосессии</li>
+          <li>🧠 Расширенный AI-анализ каждой сессии</li>
+          <li>📂 Архив всех записей</li>
+          <li>📈 Сравнительная аналитика по циклам</li>
+          <li>🎯 Персонализированные практики под ваш голос</li>
+        </ul>
+        ${isUnlimited?`<div style="margin-top:10px;font-size:.8rem;color:var(--roseD);font-weight:600">⚡ Текущий тариф</div>`:isPremium?`
+        <button class="btn btn-p btn-sm btn-block mt-2" onclick="setSub(S.curUser,'unlimited',1,false);save();showTariffs();renderFemaleDash()">⚡ Подключить — 199 ₽/мес</button>
+        <button class="btn btn-s btn-sm btn-block mt-1" onclick="setSub(S.curUser,'unlimited',12,true);save();showTariffs();renderFemaleDash()">📅 На год — 990 ₽</button>
+        `:`<p style="font-size:.78rem;color:var(--text3);margin-top:6px">Доступно только с Premium</p>`}
+      </div>
+      <p style="font-size:.7rem;color:var(--text3);text-align:center;margin-top:12px">Подписка автоматически продлевается. Отменить можно в любой момент.</p>
+      <button class="btn btn-g btn-block mt-2" onclick="closeVoiceModal()" style="font-size:.85rem">Закрыть</button>
+    </div>`);
+  lucide.createIcons(vm);
+}
+
+// ====== CONNECTION LINK ======
+function checkConnectHash(){
+  let m=location.hash.match(/^#connect=([A-Z0-9]{6})$/i);
+  if(m)S._pendingConnect=m[1].toUpperCase();
+}
+
+function buildConnectLink(){
+  let cp=S.couples.find(x=>x.fId===S.curUser);
+  if(!cp||!cp.code)return '';
+  return location.href.split('#')[0]+'#connect='+cp.code;
+}
+
+// ====== INIT ======
+function init(){
+  // Load persisted data from server if available
+  loadFromServer();
+  S._moodSaved=false;
+  loadTheme();
+  _lang=localStorage.getItem('biosync_lang')||'ru';
+  let ls=document.getElementById('lang-select');
+  if(ls)ls.value=_lang;
+  checkConnectHash();
+  lucide.createIcons(document.getElementById('p-landing'));
+  // Try auto-login from remembered session
+  if(!S.curUser){
+    try{var remembered=JSON.parse(localStorage.getItem('biosync_remember')||'null')}catch(e){localStorage.removeItem('biosync_remember')}
+    if(remembered&&remembered.userId){
+      let u=S.users.find(x=>x.id===remembered.userId);
+      if(u){S.curUser=u.id;save()}
+      else localStorage.removeItem('biosync_remember');
+    }
+  }
+  if(S.curUser){
+    let u=S.users.find(x=>x.id===S.curUser);
+    if(u)navigate(u.gender==='female'?'dash-female':'dash-male');
+    else{S.curUser=null;save();navigate('landing')}
+  } else {
+    navigate('landing');
+    // Show invite banner on landing
+    if(S._pendingConnect){
+      let b=document.getElementById('p-landing');
+      if(b){
+        let invite=document.createElement('div');
+        invite.id='connect-invite';
+        invite.style.cssText='position:fixed;top:0;left:0;right:0;z-index:100;padding:14px;text-align:center;background:linear-gradient(135deg,var(--rose),var(--roseD));color:#fff;font-weight:600;font-size:.95rem;cursor:pointer;box-shadow:0 4px 20px rgba(208,128,128,.3)';
+        invite.innerHTML='<i data-lucide="link" class="lx lx-sm"></i> Вас пригласили в пару! <span style="text-decoration:underline">Создайте аккаунт или войдите</span> →';lucide.createIcons(invite);
+        invite.onclick=()=>{navigate('register-male')};
+        b.appendChild(invite);
+      }
+    }
+  }
+  // If tutorial was queued (page closed before it appeared), show it now
+  if(S._showTutorial&&S.curUser){
+    setTimeout(()=>{if(S._showTutorial){showTutorial();delete S._showTutorial;save()}},800);
+  }
+  // Auto-save on page close
+  window.addEventListener('beforeunload',function(){save()});
+}
+init();
+</script>
+</body>
+</html>

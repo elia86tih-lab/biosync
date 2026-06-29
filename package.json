@@ -1,0 +1,8 @@
+{
+  "name": "biosync-web",
+  "version": "1.0.0",
+  "description": "BioSync — Код пары",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
