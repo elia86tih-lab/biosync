@@ -15,6 +15,7 @@
   --font: 'Inter',-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;
   --coral: #E8826B; --indigo: #4A6FA5; --amber: #D4914A;
   --sm: 12px; --md: 16px; --lg: 28px;
+  --text4: #D8D2CC;
   --icon-color: inherit;
   --bg2: #F9F4F0; --bgDark: transparent;
 }
@@ -25,6 +26,7 @@
   --border: #353028; --border2: #2D2823;
   --shadow: 0 1px 3px rgba(0,0,0,.2); --shadowH: 0 4px 16px rgba(0,0,0,.3);
   --shadowL: 0 8px 32px rgba(0,0,0,.25);
+  --text4: #3D3832;
   --bg2: #12100E; --bgDark: #1A1716;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -62,7 +64,6 @@ input,button,select,textarea{font-family:inherit}
 .landing::after{content:'';position:absolute;width:500px;height:500px;border-radius:50%;
   background:radial-gradient(circle,rgba(143,191,168,.08) 0%,transparent 70%);bottom:-150px;left:-150px}
 .landing-logo{font-size:4.2rem;margin-bottom:16px;animation:float 4s ease-in-out infinite;position:relative}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .landing h1{font-size:3.2rem;font-weight:800;margin-bottom:14px;letter-spacing:-.03em;position:relative}
 .landing h1 span{background:linear-gradient(135deg,var(--rose),var(--roseD));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .landing p{color:var(--text2);max-width:580px;margin-bottom:40px;line-height:1.7;font-size:1.15rem;position:relative}
@@ -103,15 +104,6 @@ input,button,select,textarea{font-family:inherit}
 .btn-social{width:48px;height:48px;border-radius:50%;border:1.5px solid var(--text4);background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;padding:10px}
 .btn-social:hover{border-color:var(--rose);background:var(--roseL);transform:translateY(-2px)}
 .btn-social svg{width:100%;height:100%}
-
-/* ====== GENDER CARDS ====== */
-.gc{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
-.gc-card{padding:28px 20px;border:1.5px solid var(--border);border-radius:22px;cursor:pointer;text-align:center;
-  transition:all .25s cubic-bezier(.25,.8,.25,1);background:var(--card)}
-.gc-card:hover{border-color:var(--roseL);transform:translateY(-2px);box-shadow:var(--shadowH)}
-.gc-card.sel{border-color:var(--rose);background:var(--roseL);box-shadow:0 0 0 4px rgba(224,168,168,.2)}
-.gc-icon{font-size:2.8rem;margin-bottom:10px;display:block}
-.gc-label{font-weight:600;font-size:1.05rem}
 
 /* ====== DASHBOARD ====== */
 .dash{min-height:100vh;display:flex;flex-direction:column;background:linear-gradient(180deg,var(--bg) 0%,#F9F4F0 100%)}
@@ -583,7 +575,7 @@ function _px(obj){
   return p;
 }
 let S=_px(loadState());
-const SVR='http://localhost:4000';
+const SVR=location.hostname==='localhost'||location.hostname==='127.0.0.1'?'http://localhost:4000':'';
 function save(){let j=JSON.stringify(S);localStorage.setItem(LS,j);fetch(SVR+'/api/data',{method:'POST',headers:{'Content-Type':'application/json'},body:j}).catch(()=>{})}
 async function loadFromServer(){var loc=localStorage.getItem(LS);if(loc)return;try{let r=await fetch(SVR+'/api/data');if(!r.ok)return;let d=await r.json();if(d&&Object.keys(d).length){Object.assign(S,d);localStorage.setItem(LS,JSON.stringify(S))}}catch(e){}}
 async function checkGhStatus(){try{let r=await fetch(SVR+'/api/status');if(!r.ok)return;let d=await r.json();let dot=document.getElementById('gh-indicator'),lb=document.getElementById('gh-label'),cb=document.getElementById('gh-connect-btn'),db=document.getElementById('gh-disconnect-btn');if(!dot)return;if(!d.gh){dot.style.background='#888';lb.textContent='не настроен';if(cb)cb.style.display='';if(db)db.style.display='none'}else if(d.ghStatus==='synced'){dot.style.background='var(--green)';lb.textContent='✔ синхронизировано';if(cb)cb.style.display='none';if(db)db.style.display=''}else if(d.ghStatus==='syncing'){dot.style.background='var(--gold)';lb.textContent='⟳ синхронизация...';if(cb)cb.style.display='none';if(db)db.style.display=''}else if(d.ghStatus==='error'){dot.style.background='#D46060';lb.textContent='✘ ошибка';if(cb)cb.style.display='none';if(db)db.style.display=''}else{dot.style.background='var(--text3)';lb.textContent='ожидание';if(cb)cb.style.display='';if(db)db.style.display='none'}}catch(e){}}
