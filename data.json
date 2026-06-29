@@ -12,9 +12,26 @@
         "showCareTips": true,
         "showMood": false
       }
+    },
+    {
+      "id": "jskb5tlw2",
+      "email": "google_jskb5tlw@social.biosync",
+      "pass": "",
+      "name": "Google",
+      "gender": "female",
+      "social": {
+        "provider": "google",
+        "id": "google_jskb5tlw2"
+      },
+      "priv": {
+        "showPhase": true,
+        "showDay": true,
+        "showCareTips": true,
+        "showMood": false
+      }
     }
   ],
-  "curUser": "g0bnh83lg",
+  "curUser": "jskb5tlw2",
   "cycle": {
     "g0bnh83lg": {
       "lps": "2026-06-25",
