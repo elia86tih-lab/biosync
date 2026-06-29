@@ -12,6 +12,23 @@
         "showCareTips": true,
         "showMood": false
       }
+    },
+    {
+      "id": "jskb5tlw2",
+      "email": "google_jskb5tlw@social.biosync",
+      "pass": "",
+      "name": "Google",
+      "gender": "female",
+      "social": {
+        "provider": "google",
+        "id": "google_jskb5tlw2"
+      },
+      "priv": {
+        "showPhase": true,
+        "showDay": true,
+        "showCareTips": true,
+        "showMood": false
+      }
     }
   ],
   "curUser": "g0bnh83lg",
