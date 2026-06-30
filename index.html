@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -1711,11 +1711,11 @@ function mCompass(){
 function mStrategy(){
   let cp=getCoupleForMale();
   if(!cp||cp.status!=='active'){
-    return `<div class="emp"><div class="emp-ic">📋</div><h3>Нет стратегии</h3>
-      <p>Подключитесь к партнерше, чтобы получать стратегии поддержки.</p></div>`;
+    return `<div class="emp"><div class="emp-ic">📋</div><h3>${_('m_no_strategy')}</h3>
+      <p>${_('m_connect_for_strategy')}</p></div>`;
   }
   let ph=getPhase(cp.fId);
-  if(!ph)return `<div class="emp"><div class="emp-ic">📋</div><h3>Данные цикла недоступны</h3></div>`;
+  if(!ph)return `<div class="emp"><div class="emp-ic">📋</div><h3>${_('m_cycle_unavailable')}</h3></div>`;
   let priv=getUserPriv(cp.fId);
   let tips=priv.showCareTips?(M_TIPS[ph.phaseId]||[]):[];
   let html='';
@@ -1723,21 +1723,21 @@ function mStrategy(){
   if(priv.showPhase){
     html+=`<div class="pw" style="padding:18px;background:linear-gradient(135deg,${ph.color}18,transparent);border-left:4px solid ${ph.color};margin-bottom:18px">
       <div class="ph" style="margin-bottom:0"><div class="ph-sym" style="font-size:2rem">${WAVE_ICONS[ph.phaseId]}</div>
-      <div class="ph-i"><h3 style="font-size:1.05rem">${_(_PKN.cn[ph.phaseId])}</h3><p style="font-size:.85rem">${_pd(ph.phaseId)}${priv.showDay?' · День '+ph.day:''}</p></div></div>
+      <div class="ph-i"><h3 style="font-size:1.05rem">${_(_PKN.cn[ph.phaseId])}</h3><p style="font-size:.85rem">${_pd(ph.phaseId)}${priv.showDay?' · '+_('day_word')+' '+ph.day:''}</p></div></div>
     </div>`;
   } else {
     html+=`<div class="pw" style="padding:18px;background:var(--border);border-left:4px solid var(--text3);margin-bottom:18px;opacity:.7">
       <div class="ph" style="margin-bottom:0"><div class="ph-sym" style="font-size:2rem">🔒</div>
-      <div class="ph-i"><h3 style="font-size:1.05rem">Фаза скрыта</h3><p style="font-size:.85rem">Партнерша ограничила доступ к данным цикла</p></div></div>
+      <div class="ph-i"><h3 style="font-size:1.05rem">${_('m_phase_hidden')}</h3><p style="font-size:.85rem">${_('m_phase_hidden_desc')}</p></div></div>
     </div>`;
   }
   // Strategy cards
   if(tips.length){
-    html+=`<h3 style="font-size:1rem;font-weight:700;margin-bottom:10px">📋 Рекомендации на сегодня</h3>
+    html+=`<h3 style="font-size:1rem;font-weight:700;margin-bottom:10px">📋 ${_('m_today_reco')}</h3>
       <div class="strat-grid">`;
     let icons={'':'✅','av':'🚫','ps':'🧠'};
     let classes={'':'do','av':'avoid','ps':'psych'};
-    let labels={'':_('m_todo_do'),'av':_('m_todo_avoid'),'ps':'Совет психолога'};
+    let labels={'':_('m_todo_do'),'av':_('m_todo_avoid'),'ps':_('m_psych_advice')};
     tips.forEach(t=>{
       let c=classes[t.c]||'do';
       html+=`<div class="strat-card ${c}"><div class="s-icon">${icons[t.c]||'✅'}</div>
@@ -1745,16 +1745,16 @@ function mStrategy(){
     });
     html+=`</div>`;
   } else if(priv.showPhase&&!priv.showCareTips) {
-    html+=`<div style="padding:16px;text-align:center;color:var(--text3);font-size:.9rem">💭 Партнерша отключила подсказки по заботе</div>`;
+    html+=`<div style="padding:16px;text-align:center;color:var(--text3);font-size:.9rem">💭 </div>`;
   }
   // Rituals
-  html+=`<div class="ts mt-3"><h3>💑 Ритуалы для двоих</h3>
+  html+=`<div class="ts mt-3"><h3>💑 </h3>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">`;
   let rituals=[
-    {i:'🙏',t:'Благодарность',b:'Скажи 3 вещи, которые ценишь в ней.'},
-    {i:'👂',t:'Активное слушание',b:'10 минут слушать, не перебивая.'},
-    {i:'🎁',t:'Сюрприз',b:'Купи любимый десерт без повода.'},
-    {i:'🤗',t:'Объятия',b:'Обними без слов — просто будь рядом.'},
+    {i:'🙏',t:_('m_rit_gratitude'),b:_('m_rit_gratitude_d')},
+    {i:'👂',t:_('m_rit_listen'),b:_('m_rit_listen_d')},
+    {i:'🎁',t:_('m_rit_surprise'),b:_('m_rit_surprise_d')},
+    {i:'🤗',t:_('m_rit_hug'),b:_('m_rit_hug_d')},
   ];
   rituals.forEach(r=>{
     html+=`<div class="strat-card" style="flex-direction:column;text-align:center;padding:12px;gap:4px">
@@ -1768,18 +1768,18 @@ function mStrategy(){
 function mHistory(){
   let cp=getCoupleForMale();
   if(!cp||cp.status!=='active'){
-    return `<div class="emp"><div class="emp-ic">📊</div><h3>Нет данных</h3><p>Подключитесь к партнерше.</p></div>`;
+    return `<div class="emp"><div class="emp-ic">📊</div><h3></h3><p></p></div>`;
   }
   let fu=S.users.find(x=>x.id===cp.fId);
-  return `<div class="pw"><h3 class="mb-2">📊 Как прошел цикл</h3>
-    <p style="color:var(--text2);font-size:.9rem">Обобщенная информация о циклах, которой партнерша решила поделиться.</p>
+  return `<div class="pw"><h3 class="mb-2">📊 </h3>
+    <p style="color:var(--text2);font-size:.9rem"></p>
     <div class="flex gap-1 mt-2" style="flex-wrap:wrap">
       <span class="mi">🌰 ${_('phase_mens_cn')}</span>
       <span class="mi">🌱 ${_('phase_foll_cn')}</span>
       <span class="mi">🌸 ${_('phase_ovul_cn')}</span>
       <span class="mi">🍂 ${_('phase_lut_cn')}</span>
     </div>
-    <p class="mt-2" style="color:var(--text3);font-size:.85rem">Статистика будет доступна после завершения первого полного цикла.</p>
+    <p class="mt-2" style="color:var(--text3);font-size:.85rem"></p>
   </div>`;
 }
 
@@ -1790,8 +1790,8 @@ function mNotifs(){
     <button class="btn btn-g btn-sm" onclick="genNotifs()">🔄 ${_('refresh')}</button></div>`;
   let ns=S.notifs[S.curUser]||[];
   if(!ns.length){
-    html+=`<div class="emp"><div class="emp-ic">🔔</div><h3>Нет подсказок</h3>
-      <button class="btn btn-p btn-sm mt-2" onclick="genNotifs()">Сгенерировать тестовые</button></div>`;
+    html+=`<div class="emp"><div class="emp-ic">🔔</div><h3>${_('m_no_tips')}</h3>
+      <button class="btn btn-p btn-sm mt-2" onclick="genNotifs()">${_('m_gen_test')}</button></div>`;
   } else {
     ns.forEach(n=>{
       let ic=n.type==='warning'?'⚠️':n.type==='phase'?'🌊':n.type==='ritual'?'💝':'💬';
@@ -1804,11 +1804,11 @@ function mNotifs(){
     let ph=getPhase(cp.fId);
     if(ph){
       let tips=M_TIPS[ph.phaseId]||[];
-      html+=`<div class="pw mt-2" style="padding:14px;background:linear-gradient(135deg,${WAVE_COLORS[ph.phaseId]}15,transparent)"><h4 class="mb-1">📌 Текущие рекомендации</h4>
+      html+=`<div class="pw mt-2" style="padding:14px;background:linear-gradient(135deg,${WAVE_COLORS[ph.phaseId]}15,transparent)"><h4 class="mb-1">📌 ${_('m_current_reco')}</h4>
         <ul style="font-size:.85rem;color:var(--text2);padding-left:1.2rem;line-height:1.8">
         <li><strong>${WAVE_ICONS[ph.phaseId]} ${_('phase_word')}:</strong> ${_(_PKN.cn[ph.phaseId])} (${_(['wave_rest','wave_grow','wave_bloom','wave_fade'][ph.phaseId])})</li>
-        <li><strong>📅 День:</strong> ${ph.day} из ${ph.cl}</li>
-        <li><strong>💡 ${_('m_sonya_tip')}:</strong> ${tips.length?tips[0].b:'Будьте внимательны и заботливы'}</li></ul></div>`;
+        <li><strong>📅 :</strong> ${ph.day} из ${ph.cl}</li>
+        <li><strong>💡 ${_('m_sonya_tip')}:</strong> ${tips.length?tips[0].b:''}</li></ul></div>`;
     }
   }
   return html;
@@ -2119,7 +2119,29 @@ const _T={
 'm_no_strategy':{ru:'Нет стратегии',en:'No strategy',zh:'无策略',hi:'कोई रणनीति नहीं',es:'Sin estrategia',ar:'لا استراتيجية',fr:'Pas de stratégie',bn:'কোন কৌশল নেই',pt:'Sem estratégia',ur:'کوئی حکمت عملی نہیں',de:'Keine Strategie',id:'Tidak ada strategi',ja:'戦略なし',tr:'Strateji yok',ko:'전략 없음'},
 'm_no_data':{ru:'Нет данных',en:'No data',zh:'无数据',hi:'कोई डेटा नहीं',es:'Sin datos',ar:'لا بيانات',fr:'Pas de données',bn:'কোন ডেটা নেই',pt:'Sem dados',ur:'کوئی ڈیٹا نہیں',de:'Keine Daten',id:'Tidak ada data',ja:'データなし',tr:'Veri yok',ko:'데이터 없음'},
 'm_no_tips':{ru:'Нет подсказок',en:'No tips',zh:'无提示',hi:'कोई सुझाव नहीं',es:'Sin consejos',ar:'لا نصائح',fr:'Pas de conseils',bn:'কোন টিপস নেই',pt:'Sem dicas',ur:'کوئی مشورے نہیں',de:'Keine Tipps',id:'Tidak ada tips',ja:'ヒントなし',tr:'İpucu yok',ko:'팁 없음'},
-'m_gen_test':{ru:'Сгенерировать тестовые',en:'Generate test tips',zh:'生成测试提示',hi:'परीक्षण सुझाव बनाएं',es:'Generar consejos de prueba',ar:'إنشاء نصائح تجريبية',fr:'Générer des conseils de test',bn:'পরীক্ষামূলক টিপস তৈরি করুন',pt:'Gerar dicas de teste',ur:'ٹیسٹ مشورے بنائیں',de:'Test-Tipps generieren',id:'Buat tips uji',ja:'テストヒントを生成',tr:'Test ipuçları oluştur',ko:'테스트 팁 생성'},
+'m_connect_for_strategy':{ru:'Подключитесь к партнерше, чтобы получать стратегии поддержки.',en:'Connect to your partner to get support strategies.',zh:'连接伴侣以获取支持策略。',hi:'समर्थन रणनीतियाँ प्राप्त करने के लिए साथी से जुड़ें।',es:'Conéctate con tu pareja para recibir estrategias de apoyo.',ar:'اتصل بشريكتك للحصول على استراتيجيات الدعم.',fr:'Connectez-vous à votre partenaire pour recevoir des stratégies de soutien.',bn:'সমর্থন কৌশল পেতে সঙ্গীর সাথে সংযুক্ত হন।',pt:'Conecte-se à sua parceira para receber estratégias de apoio.',ur:'مدد کی حکمت عملی کے لیے ساتھی سے جڑیں۔',de:'Verbinden Sie sich mit Ihrer Partnerin, um Unterstützungsstrategien zu erhalten.',id:'Hubungkan ke pasangan untuk mendapatkan strategi dukungan.',ja:'サポート戦略を受け取るにはパートナーに接続してください。',tr:'Destek stratejileri almak için partnerinize bağlanın.',ko:'지원 전략을 받으려면 파트너에게 연결하세요.'},
+'m_cycle_unavailable':{ru:'Данные цикла недоступны',en:'Cycle data unavailable',zh:'周期数据不可用',hi:'चक्र डेटा अनुपलब्ध',es:'Datos del ciclo no disponibles',ar:'بيانات الدورة غير متاحة',fr:'Données de cycle indisponibles',bn:'চক্র ডেটা অনুপলব্ধ',pt:'Dados do ciclo indisponíveis',ur:'چکر ڈیٹا دستیاب نہیں',de:'Zyklusdaten nicht verfügbar',id:'Data siklus tidak tersedia',ja:'周期データが利用不可',tr:'Döngü verileri mevcut değil',ko:'주기 데이터 사용 불가'},
+'m_phase_hidden':{ru:'Фаза скрыта',en:'Phase hidden',zh:'阶段已隐藏',hi:'चरण छिपा हुआ',es:'Fase oculta',ar:'المرحلة مخفية',fr:'Phase masquée',bn:'ফেজ লুকানো',pt:'Fase oculta',ur:'مرحلہ پوشیدہ',de:'Phase ausgeblendet',id:'Fase tersembunyi',ja:'フェーズ非表示',tr:'Faz gizli',ko:'단계 숨김'},
+'m_phase_hidden_desc':{ru:'Партнерша ограничила доступ к данным цикла',en:'Partner restricted access to cycle data',zh:'伴侣限制了对周期数据的访问',hi:'साथी ने चक्र डेटा तक पहुंच सीमित कर दी',es:'Tu pareja restringió el acceso a los datos del ciclo',ar:'قيدت الشريكة الوصول إلى بيانات الدورة',fr:'Votre partenaire a restreint l\'accès aux données du cycle',bn:'সঙ্গী চক্র ডেটাতে অ্যাক্সেস সীমিত করেছেন',pt:'Sua parceira restringiu o acesso aos dados do ciclo',ur:'ساتھی نے چکر ڈیٹا تک رسائی محدود کر دی',de:'Partnerin hat den Zugriff auf Zyklusdaten eingeschränkt',id:'Pasangan membatasi akses ke data siklus',ja:'パートナーが周期データへのアクセスを制限しました',tr:'Partner döngü verilerine erişimi kısıtladı',ko:'파트너가 주기 데이터 접근을 제한했습니다'},
+'m_today_reco':{ru:'Рекомендации на сегодня',en:'Today\'s recommendations',zh:'今日推荐',hi:'आज की सिफारिशें',es:'Recomendaciones de hoy',ar:'توصيات اليوم',fr:'Recommandations du jour',bn:'আজকের সুপারিশ',pt:'Recomendações de hoje',ur:'آج کی سفارشات',de:'Heutige Empfehlungen',id:'Rekomendasi hari ini',ja:'今日のおすすめ',tr:'Bugünün önerileri',ko:'오늘의 추천'},
+'m_psych_advice':{ru:'Совет психолога',en:'Psychologist advice',zh:'心理学家建议',hi:'मनोवैज्ञानिक सलाह',es:'Consejo psicológico',ar:'نصيحة نفسية',fr:'Conseil psychologique',bn:'মনোবিজ্ঞানীর পরামর্শ',pt:'Conselho psicológico',ur:'ماہر نفسیات کا مشورہ',de:'Psychologenrat',id:'Saran psikolog',ja:'心理学者のアドバイス',tr:'Psikolog tavsiyesi',ko:'심리학자 조언'},
+'m_tips_disabled':{ru:'Партнерша отключила подсказки по заботе',en:'Partner disabled care tips',zh:'伴侣已禁用关怀提示',hi:'साथी ने देखभाल सुझाव अक्षम कर दिए',es:'Tu pareja desactivó los consejos de cuidado',ar:'عطلت الشريكة نصائح الرعاية',fr:'Votre partenaire a désactivé les conseils de soin',bn:'সঙ্গী যত্ন টিপস নিষ্ক্রিয় করেছেন',pt:'Sua parceira desativou as dicas de cuidado',ur:'ساتھی نے دیکھ بھال کے مشورے بند کر دیے',de:'Partnerin hat Pflegetipps deaktiviert',id:'Pasangan menonaktifkan tips perawatan',ja:'パートナーがケアのヒントを無効にしました',tr:'Partner bakım ipuçlarını devre dışı bıraktı',ko:'파트너가 케어 팁을 비활성화했습니다'},
+'m_rituals':{ru:'Ритуалы для двоих',en:'Rituals for two',zh:'双人仪式',hi:'दो के लिए अनुष्ठान',es:'Rituales para dos',ar:'طقوس للاثنين',fr:'Rituels pour deux',bn:'দুজনের জন্য আচার',pt:'Rituais para dois',ur:'دو کے لیے رسوم',de:'Rituale für zwei',id:'Ritual untuk berdua',ja:'二人のための儀式',tr:'İki kişi için ritüeller',ko:'둘을 위한 의식'},
+'m_rit_gratitude':{ru:'Благодарность',en:'Gratitude',zh:'感恩',hi:'कृतज्ञता',es:'Gratitud',ar:'امتنان',fr:'Gratitude',bn:'কৃতজ্ঞতা',pt:'Gratidão',ur:'شکریہ',de:'Dankbarkeit',id:'Rasa terima kasih',ja:'感謝',tr:'Minnettarlık',ko:'감사'},
+'m_rit_gratitude_d':{ru:'Скажи 3 вещи, которые ценишь в ней.',en:'Say 3 things you appreciate about her.',zh:'说出3件你欣赏她的事。',hi:'उनके बारे में 3 चीजें बताएं जो आप सराहते हैं।',es:'Di 3 cosas que aprecias de ella.',ar:'قل 3 أشياء تقدرها فيها.',fr:'Dites 3 choses que vous appréciez chez elle.',bn:'তার সম্পর্কে ৩টি জিনিস বলুন যা আপনি মূল্যায়ন করেন।',pt:'Diga 3 coisas que você aprecia nela.',ur:'ان کے بارے میں 3 باتیں کہیں جو آپ قدر کرتے ہیں۔',de:'Sagen Sie 3 Dinge, die Sie an ihr schätzen.',id:'Katakan 3 hal yang Anda hargai darinya.',ja:'彼女について感謝する3つのことを言ってください。',tr:'Onun hakkında takdir ettiğiniz 3 şey söyleyin.',ko:'그녀에 대해 감사한 3가지를 말하세요.'},
+'m_rit_listen':{ru:'Активное слушание',en:'Active listening',zh:'积极倾听',hi:'सक्रिय सुनना',es:'Escucha activa',ar:'الاستماع النشط',fr:'Écoute active',bn:'সক্রিয় শোনা',pt:'Escuta ativa',ur:'فعال سننا',de:'Aktives Zuhören',id:'Mendengarkan aktif',ja:'アクティブリスニング',tr:'Aktif dinleme',ko:'경청'},
+'m_rit_listen_d':{ru:'10 минут слушать, не перебивая.',en:'10 minutes of listening without interrupting.',zh:'10分钟倾听，不打断。',hi:'10 मिनट बिना टोके सुनना।',es:'10 minutos de escucha sin interrumpir.',ar:'10 دقائق من الاستماع دون مقاطعة.',fr:'10 minutes d\'écoute sans interrompre.',bn:'১০ মিনিট বাধা দিয়ে শোনা।',pt:'10 minutos ouvindo sem interromper.',ur:'10 منٹ بنا روکے سننا۔',de:'10 Minuten zuhören, ohne zu unterbrechen.',id:'10 menit mendengarkan tanpa menyela.',ja:'10分間遮らずに聞く。',tr:'10 dakika bölmeden dinlemek.',ko:'10분 동안 끊지 않고 듣기.'},
+'m_rit_surprise':{ru:'Сюрприз',en:'Surprise',zh:'惊喜',hi:'आश्चर्य',es:'Sorpresa',ar:'مفاجأة',fr:'Surprise',bn:'বিস্ময়',pt:'Surpresa',ur:'مفاجحہ',de:'Überraschung',id:'Kejutan',ja:'サプライズ',tr:'Sürpriz',ko:'서프라이즈'},
+'m_rit_surprise_d':{ru:'Купи любимый десерт без повода.',en:'Buy her favorite dessert for no reason.',zh:'无缘无故买她最爱的甜点。',hi:'बिना किसी कारण के उनका पसंदीदा मिठाई खरीदें।',es:'Compra su postre favorito sin motivo.',ar:'اشترِ حلوياتها المفضلة بدون سبب.',fr:'Achetez son dessert préféré sans raison.',bn:'কোনো কারণ ছাড়াই তার প্রিয় মিষ্টি কিনুন।',pt:'Compre a sobremesa favorita dela sem motivo.',ur:'بغیر وجہ کے ان کی پسندیدہ مٹھائی خریدیں۔',de:'Kaufen Sie ihr Lieblingsdessert ohne Grund.',id:'Beli makanan penutup favoritnya tanpa alasan.',ja:'理由なく彼女の好きなデザートを買う。',tr:'Sevdiği tatlıyı sebepsiz satın al.',ko:'이유 없이 그녀가 좋아하는 디저트 사기.'},
+'m_rit_hug':{ru:'Объятия',en:'Hug',zh:'拥抱',hi:'गले लगाना',es:'Abrazo',ar:'عناق',fr:'Câlin',bn:'আলিঙ্গন',pt:'Abraço',ur:'گلے لگانا',de:'Umarmung',id:'Pelukan',ja:'ハグ',tr:'Sarılma',ko:'포옹'},
+'m_rit_hug_d':{ru:'Обними без слов — просто будь рядом.',en:'Hug without words — just be there.',zh:'无言地拥抱——只是在身边。',hi:'बिना शब्दों के गले लगाएं — बस साथ रहें।',es:'Abraza sin palabras — solo está ahí.',ar:'عانق بلا كلمات — فقط كن هناك.',fr:'Prends-la dans tes bras sans mots — sois juste là.',bn:'শব্দ ছাড়াই আলিঙ্গন করুন — শুধু পাশে থাকুন।',pt:'Abrace sem palavras — apenas esteja lá.',ur:'بغیر الفاظ کے گلے لگائیں — بس ساتھ رہیں۔',de:'Umarmen ohne Worte — einfach da sein.',id:'Peluk tanpa kata — hanya hadir di sana.',ja:'言葉なしでハグする — ただそばにいる。',tr:'Kelimesiz sarıl — sadece orada ol.',ko:'말없이 포옹하기 — 그냥 곁에 있기.'},
+'m_connect_for_data':{ru:'Подключитесь к партнерше.',en:'Connect to your partner.',zh:'连接到伴侣。',hi:'साथी से जुड़ें।',es:'Conéctate con tu pareja.',ar:'اتصل بشريكتك.',fr:'Connectez-vous à votre partenaire.',bn:'সঙ্গীর সাথে সংযুক্ত হন।',pt:'Conecte-se à sua parceira.',ur:'ساتھی سے جڑیں۔',de:'Verbinden Sie sich mit Ihrer Partnerin.',id:'Hubungkan ke pasangan.',ja:'パートナーに接続してください。',tr:'Partnerinize bağlanın.',ko:'파트너에게 연결하세요.'},
+'m_how_cycle':{ru:'Как прошел цикл',en:'How the cycle went',zh:'周期回顾',hi:'चक्र कैसा रहा',es:'Cómo transcurrió el ciclo',ar:'كيف مرت الدورة',fr:'Comment s\'est passé le cycle',bn:'চক্র কেমন কাটল',pt:'Como foi o ciclo',ur:'چکر کیسا رہا',de:'Wie der Zyklus verlief',id:'Bagaimana siklus berlangsung',ja:'周期の振り返り',tr:'Döngü nasıl geçti',ko:'주기 회고'},
+'m_cycle_summary':{ru:'Обобщенная информация о циклах, которой партнерша решила поделиться.',en:'Summary of cycle data your partner chose to share.',zh:'伴侣选择分享的周期数据摘要。',hi:'साथी द्वारा साझा करने के लिए चुने गए चक्र डेटा का सारांश।',es:'Resumen de los datos del ciclo que tu pareja decidió compartir.',ar:'ملخص بيانات الدورة التي اختارت الشريكة مشاركتها.',fr:'Résumé des données de cycle que votre partenaire a choisi de partager.',bn:'সঙ্গী শেয়ার করতে বেছে নেওয়া চক্র ডেটার সারাংশ।',pt:'Resumo dos dados do ciclo que sua parceira escolheu compartilhar.',ur:'ساتھی کے شیئر کرنے کے لیے چنے ہوئے چکر ڈیٹا کا خلاصہ۔',de:'Zusammenfassung der Zyklusdaten, die Ihre Partnerin teilen möchte.',id:'Ringkasan data siklus yang dipilih pasangan untuk dibagikan.',ja:'パートナーが共有を選んだ周期データの要約。',tr:'Partnerinizin paylaşmayı seçtiği döngü verilerinin özeti.',ko:'파트너가 공유하기로 선택한 주기 데이터 요약.'},
+'m_stats_later':{ru:'Статистика будет доступна после завершения первого полного цикла.',en:'Statistics will be available after the first complete cycle.',zh:'统计数据将在第一个完整周期后可用。',hi:'पहले पूरे चक्र के बाद आंकड़े उपलब्ध होंगे।',es:'Las estadísticas estarán disponibles tras el primer ciclo completo.',ar:'ستكون الإحصائيات متاحة بعد الدورة الكاملة الأولى.',fr:'Les statistiques seront disponibles après le premier cycle complet.',bn:'প্রথম সম্পূর্ণ চক্রের পরে পরিসংখ্যান উপলব্ধ হবে।',pt:'As estatísticas estarão disponíveis após o primeiro ciclo completo.',ur:'پہلے مکمل چکر کے بعد اعداد و شمار دستیاب ہوں گے۔',de:'Statistiken sind nach dem ersten vollständigen Zyklus verfügbar.',id:'Statistik akan tersedia setelah siklus pertama selesai.',ja:'最初の完全な周期後に統計が利用可能になります。',tr:'İstatistikler ilk tam döngüden sonra kullanılabilecek.',ko:'첫 번째 완전한 주기 후에 통계를 사용할 수 있습니다.'},
+'m_current_reco':{ru:'Текущие рекомендации',en:'Current recommendations',zh:'当前推荐',hi:'वर्तमान सिफारिशें',es:'Recomendaciones actuales',ar:'التوصيات الحالية',fr:'Recommandations actuelles',bn:'বর্তমান সুপারিশ',pt:'Recomendações atuais',ur:'موجودہ سفارشات',de:'Aktuelle Empfehlungen',id:'Rekomendasi saat ini',ja:'現在の推奨事項',tr:'Mevcut öneriler',ko:'현재 추천'},
+'day_word':{ru:'День',en:'Day',zh:'天',hi:'दिन',es:'Día',ar:'يوم',fr:'Jour',bn:'দিন',pt:'Dia',ur:'دن',de:'Tag',id:'Hari',ja:'日',tr:'Gün',ko:'일'},
+'m_be_attentive':{ru:'Будьте внимательны и заботливы',en:'Be attentive and caring',zh:'细心关爱',hi:'सचेत और देखभाल करने वाले बनें',es:'Sé atento y cariñoso',ar:'كن منتبهاً ومهتماً',fr:'Soyez attentif et bienveillant',bn:'মনোযোগী এবং যত্নশীল হন',pt:'Seja atencioso e carinhoso',ur:'توجہ اور دیکھ بھال والے بنیں',de:'Seien Sie aufmerksam und fürsorglich',id:'Jadi penuh perhatian dan peduli',ja:'注意深く思いやりを持つ',tr:'Dikkatli ve özenli olun',ko:'주의 깊고 다정하게'},'m_gen_test':{ru:'Сгенерировать тестовые',en:'Generate test tips',zh:'生成测试提示',hi:'परीक्षण सुझाव बनाएं',es:'Generar consejos de prueba',ar:'إنشاء نصائح تجريبية',fr:'Générer des conseils de test',bn:'পরীক্ষামূলক টিপস তৈরি করুন',pt:'Gerar dicas de teste',ur:'ٹیسٹ مشورے بنائیں',de:'Test-Tipps generieren',id:'Buat tips uji',ja:'テストヒントを生成',tr:'Test ipuçları oluştur',ko:'테스트 팁 생성'},
 };
 function _(key,...args){
   var t=(_T[key]&&_T[key][_lang])||(_T[key]&&_T[key].ru)||key;
