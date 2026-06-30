@@ -1245,26 +1245,29 @@ function showPhaseSplash(uid, cb){
 }
 
 // ====== TUTORIAL ======
-const TUTORIAL_STEPS = [
+function getTutSteps(){
+  return [
   {icon:'waves',title:_('tut_wave'),desc:_('tut_wave_desc')},
   {icon:'heart',title:_('tut_self'),desc:_('tut_self_desc')},
   {icon:'message-circle',title:_('tut_sonya'),desc:_('tut_sonya_desc')},
   {icon:'link',title:_('tut_couple'),desc:_('tut_couple_desc')},
   {icon:'edit-3',title:_('tut_diary'),desc:_('tut_diary_desc')},
-];
+  ];
+}
 function showTutorial(onDone){
+  let TS=getTutSteps();
   let step=S._tutStep||0;
-  let s=TUTORIAL_STEPS[step];
+  let s=TS[step];
   if(!s){delete S._tutStep;if(onDone)onDone();return}
   let div=document.createElement('div');
   div.id='tut-overlay';
   div.className='tut-overlay';
-  let dots=TUTORIAL_STEPS.map((_,i)=>`<span class="tut-dot ${i===step?'act':''}" onclick="gotoTutStep(${i})"></span>`).join('');
+  let dots=TS.map((_,i)=>`<span class="tut-dot ${i===step?'act':''}" onclick="gotoTutStep(${i})"></span>`).join('');
   let prevBtn=step>0?`<button class="btn btn-s btn-sm" onclick="gotoTutStep(${step-1})">${_('tut_back')}</button>`:'';
-  let nextBtn=step<TUTORIAL_STEPS.length-1?`<button class="btn btn-p btn-sm" onclick="gotoTutStep(${step+1})">${_('tut_next')}</button>`:`<button class="btn btn-p btn-sm" onclick="finishTut()">${_('tut_done')}</button>`;
+  let nextBtn=step<TS.length-1?`<button class="btn btn-p btn-sm" onclick="gotoTutStep(${step+1})">${_('tut_next')}</button>`:`<button class="btn btn-p btn-sm" onclick="finishTut()">${_('tut_done')}</button>`;
   div.innerHTML=rI(`
     <div class="tut-card">
-      <div class="tut-step">${step+1} / ${TUTORIAL_STEPS.length}</div>
+      <div class="tut-step">${step+1} / ${TS.length}</div>
       <div class="tut-icon">${ic(s.icon,'lx-xl')}</div>
       <h3>${s.title}</h3>
       <p>${s.desc}</p>
