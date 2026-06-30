@@ -69,9 +69,9 @@ input,button,select,textarea{font-family:inherit}
   padding:2.5rem;text-align:center;background:linear-gradient(135deg,var(--bg) 0%,var(--bg2) 50%,var(--bg2) 100%);
   position:relative;overflow:hidden}
 .landing::before{content:'';position:absolute;width:700px;height:700px;border-radius:50%;
-  background:radial-gradient(circle,rgba(224,168,168,.08) 0%,transparent 70%);top:-200px;right:-200px}
+  background:radial-gradient(circle,rgba(224,168,168,.08) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none;z-index:0}
 .landing::after{content:'';position:absolute;width:500px;height:500px;border-radius:50%;
-  background:radial-gradient(circle,rgba(143,191,168,.08) 0%,transparent 70%);bottom:-150px;left:-150px}
+  background:radial-gradient(circle,rgba(143,191,168,.08) 0%,transparent 70%);bottom:-150px;left:-150px;pointer-events:none;z-index:0}
 .landing-logo{font-size:4.2rem;margin-bottom:16px;animation:float 4s ease-in-out infinite;position:relative}
 .landing h1{font-size:3.2rem;font-weight:800;margin-bottom:14px;letter-spacing:-.03em;position:relative}
 .landing h1 span{background:linear-gradient(135deg,var(--rose),var(--roseD));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -85,11 +85,11 @@ input,button,select,textarea{font-family:inherit}
 .auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2.5rem;
   background:linear-gradient(135deg,var(--bg) 0%,var(--bg2) 50%,var(--bg2) 100%);position:relative;overflow:hidden}
 .auth-page::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;
-  background:radial-gradient(circle,rgba(224,168,168,.06) 0%,transparent 70%);top:-150px;right:-150px}
+  background:radial-gradient(circle,rgba(224,168,168,.06) 0%,transparent 70%);top:-150px;right:-150px;pointer-events:none;z-index:0}
 .auth-card{background:rgba(255,255,255,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   border-radius:32px;padding:44px 40px;width:100%;max-width:480px;
   box-shadow:var(--shadowL),var(--shadow);
-  border:1px solid rgba(255,255,255,.8);position:relative}
+  border:1px solid rgba(255,255,255,.8);position:relative;z-index:1}
 [data-theme="dark"] .auth-card{background:rgba(37,34,32,.9);border-color:rgba(255,255,255,.06)}
 .auth-card h2{font-size:1.7rem;font-weight:800;margin-bottom:6px;letter-spacing:-.02em}
 .auth-card>p{color:var(--text2);margin-bottom:28px;font-size:1rem}
@@ -1915,12 +1915,12 @@ const _T={
 'period_len':{ru:'Длина месячных (дни)',en:'Period length (days)',zh:'经期长度（天）',hi:'मासिक लंबाई (दिन)',es:'Duración del periodo (días)',ar:'مدة الحيض (أيام)',fr:'Durée des règles (jours)',bn:'মাসিক দৈর্ঘ্য (দিন)',pt:'Duração da menstruação (dias)',ur:'ماہواری کی لمبائی (دن)',de:'Dauer der Periode (Tage)',id:'Durasi haid (hari)',ja:'生理の長さ（日）',tr:'Adet süresi (gün)',ko:'생리 기간 (일)'},
 'period_len_hint':{ru:'Обычно 3–7 дней',en:'Usually 3–7 days',zh:'通常3-7天',hi:'आमतौर पर 3-7 दिन',es:'Normalmente 3-7 días',ar:'عادة 3-7 أيام',fr:'Généralement 3-7 jours',bn:'সাধারণত ৩-৭ দিন',pt:'Geralmente 3-7 dias',ur:'عام طور پر 3-7 دن',de:'Normalerweise 3-7 Tage',id:'Biasanya 3-7 hari',ja:'通常3〜7日',tr:'Genellikle 3-7 gün',ko:'보통 3-7일'},
 'cycle_save':{ru:'Сохранить и продолжить',en:'Save and continue',zh:'保存并继续',hi:'सहेजें और जारी रखें',es:'Guardar y continuar',ar:'حفظ ومتابعة',fr:'Enregistrer et continuer',bn:'সংরক্ষণ ও চালিয়ে যান',pt:'Salvar e continuar',ur:'محفوظ کریں اور جاری رکھیں',de:'Speichern und fortfahren',id:'Simpan dan lanjutkan',ja:'保存して続ける',tr:'Kaydet ve devam et',ko:'저장하고 계속'},
-'cycle_skip':{ru:'Пропустить — настрою позже',en:'Skip — I\'ll set it up later'},
+'cycle_skip':{ru:'Пропустить — настрою позже',en:'Skip — Ill set it up later',zh:'跳过 — 稍后设置',hi:'छोड़ें — बाद में सेट करूंगा',es:'Omitir — lo configuraré después',ar:'تخطي — سأضبطه لاحقاً',fr:'Passer — je le configurerai plus tard',bn:'এড়িয়ে যান — পরে সেট করব',pt:'Pular — vou configurar depois',ur:'چھوڑیں — بعد میں سیٹ کروں گا',de:'Überspringen — richte ich später ein',id:'Lewati — akan saya atur nanti',ja:'スキップ — 後で設定します',tr:'Atla — sonra ayarlayacağım',ko:'건너뛰기 — 나중에 설정'},
 'connect_title':{ru:'Подключение к паре',en:'Connect to couple',zh:'连接到伴侣',hi:'कपल से कनेक्ट करें',es:'Conectar con la pareja',ar:'الاتصال بالزوجين',fr:'Se connecter au couple',bn:'কাপলের সাথে সংযুক্ত হন',pt:'Conectar ao casal',ur:'جوڑے سے جڑیں',de:'Mit dem Paar verbinden',id:'Hubungkan ke pasangan',ja:'カップルに接続',tr:'Çifte bağlan',ko:'커플에 연결'},
 'connect_sub':{ru:'Введите код пары, который передала вам партнерша.',en:'Enter the couple code your partner shared with you.',zh:'输入您的伴侣分享的情侣代码。',hi:'अपनी साथी द्वारा साझा किए गए कपल कोड दर्ज करें।',es:'Ingresa el código de pareja que compartió tu pareja.',ar:'أدخل رمز الزوجين الذي شاركته شريكتك.',fr:'Entrez le code de couple que votre partenaire a partagé avec vous.',bn:'আপনার সঙ্গীর শেয়ার করা কাপল কোড লিখুন।',pt:'Digite o código do casal que sua parceira compartilhou.',ur:'اپنی ساتھی کے شیئر کیے ہوئے جوڑے کا کوڈ درج کریں۔',de:'Geben Sie den Paarcode ein, den Ihre Partnerin mit Ihnen geteilt hat.',id:'Masukkan kode pasangan yang dibagikan pasangan Anda.',ja:'パートナーが共有したカップルコードを入力。',tr:'Partnerinizin paylaştığı çift kodunu girin.',ko:'파트너가 공유한 커플 코드를 입력하세요.'},
 'connect_code':{ru:'Код пары',en:'Couple code',zh:'情侣代码',hi:'कपल कोड',es:'Código de pareja',ar:'رمز الزوجين',fr:'Code de couple',bn:'কাপল কোড',pt:'Código do casal',ur:'جوڑے کا کوڈ',de:'Paarcode',id:'Kode pasangan',ja:'カップルコード',tr:'Çift kodu',ko:'커플 코드'},
 'connect_btn':{ru:'Подключиться',en:'Connect',zh:'连接',hi:'जुड़ें',es:'Conectar',ar:'اتصال',fr:'Connecter',bn:'সংযুক্ত',pt:'Conectar',ur:'جڑیں',de:'Verbinden',id:'Hubungkan',ja:'接続',tr:'Bağlan',ko:'연결'},
-'connect_skip':{ru:'Пропустить — подключусь позже',en:'Skip — I\'ll connect later'},
+'connect_skip':{ru:'Пропустить — подключусь позже',en:'Skip — Ill connect later',zh:'跳过 — 稍后连接',hi:'छोड़ें — बाद में जुड़ूंगा',es:'Omitir — conectaré después',ar:'تخطي — سأتصل لاحقاً',fr:'Passer — je me connecterai plus tard',bn:'এড়িয়ে যান — পরে সংযুক্ত হব',pt:'Pular — vou conectar depois',ur:'چھوڑیں — بعد میں جڑوں گا',de:'Überspringen — verbinde ich später',id:'Lewati — akan hubungkan nanti',ja:'スキップ — 後で接続します',tr:'Atla — sonra bağlanacağım',ko:'건너뛰기 — 나중에 연결'},
 'logout':{ru:'Выйти',en:'Log out',zh:'退出',hi:'लॉग आउट',es:'Cerrar sesión',ar:'تسجيل الخروج',fr:'Se déconnecter',bn:'লগআউট',pt:'Sair',ur:'لاگ آؤٹ',de:'Abmelden',id:'Keluar',ja:'ログアウト',tr:'Çıkış yap',ko:'로그아웃'},
 'voice_btn':{ru:'Выговориться',en:'Speak out',zh:'倾诉',hi:'बात करें',es:'Desahogarse',ar:'تعبير',fr:'Se confier',bn:'বলুন',pt:'Desabafar',ur:'اظہار',de:'Aussprechen',id:'Curhat',ja:'聞いてほしい',tr:'Dökül',ko:'털어놓기'},
 'phase_mens':{ru:'Менструальная',en:'Menstrual',zh:'月经期',hi:'मासिक धर्म',es:'Menstrual',ar:'الحائض',fr:'Menstruelle',bn:'মেনস্ট্রুয়াল',pt:'Menstrual',ur:'حیض',de:'Menstruell',id:'Menstruasi',ja:'月経期',tr:'Menstrüel',ko:'월경기'},
@@ -1956,8 +1956,8 @@ const _T={
 'to_premium':{ru:'перейти в Premium',en:'upgrade to Premium',zh:'升级到Premium',hi:'प्रीमियम में अपग्रेड करें',es:'mejorar a Premium',ar:'الترقية إلى Premium',fr:'passer à Premium',bn:'Premium-এ আপগ্রেড',pt:'atualizar para Premium',ur:'پریمیم میں اپ گریڈ',de:'auf Premium upgraden',id:'upgrade ke Premium',ja:'Premiumにアップグレード',tr:'Premium\'a geç',ko:'Premium으로 업그레이드'},
 'voice_limit':{ru:'Лимит исчерпан',en:'Limit reached',zh:'已达上限',hi:'सीमा पूरी',es:'Límite alcanzado',ar:'تم بلوغ الحد',fr:'Limite atteinte',bn:'সীমা পূর্ণ',pt:'Limite atingido',ur:'حد پوری',de:'Limit erreicht',id:'Batas tercapai',ja:'上限に達しました',tr:'Sınıra ulaşıldı',ko:'한도 도달'},
 'voice_limit_desc':{ru:'На бесплатном тарифе — 1 сессия в месяц. Оформите Premium для безлимитного доступа.',en:'Free plan: 1 session/month. Get Premium for unlimited access.',zh:'免费套餐：每月1次会话。升级Premium获得无限访问。',hi:'मुफ्त योजना: मासिक 1 सत्र। असीमित पहुंच के लिए Premium प्राप्त करें।',es:'Plan gratuito: 1 sesión/mes. Obtén Premium para acceso ilimitado.',ar:'الخطة المجانية: جلسة واحدة/شهر. احصل على Premium للوصول غير المحدود.',fr:'Forfait gratuit : 1 séance/mois. Passez à Premium pour un accès illimité.',bn:'ফ্রি প্ল্যান: মাসে ১ সেশন। অসীম অ্যাক্সেসের জন্য Premium নিন।',pt:'Plano gratuito: 1 sessão/mês. Obtenha Premium para acesso ilimitado.',ur:'مفت پلان: ماہانہ 1 سیشن۔ لامحدود رسائی کے لیے Premium حاصل کریں۔',de:'Kostenloser Tarif: 1 Sitzung/Monat. Premium für unbegrenzten Zugriff.',id:'Paket gratis: 1 sesi/bulan. Dapatkan Premium untuk akses tanpa batas.',ja:'無料プラン：月1回。Premiumで無制限アクセス。',tr:'Ücretsiz plan: ayda 1 oturum. Sınırsız erişim için Premium.',ko:'무료 요금제: 월 1회. Premium으로 무제한 이용.'},
-'voice_listen':{ru:'Я слушаю',en:'I\'m listening'},
-'voice_prompt':{ru:'Говори сколько хочешь. Я никуда не спешу.',en:'Speak as much as you want. I\'m in no hurry.'},
+'voice_listen':{ru:'Я слушаю',en:'Im listening',zh:'我在听',hi:'मैं सुन रहा हूं',es:'Te escucho',ar:'أنا أستمع',fr:'Jécoute',bn:'আমি শুনছি',pt:'Estou ouvindo',ur:'میں سن رہا ہوں',de:'Ich höre zu',id:'Aku mendengarkan',ja:'聞いています',tr:'Dinliyorum',ko:'듣고 있어요'},
+'voice_prompt':{ru:'Говори сколько хочешь. Я никуда не спешу.',en:'Speak as much as you want. Im in no hurry.',zh:'想说多少就说多少。我不着急。',hi:'जितना चाहें बोलें। मुझे जल्दी नहीं है।',es:'Habla todo lo que quieras. No tengo prisa.',ar:'تحدث بقدر ما تريد. أنا لست مستعجلاً.',fr:'Parlez autant que vous voulez. Je ne suis pas pressé.',bn:'যত খুশি বলুন। আমার তাড়া নেই।',pt:'Fale o quanto quiser. Não tenho pressa.',ur:'جتنا چاہیں بولیں۔ مجھے جلدی نہیں۔',de:'Sprechen Sie so viel Sie wollen. Ich habe es eilig.',id:'Bicara sebanyak yang Anda mau. Saya tidak buru-buru.',ja:'好きなだけ話してください。急いでいません。',tr:'İstediğin kadar konuş. Acelem yok.',ko:'원하는 만큼 말하세요. 급하지 않아요.'},
 'voice_start':{ru:'Нажми, чтобы начать',en:'Tap to start',zh:'点击开始',hi:'शुरू करने के लिए टैप करें',es:'Toca para empezar',ar:'اضغط للبدء',fr:'Touchez pour commencer',bn:'শুরু করতে ট্যাপ করুন',pt:'Toque para começar',ur:'شروع کرنے کے لیے ٹیپ کریں',de:'Tippen zum Starten',id:'Ketuk untuk mulai',ja:'タップして開始',tr:'Başlamak için dokun',ko:'눌러서 시작'},
 'voice_cancel':{ru:'Отмена',en:'Cancel',zh:'取消',hi:'रद्द करें',es:'Cancelar',ar:'إلغاء',fr:'Annuler',bn:'বাতিল',pt:'Cancelar',ur:'منسوخ',de:'Abbrechen',id:'Batal',ja:'キャンセル',tr:'İptal',ko:'취소'},
 'voice_recording':{ru:'0:00 · Говорите...',en:'0:00 · Speaking...',zh:'0:00 · 说话中...',hi:'0:00 · बोल रहे हैं...',es:'0:00 · Hablando...',ar:'0:00 · يتحدث...',fr:'0:00 · Parle...',bn:'0:00 · বলছেন...',pt:'0:00 · Falando...',ur:'0:00 · بول رہے ہیں...',de:'0:00 · Sprechen...',id:'0:00 · Berbicara...',ja:'0:00 · 話中...',tr:'0:00 · Konuşuyor...',ko:'0:00 · 말하는 중...'},
@@ -2186,73 +2186,108 @@ function updateLandingTexts(){
   lucide.createIcons();
 }
 function updateAuthTexts(){
-  var map={
-    'p-login h2':'login_welcome','p-login p.sub':'login_subtitle',
-    'p-login label[for=login-remember]':'login_remember',
-    'p-login .social-divider span':'login_or',
-    'p-login .auth-link':'no_account',
-    'p-login .auth-link a':'register_link',
-    'p-login button.btn-p':'login_btn',
-    'p-login button.btn-g.btn-block':'back',
-    'p-register-female #rf-page1 h2':'reg_title',
-    'p-register-female #rf-page1 p':'reg_f_sub',
-    'p-register-female #rf-page1 button.btn-p':'create_btn',
-    'p-register-female #rf-page1 button.btn-g.btn-block':'back',
-    'p-register-female #rf-page2 h2':'cycle_setup',
-    'p-register-female #rf-page2 p':'cycle_setup_sub',
-    'p-register-female #rf-page2 button.btn-p':'cycle_save',
-    'p-register-female #rf-page2 button.btn-g.btn-block':'back',
-    'p-register-male #rm-page1 h2':'reg_title',
-    'p-register-male #rm-page1 p':'reg_m_sub',
-    'p-register-male #rm-page1 button.btn-p':'create_btn',
-    'p-register-male #rm-page1 button.btn-g.btn-block':'back',
-    'p-register-male #rm-page2 h2':'connect_title',
-    'p-register-male #rm-page2 p':'connect_sub',
-    'p-register-male #rm-page2 button.btn-p':'connect_btn',
-    'p-register-male #rm-page2 button.btn-g.btn-block':'back'
-  };
-  for(var sel in map){
-    var key=map[sel];
-    var parts=sel.split(' ');
-    var scope=document.getElementById(parts[0].replace('#','').replace('p-','p-'));
-    if(!scope)scope=document.querySelector('#'+parts[0]);
-    if(!scope)continue;
-    var el=scope.querySelector(parts.slice(1).join(' '));
-    if(el){
-      var val=_(key);
-      if(sel.indexOf('auth-link')>=0&&key==='no_account'){
-        el.innerHTML=val+' <a onclick="navigate(\'landing\')">'+_('register_link')+'</a>';
-      }else if(sel.indexOf('auth-link')>=0&&key==='register_link'){
-        // skip, handled by no_account
-      }else if(sel.indexOf('.social-divider')>=0){
-        el.textContent=val;
-      }else if(el.tagName==='BUTTON'){
-        // preserve icon
-        var ic=el.querySelector('i[data-lucide],svg');
-        if(ic)el.innerHTML=ic.outerHTML+' '+val;else el.textContent=val;
-      }else{
-        el.textContent=val;
-      }
+  function setTxt(el,key){
+    if(!el)return;
+    var val=_(key);
+    var ic=el.querySelector('i[data-lucide],svg');
+    if(ic)el.innerHTML=ic.outerHTML+' '+val;else el.textContent=val;
+  }
+  function setSimple(el,key){if(el)el.textContent=_(key)}
+  function setHTML(el,html){if(el)el.innerHTML=html}
+
+  var lp=document.getElementById('p-login');
+  if(lp){
+    var lh2=lp.querySelector('h2');if(lh2)setHTML(lh2,ic('heart-handshake','lx lx-lg')+' '+_('login_welcome'));
+    var lp1=lp.querySelector('.auth-card > p');if(lp1)setSimple(lp1,'login_subtitle');
+    setSimple(lp.querySelector('label[for=login-remember]'),'login_remember');
+    var sd=lp.querySelector('.social-divider span');if(sd)setSimple(sd,'login_or');
+    var al=lp.querySelector('.auth-link');
+    if(al)setHTML(al,_('no_account')+' <a onclick="navigate('+String.fromCharCode(39)+'landing'+String.fromCharCode(39)+')">'+_('register_link')+'</a>');
+    var lbtns=lp.querySelectorAll('button');
+    lbtns.forEach(function(b){
+      if(b.classList.contains('btn-p'))setTxt(b,'login_btn');
+      else if(b.classList.contains('btn-g')&&b.classList.contains('btn-block'))setTxt(b,'back');
+    });
+    var le=document.getElementById('login-email');if(le&&le.previousElementSibling&&le.previousElementSibling.tagName==='LABEL')setSimple(le.previousElementSibling,'login_email');
+    var lp2=document.getElementById('login-pass');if(lp2&&lp2.previousElementSibling&&lp2.previousElementSibling.tagName==='LABEL')setSimple(lp2.previousElementSibling,'login_pass');
+    if(le)le.placeholder=_('login_email');
+    if(lp2)lp2.placeholder=_('login_pass_ph');
+    var ql=lp.querySelector('#login-quick');
+    if(ql){
+      var qlp=ql.querySelector('p');if(qlp)setHTML(qlp,ic('waves','lx lx-lg')+' '+_('login_back'));
+      var qlb=ql.querySelector('#login-quick-btn');if(qlb)setHTML(qlb,_('login_as')+' <span id="login-quick-name" style="font-weight:800"></span>');
+      var qlc=ql.querySelectorAll('button.btn-g');qlc.forEach(function(b){if(b.id!=='login-quick-btn')setSimple(b,'login_not_me')});
     }
   }
-  // Update labels
-  var labels={'rf-name':'name_label','rf-email':'login_email','rf-pass':'pass_label','rm-name':'name_label','rm-email':'login_email','rm-pass':'pass_label','login-email':'login_email','login-pass':'login_pass'};
-  for(var id in labels){
-    var inp=document.getElementById(id);
-    if(inp){
-      var lbl=inp.previousElementSibling;
-      if(lbl&&lbl.tagName==='LABEL')lbl.textContent=_(labels[id]);
-    }
+
+  var rf1=document.getElementById('rf-page1');
+  if(rf1){
+    var rfH=rf1.querySelector('h2');if(rfH)setHTML(rfH,ic('sprout','lx lx-lg')+' '+_('reg_title'));
+    var rfP=rf1.querySelector('.auth-card > p');if(rfP)setSimple(rfP,'reg_f_sub');
+    var rBtns=rf1.querySelectorAll('button');
+    rBtns.forEach(function(b){
+      if(b.classList.contains('btn-p'))setTxt(b,'create_btn');
+      else if(b.classList.contains('btn-g')&&b.classList.contains('btn-block'))setTxt(b,'back');
+    });
+    var rfn=document.getElementById('rf-name');if(rfn&&rfn.previousElementSibling&&rfn.previousElementSibling.tagName==='LABEL')setSimple(rfn.previousElementSibling,'name_label');
+    var rfe=document.getElementById('rf-email');if(rfe&&rfe.previousElementSibling&&rfe.previousElementSibling.tagName==='LABEL')setSimple(rfe.previousElementSibling,'login_email');
+    var rfp=document.getElementById('rf-pass');if(rfp&&rfp.previousElementSibling&&rfp.previousElementSibling.tagName==='LABEL')setSimple(rfp.previousElementSibling,'pass_label');
+    if(rfn)rfn.placeholder=_('name_ph');
+    if(rfe)rfe.placeholder=_('login_email');
+    if(rfp)rfp.placeholder=_('pass_hint');
+    var ral=rf1.querySelector('.auth-link');
+    if(ral)setHTML(ral,_('have_account')+' <a onclick="navigate('+String.fromCharCode(39)+'login'+String.fromCharCode(39)+')">'+_('register_link')+'</a>');
   }
-  // Placeholders
-  var phs={'rf-name':'name_ph','rf-pass':'pass_hint','rm-name':'name_ph','rm-pass':'pass_hint','login-pass':'login_pass_ph'};
-  for(var id in phs){
-    var e=document.getElementById(id);
-    if(e)e.placeholder=_(phs[id]);
+
+  var rf2=document.getElementById('rf-page2');
+  if(rf2){
+    var r2H=rf2.querySelector('h2');if(r2H)setHTML(r2H,ic('bar-chart-3','lx lx-lg')+' '+_('cycle_setup'));
+    var r2P=rf2.querySelector('.auth-card > p');if(r2P)setSimple(r2P,'cycle_setup_sub');
+    var r2Btns=rf2.querySelectorAll('button');
+    r2Btns.forEach(function(b){
+      if(b.classList.contains('btn-p'))setTxt(b,'cycle_save');
+      else if(b.classList.contains('btn-g')&&b.classList.contains('btn-block'))setTxt(b,'back');
+      else if(b.classList.contains('btn-g')&&!b.classList.contains('btn-block'))setSimple(b,'cycle_skip');
+    });
+    var rlp=document.getElementById('rf-last-period');if(rlp&&rlp.previousElementSibling&&rlp.previousElementSibling.tagName==='LABEL')setSimple(rlp.previousElementSibling,'cycle_start');
+    var rcl=document.getElementById('rf-cycle-len');if(rcl&&rcl.previousElementSibling&&rcl.previousElementSibling.tagName==='LABEL')setSimple(rcl.previousElementSibling,'cycle_len');
+    var rpl=document.getElementById('rf-period-len');if(rpl&&rpl.previousElementSibling&&rpl.previousElementSibling.tagName==='LABEL')setSimple(rpl.previousElementSibling,'period_len');
   }
+
+  var rm1=document.getElementById('rm-page1');
+  if(rm1){
+    var rmH=rm1.querySelector('h2');if(rmH)setHTML(rmH,ic('handshake','lx lx-lg')+' '+_('reg_title'));
+    var rmP=rm1.querySelector('.auth-card > p');if(rmP)setSimple(rmP,'reg_m_sub');
+    var mBtns=rm1.querySelectorAll('button');
+    mBtns.forEach(function(b){
+      if(b.classList.contains('btn-p'))setTxt(b,'create_btn');
+      else if(b.classList.contains('btn-g')&&b.classList.contains('btn-block'))setTxt(b,'back');
+    });
+    var rmn=document.getElementById('rm-name');if(rmn&&rmn.previousElementSibling&&rmn.previousElementSibling.tagName==='LABEL')setSimple(rmn.previousElementSibling,'name_label');
+    var rme=document.getElementById('rm-email');if(rme&&rme.previousElementSibling&&rme.previousElementSibling.tagName==='LABEL')setSimple(rme.previousElementSibling,'login_email');
+    var rmp=document.getElementById('rm-pass');if(rmp&&rmp.previousElementSibling&&rmp.previousElementSibling.tagName==='LABEL')setSimple(rmp.previousElementSibling,'pass_label');
+    if(rmn)rmn.placeholder=_('name_ph');
+    if(rme)rme.placeholder=_('login_email');
+    if(rmp)rmp.placeholder=_('pass_hint');
+    var mal=rm1.querySelector('.auth-link');
+    if(mal)setHTML(mal,_('have_account')+' <a onclick="navigate('+String.fromCharCode(39)+'login'+String.fromCharCode(39)+')">'+_('register_link')+'</a>');
+  }
+
+  var rm2=document.getElementById('rm-page2');
+  if(rm2){
+    var m2H=rm2.querySelector('h2');if(m2H)setHTML(m2H,ic('link','lx lx-lg')+' '+_('connect_title'));
+    var m2P=rm2.querySelector('.auth-card > p');if(m2P)setSimple(m2P,'connect_sub');
+    var m2Btns=rm2.querySelectorAll('button');
+    m2Btns.forEach(function(b){
+      if(b.classList.contains('btn-p'))setTxt(b,'connect_btn');
+      else if(b.classList.contains('btn-g')&&b.classList.contains('btn-block'))setTxt(b,'back');
+      else if(b.classList.contains('btn-g')&&!b.classList.contains('btn-block'))setSimple(b,'connect_skip');
+    });
+    var rmc=document.getElementById('rm-code');if(rmc&&rmc.previousElementSibling&&rmc.previousElementSibling.tagName==='LABEL')setSimple(rmc.previousElementSibling,'connect_code');
+  }
+
   lucide.createIcons();
 }
-
 // ====== PRIVACY HELPERS ======
 function getUserPriv(uid){
   let u=S.users.find(x=>x.id===uid);
