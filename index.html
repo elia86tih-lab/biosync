@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>BioSync — Код пары</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231B9E8C'/%3E%3Cstop offset='1' stop-color='%2315857A'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%23F7F3EE'/%3E%3Cpath d='M12 40 Q20 28 32 36 T52 30' fill='none' stroke='url(%23g)' stroke-width='3.5' stroke-linecap='round'/%3E%3Cpath d='M12 44 Q20 32 32 40 T52 34' fill='none' stroke='%2300F0FF' stroke-width='2.5' stroke-linecap='round' opacity='.5'/%3E%3Ccircle cx='32' cy='24' r='6' fill='url(%23g)'/%3E%3Ccircle cx='32' cy='24' r='3' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231B9E8C'/%3E%3Cstop offset='1' stop-color='%2315857A'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%23F7F3EE'/%3E%3Cpath d='M12 40 Q20 28 32 36 T52 30' fill='none' stroke='url(%23g)' stroke-width='3.5' stroke-linecap='round'/%3E%3Cpath d='M12 44 Q20 32 32 40 T52 34' fill='none' stroke='%2300F0FF' stroke-width='2.5' stroke-linecap='round' opacity='.5'/%3E%3Ccircle cx='32' cy='24' r='6' fill='url(%23g)'/%3E%3Ccircle cx='32' cy='24' r='3' fill='%23fff'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -119,7 +121,7 @@ input,button,select,textarea{font-family:inherit}
 .dash-hdr{background:rgba(255,255,255,.8);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   padding:16px 28px;display:flex;align-items:center;justify-content:space-between;
   border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-.dash-logo{font-size:1.35rem;font-weight:800;letter-spacing:-.02em}
+.dash-logo{font-size:1.35rem;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:6px}
 .dash-logo span{background:linear-gradient(135deg,var(--rose),var(--roseD));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .dash-r{display:flex;align-items:center;gap:12px}
 .dash-user{font-size:.95rem;color:var(--text2);font-weight:500;padding:6px 14px;background:var(--bg);border-radius:50px}
@@ -346,7 +348,30 @@ input,button,select,textarea{font-family:inherit}
     <div style="position:absolute;top:20px;right:24px;z-index:10">
       <button class="btn btn-g btn-sm" onclick="let t=S._theme||localStorage.getItem('biosync_theme')||'light';setTheme(t==='dark'?'light':'dark')" style="font-size:1.2rem;padding:8px 12px;border-radius:50%;width:40px;height:40px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow)" title="Сменить тему"><i data-lucide="moon" class="lx"></i></button>
     </div>
-    <div style="font-size:3rem;margin-bottom:8px;color:var(--roseD)"><i data-lucide="heart-handshake" class="lx lx-xl"></i></div>
+    <div style="margin-bottom:8px;display:flex;justify-content:center">
+      <svg width="80" height="80" viewBox="0 0 80 80" style="animation:float 4s ease-in-out infinite;filter:drop-shadow(0 4px 20px rgba(27,158,140,.2))">
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#1B9E8C"/>
+            <stop offset="1" stop-color="#15857A"/>
+          </linearGradient>
+          <linearGradient id="lg2" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#1B9E8C" stop-opacity=".3"/>
+            <stop offset="1" stop-color="#00F0FF" stop-opacity=".3"/>
+          </linearGradient>
+        </defs>
+        <circle cx="40" cy="40" r="36" fill="none" stroke="url(#lg1)" stroke-width="2" opacity=".15"/>
+        <circle cx="40" cy="40" r="28" fill="none" stroke="url(#lg1)" stroke-width="1.5" opacity=".1"/>
+        <path d="M14 50 Q25 35 40 45 T66 38" fill="none" stroke="url(#lg1)" stroke-width="4" stroke-linecap="round"/>
+        <path d="M14 56 Q25 41 40 51 T66 44" fill="none" stroke="#00F0FF" stroke-width="3" stroke-linecap="round" opacity=".4"/>
+        <circle cx="40" cy="28" r="8" fill="url(#lg1)"/>
+        <circle cx="40" cy="28" r="4" fill="#fff"/>
+        <circle cx="40" cy="28" r="12" fill="none" stroke="#00F0FF" stroke-width="1.5" opacity=".3">
+          <animate attributeName="r" values="8;14;8" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values=".4;0;.4" dur="3s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
     <h1>BioSync <span>Код пары</span></h1>
     <p style="margin-bottom:16px">Превратите знание о цикле в инструмент бережного общения. Приложение синхронизирует гормональный трекер женщины с персонализированными подсказками для мужчины — через <strong>«Код пары»</strong> вы соединяете аккаунты и получаете единое пространство для отношений.</p>
     <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:24px;font-size:.85rem;color:var(--text2)">
@@ -472,7 +497,7 @@ input,button,select,textarea{font-family:inherit}
 
 <div class="dash" id="p-dash-female">
   <header class="dash-hdr">
-    <div class="dash-logo">Bio<span>Sync</span></div>
+    <div class="dash-logo"><svg width="28" height="28" viewBox="0 0 64 64" style="flex-shrink:0;vertical-align:middle;margin-right:4px"><defs><linearGradient id="dlg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1B9E8C"/><stop offset="1" stop-color="#15857A"/></linearGradient></defs><path d="M10 40 Q20 26 32 36 T54 28" fill="none" stroke="url(#dlg)" stroke-width="3.5" stroke-linecap="round"/><path d="M10 46 Q20 32 32 42 T54 34" fill="none" stroke="#00F0FF" stroke-width="2.5" stroke-linecap="round" opacity=".4"/><circle cx="32" cy="20" r="6" fill="url(#dlg)"/><circle cx="32" cy="20" r="3" fill="#fff"/></svg>Bio<span>Sync</span></div>
     <div class="dash-r"><span class="dash-user" id="df-user"></span>
       <button class="btn btn-sm" id="df-voice-btn" onclick="openVoiceModal()" style="background:linear-gradient(135deg,var(--rose),var(--roseD));color:#fff;font-size:.85rem;padding:6px 14px;gap:6px;display:none" title="Выговориться"><i data-lucide="mic" class="lx lx-sm"></i></button>
       <button class="btn btn-g btn-sm" onclick="logout()">Выйти</button>
@@ -494,7 +519,7 @@ input,button,select,textarea{font-family:inherit}
 
 <div class="dash" id="p-dash-male">
   <header class="dash-hdr">
-    <div class="dash-logo">Bio<span>Sync</span></div>
+    <div class="dash-logo"><svg width="28" height="28" viewBox="0 0 64 64" style="flex-shrink:0;vertical-align:middle;margin-right:4px"><defs><linearGradient id="dlg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1B9E8C"/><stop offset="1" stop-color="#15857A"/></linearGradient></defs><path d="M10 40 Q20 26 32 36 T54 28" fill="none" stroke="url(#dlg)" stroke-width="3.5" stroke-linecap="round"/><path d="M10 46 Q20 32 32 42 T54 34" fill="none" stroke="#00F0FF" stroke-width="2.5" stroke-linecap="round" opacity=".4"/><circle cx="32" cy="20" r="6" fill="url(#dlg)"/><circle cx="32" cy="20" r="3" fill="#fff"/></svg>Bio<span>Sync</span></div>
     <div class="dash-r"><span class="dash-user" id="dm-user"></span><button class="btn btn-g btn-sm" onclick="logout()">Выйти</button></div>
   </header>
   <div class="dash-c">
@@ -516,6 +541,15 @@ button .lx, a .lx, .nav-item .lx{pointer-events:none}
 <script>
 // ====== ICON HELPER ======
 function ic(name,cls=''){return `<i data-lucide="${name}" class="lx ${cls}"></i>`}
+function logoIcon(sz){
+  sz=sz||24;
+  return `<svg width="${sz}" height="${sz}" viewBox="0 0 64 64" style="flex-shrink:0;vertical-align:middle">
+    <defs><linearGradient id="dlg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1B9E8C"/><stop offset="1" stop-color="#15857A"/></linearGradient></defs>
+    <path d="M10 40 Q20 26 32 36 T54 28" fill="none" stroke="url(#dlg)" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M10 46 Q20 32 32 42 T54 34" fill="none" stroke="#00F0FF" stroke-width="2.5" stroke-linecap="round" opacity=".4"/>
+    <circle cx="32" cy="20" r="6" fill="url(#dlg)"/><circle cx="32" cy="20" r="3" fill="#fff"/>
+  </svg>`;
+}
 // emoji → lucide name lookup
 const _EM={'🌊':'waves','🧘':'heart','🤍':'message-circle','🔗':'link','📝':'edit-3','🔔':'bell','⭐':'sparkles','⚙️':'settings','🧭':'compass','📋':'clipboard-list','📊':'bar-chart-3','🌐':'globe','💞':'heart-handshake','🎤':'mic','🧠':'brain','🆘':'alert-circle','🎯':'target','💬':'message-square','📅':'calendar','📈':'trending-up','📖':'book-open','💼':'briefcase','🏠':'home','🙏':'hands','🤝':'handshake','🔮':'sparkles','🎉':'party-popper','🔄':'refresh-cw','✅':'check','❌':'x','✨':'sparkles','🔥':'flame','💾':'save','📂':'folder','🔓':'unlock','🔒':'lock','🌙':'moon','💭':'message-circle','👂':'ear','🎁':'gift','🤗':'smile','📱':'smartphone','⏳':'hourglass','📍':'map-pin','🔑':'key','🗑️':'trash-2','🚪':'log-out','🌓':'moon','⚡':'zap','📌':'pin','🍵':'coffee','🌬️':'wind','💝':'heart','🚫':'ban','🎙️':'mic','👶':'baby','💡':'lightbulb','▶️':'play'};
 // replace icon emojis (only known icons, skips content emojis like moods & phase syms)
