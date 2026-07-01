@@ -198,7 +198,7 @@ div:hover>.avatar-overlay{opacity:1}
 .pd{display:flex;justify-content:space-between;margin-top:8px;font-size:.85rem;color:var(--text3);font-weight:500}
 
 /* ====== SVG WAVE ====== */
-.svg-wave{width:100%;height:auto;min-height:180px;max-height:240px;margin:4px 0 0;overflow:visible}
+.svg-wave{width:100%;height:auto;min-height:220px;max-height:300px;margin:4px 0 0;overflow:visible}
 .svg-wave-section{background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(245,240,232,.6));border-radius:20px;padding:18px;border:1.5px solid var(--border);box-shadow:0 2px 6px rgba(44,40,37,.06),inset 0 1px 0 rgba(255,255,255,.9);margin-bottom:14px}
 .svg-wave-title{font-weight:700;font-size:.85rem;color:var(--roseD);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .wave-dot{animation:wavePulse 2s ease-in-out infinite;transform-origin:center}
@@ -1427,7 +1427,7 @@ function waveY(x,W){
   return 80;
 }
 function renderWaveSVG(ph, uid){
-  const W=800,H=170,bn=WAVE_BN,by=WAVE_BY;
+  const W=800,H=200,bn=WAVE_BN,by=WAVE_BY;
   let fs=getUserFlowerSet(uid||S.curUser);
   let cols=fs.colors;
   let icons=fs.icons;
