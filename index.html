@@ -689,22 +689,27 @@ let _ghPath=localStorage.getItem('biosync_gh_path')||'data.json';
 let _ghBranch=localStorage.getItem('biosync_gh_branch')||'main';
 
 let _ghTimer2=null,_ghPending=null;
-async function ghDirectSave(json){
+async function ghDirectSave(json,force){
   const t=_ghToken,r=_ghRepo;
   if(!t||!r)return;
   _ghPending=json;
+  if(!force){clearTimeout(_ghTimer2);_ghTimer2=setTimeout(ghDoSave,3000);return}
   clearTimeout(_ghTimer2);
-  _ghTimer2=setTimeout(async()=>{
-    const data=_ghPending;_ghPending=null;
-    try{
-      const p=_ghPath,b=_ghBranch;
-      const r1=await fetch('https://api.github.com/repos/'+r+'/contents/'+p+'?ref='+b,{headers:{Authorization:'Bearer '+t}});
-      const sha=r1.ok?(await r1.json()).sha:null;
-      const body={message:'Auto-save '+new Date().toISOString().slice(0,10),content:btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2)))),branch:b};
-      if(sha)body.sha=sha;
-      await fetch('https://api.github.com/repos/'+r+'/contents/'+p,{method:'PUT',headers:{Authorization:'Bearer '+t,'Content-Type':'application/json'},body:JSON.stringify(body)});
-    }catch(e){console.error('GitHub sync error:',e)}
-  },3000);
+  try{await ghDoSave()}catch(e){}
+}
+async function ghDoSave(){
+  const t=_ghToken,r=_ghRepo;
+  if(!t||!r)return;
+  const data=_ghPending;_ghPending=null;
+  if(!data)return;
+  try{
+    const p=_ghPath,b=_ghBranch;
+    const r1=await fetch('https://api.github.com/repos/'+r+'/contents/'+p+'?ref='+b,{headers:{Authorization:'Bearer '+t}});
+    const sha=r1.ok?(await r1.json()).sha:null;
+    const body={message:'Auto-save '+new Date().toISOString().slice(0,10),content:btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2)))),branch:b};
+    if(sha)body.sha=sha;
+    await fetch('https://api.github.com/repos/'+r+'/contents/'+p,{method:'PUT',headers:{Authorization:'Bearer '+t,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  }catch(e){console.error('GitHub sync error:',e)}
 }
 function save(){let j=JSON.stringify(S);localStorage.setItem(LS,j);fetch(SVR+'/api/data',{method:'POST',headers:{'Content-Type':'application/json'},body:j}).catch(()=>{});ghDirectSave(S)}
 async function loadFromServer(){
@@ -1287,6 +1292,8 @@ function handleConnect(){
   S.notifs[cp.fId].push({id:uid(),type:'connection',title:(mu?mu.name:_('partner'))+' '+_('wants_to_connect'),
     body:_('connect_approve_body'),read:0,createdAt:new Date().toISOString()});
   save();
+  // Force immediate GitHub sync so female sees request quickly
+  if(!SVR)ghDirectSave(S,true);
   finishMaleReg();
 }
 
