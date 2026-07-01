@@ -3270,11 +3270,25 @@ function fSonyaChat(){
   }
   html+='</div>';
   html+='<div style="display:flex;gap:8px">';
-  html+='<input type="text" id="sonya-chat-input" placeholder="'+_('sonya_chat_placeholder')+'" style="flex:1;padding:12px 16px;border:1px solid var(--border);border-radius:16px;font-size:.9rem;background:var(--card);color:var(--text);outline:none" onkeydown="if(event.key==='+String.fromCharCode(39)+'Enter'+String.fromCharCode(39)+'){sonyaAISend(this.value);this.value='+String.fromCharCode(39)+String.fromCharCode(39)+'}">';
-  html+='<button class="btn btn-p" onclick="var i=document.getElementById('+String.fromCharCode(39)+'sonya-chat-input'+String.fromCharCode(39)+');sonyaAISend(i.value);i.value='+String.fromCharCode(39)+String.fromCharCode(39)+'">'+_('sonya_send')+'</button>';
+  html+='<input type="text" id="sonya-chat-input" placeholder="'+_('sonya_chat_placeholder')+'" style="flex:1;padding:12px 16px;border:1px solid var(--border);border-radius:16px;font-size:.9rem;background:var(--card);color:var(--text);outline:none" onkeydown="sonyaChatKey(event,this)">';
+  html+='<button class="btn btn-p" id="sonya-chat-send-btn" onclick="sonyaChatSend()">'+_('sonya_send')+'</button>';
   html+='</div></div>';
   setTimeout(function(){var box=document.getElementById('sonya-chat-box');if(box)box.scrollTop=box.scrollHeight},50);
   return html;
+}
+function sonyaChatKey(e,el){
+  if(!e)e=window.event;
+  if(e.key==='Enter'||e.keyCode===13||e.code==='Enter'){
+    e.preventDefault();
+    var v=el.value.trim();
+    if(v){sonyaAISend(v);el.value=''}
+  }
+}
+function sonyaChatSend(){
+  var el=document.getElementById('sonya-chat-input');
+  if(!el)return;
+  var v=el.value.trim();
+  if(v){sonyaAISend(v);el.value=''}
 }
 
 function fSonyaBreathBall(ph){
@@ -3629,11 +3643,25 @@ function mSonyaChat(){
   }
   html+='</div>';
   html+='<div style="display:flex;gap:8px">';
-  html+='<input type="text" id="sonya-chat-input" placeholder="'+_('sonya_chat_placeholder')+'" style="flex:1;padding:12px 16px;border:1px solid var(--border);border-radius:16px;font-size:.9rem;background:var(--card);color:var(--text);outline:none" onkeydown="if(event.key==='+Q+'Enter'+Q+'){sonyaAISendMale(this.value);this.value='+Q+Q+'}">';
-  html+='<button class="btn btn-p" onclick="var i=document.getElementById('+Q+'sonya-chat-input'+Q+');sonyaAISendMale(i.value);i.value='+Q+Q+'">'+_('sonya_send')+'</button>';
+  html+='<input type="text" id="sonya-chat-input-m" placeholder="'+_('sonya_chat_placeholder')+'" style="flex:1;padding:12px 16px;border:1px solid var(--border);border-radius:16px;font-size:.9rem;background:var(--card);color:var(--text);outline:none" onkeydown="sonyaChatKeyMale(event,this)">';
+  html+='<button class="btn btn-p" id="sonya-chat-send-btn-m" onclick="sonyaChatSendMale()">'+_('sonya_send')+'</button>';
   html+='</div></div>';
   setTimeout(function(){var box=document.getElementById('sonya-chat-box');if(box)box.scrollTop=box.scrollHeight},50);
   return html;
+}
+function sonyaChatKeyMale(e,el){
+  if(!e)e=window.event;
+  if(e.key==='Enter'||e.keyCode===13||e.code==='Enter'){
+    e.preventDefault();
+    var v=el.value.trim();
+    if(v){sonyaAISendMale(v);el.value=''}
+  }
+}
+function sonyaChatSendMale(){
+  var el=document.getElementById('sonya-chat-input-m');
+  if(!el)return;
+  var v=el.value.trim();
+  if(v){sonyaAISendMale(v);el.value=''}
 }
 
 function genCoupleCode(){
