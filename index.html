@@ -289,7 +289,7 @@ div:hover>.avatar-overlay{opacity:1}
 /* ====== PARTNER STATUS ====== */
 .ps-bar{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--card);border-radius:16px;
   margin-bottom:18px;font-size:.95rem;box-shadow:var(--shadow);border:1px solid var(--border)}
-.ps-bar.conn{border-left:5px solid var(--green)}
+.ps-bar.conn{border-left:5px solid var(--lav)}
 .ps-bar.disc{border-left:5px solid var(--text3);color:var(--text2)}
 
 /* ====== NOTIFICATIONS ====== */
@@ -1946,8 +1946,8 @@ function mCompass(){
     compassSVG+='<circle cx="150" cy="150" r="60" fill="var(--card)"/><circle cx="150" cy="150" r="55" fill="none" stroke="var(--border)" stroke-width="1"/><circle cx="150" cy="150" r="8" fill="'+cols[ph.phaseId]+'"/><line x1="150" y1="150" x2="150" y2="90" stroke="'+cols[ph.phaseId]+'" stroke-width="3" stroke-linecap="round"><animateTransform attributeName="transform" type="rotate" from="'+compassDeg+'" to="'+(compassDeg+360)+'" dur="20s" repeatCount="indefinite"/></line>';
     for(let i=0;i<4;i++){let a=(i*90-90)*Math.PI/180;let r=100;let tx=150+r*Math.cos(a);let ty=150+r*Math.sin(a)+4;compassSVG+='<text x="'+tx+'" y="'+ty+'" text-anchor="middle" font-size="11" fill="var(--text2)" font-weight="'+(i===ph.phaseId?'800':'400')+'">'+icons[i]+'</text>'}
     compassSVG+='<text x="150" y="155" text-anchor="middle" font-size="18" font-weight="800" fill="'+cols[ph.phaseId]+'">'+ph.day+'</text><text x="150" y="172" text-anchor="middle" font-size="9" fill="var(--text3)">день из '+ph.cl+'</text></svg></div>';
-    let today=`<div style="background:linear-gradient(135deg,rgba(143,191,168,.08),rgba(224,168,168,.06));border-radius:20px;padding:18px 20px;margin-bottom:20px;border:1px solid rgba(143,191,168,.15)">
-      <div style="font-size:.85rem;font-weight:700;color:var(--green);margin-bottom:10px;letter-spacing:.03em;text-transform:uppercase">${_('wave_today')}</div>
+    let today=`<div style="background:linear-gradient(135deg,rgba(192,176,208,.1),rgba(224,168,168,.04));border-radius:20px;padding:18px 20px;margin-bottom:20px;border:1px solid rgba(192,176,208,.15)">
+      <div style="font-size:.85rem;font-weight:700;color:var(--lav);margin-bottom:10px;letter-spacing:.03em;text-transform:uppercase">${_('wave_today')}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div style="background:var(--card);border-radius:14px;padding:14px;box-shadow:var(--shadow);text-align:center">
           <div style="font-size:2rem">${WAVE_ICONS[ph.phaseId]}</div>
@@ -2645,7 +2645,7 @@ function fSettings(g){
         <div style="flex:1;text-align:left"><div style="font-weight:700;font-size:1.05rem">${u.name||'Пользователь'}</div>
         <div style="color:var(--text2);font-size:.85rem">${u.email||''}</div></div>
         <div style="background:${isF?'var(--roseL)':'rgba(143,191,168,.15)'};padding:4px 12px;border-radius:50px;
-          font-size:.75rem;font-weight:600;color:${isF?'var(--roseD)':'var(--green)'}">
+          font-size:.75rem;font-weight:600;          color:${isF?'var(--roseD)':'var(--lav)'}">
           ${isF?'🌸 Женский':'🌲 Мужской'}
         </div>
       </div>
@@ -2657,7 +2657,7 @@ function fSettings(g){
       <span style="font-size:1.4rem">💑</span>
       <div style="text-align:left;flex:1"><div style="font-weight:600;font-size:.9rem">В паре с</div>
       <div style="color:var(--text2);font-size:.85rem">${partnerName}</div></div>
-      <span style="background:var(--green);width:8px;height:8px;border-radius:50%;display:inline-block;
+      <span style="background:var(--lav);width:8px;height:8px;border-radius:50%;display:inline-block;
         box-shadow:0 0 6px rgba(143,191,168,.4)"></span>
     </div>`:''}
 
@@ -2770,7 +2770,7 @@ function fSettings(g){
     <div class="rc" style="margin-bottom:16px;text-align:left">
       <div style="font-weight:600;font-size:.95rem;margin-bottom:4px">${_('settings_couple_code')}</div>
       ${cpM?`
-        <p style="color:var(--green);font-size:.85rem">✅ Вы подключены к ${partnerName?'<strong>'+partnerName+'</strong>':'партнерше'}.</p>
+        <p style="color:var(--lav);font-size:.85rem">✅ Вы подключены к ${partnerName?'<strong>'+partnerName+'</strong>':'партнерше'}.</p>
         <p style="color:var(--text2);font-size:.78rem;margin-top:6px;line-height:1.6">Код пары — это ваш персональный ключ синхронизации. Через него Соня получает данные о фазах цикла партнёрши и настраивает стратегии заботы специально под вас.</p>
       `:`
         <p style="color:var(--text2);font-size:.85rem;margin-bottom:8px">⏳ Вы ещё не подключены к паре.</p>
@@ -3227,7 +3227,7 @@ function fSonya(){
         <div style="font-weight:600;font-size:.85rem;margin-bottom:4px">🌸 Тебе</div>
         <p style="font-size:.82rem;color:var(--text2);line-height:1.6">«${res.herTip}»</p>
       </div>
-      <div style="background:rgba(143,191,168,.08);border-radius:16px;padding:16px;margin-bottom:16px;border-left:4px solid var(--green)">
+      <div style="background:rgba(143,191,168,.08);border-radius:16px;padding:16px;margin-bottom:16px;border-left:4px solid var(--lav)">
         <div style="font-weight:600;font-size:.85rem;margin-bottom:4px">🌲 Ему (увидит в своём интерфейсе)</div>
         <p style="font-size:.82rem;color:var(--text2);line-height:1.6">«${res.himTip}»</p>
       </div>
@@ -3712,7 +3712,7 @@ function mSonya(){
       <div style="background:var(--bg);border-radius:16px;padding:16px;margin-bottom:12px;border-left:4px solid ${ph.color}">
         <p style="font-size:.85rem;color:var(--text2);line-height:1.6">${pm.today}</p>
       </div>
-      <div style="background:rgba(143,191,168,.08);border-radius:16px;padding:16px;margin-bottom:12px;border-left:4px solid var(--green)">
+      <div style="background:rgba(143,191,168,.08);border-radius:16px;padding:16px;margin-bottom:12px;border-left:4px solid var(--lav)">
         <div style="font-weight:600;font-size:.85rem;margin-bottom:4px">${_('m_todo_do')}</div>
         <p style="font-size:.82rem;color:var(--text2)">${pm.do}</p>
       </div>
