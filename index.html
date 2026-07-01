@@ -175,6 +175,10 @@ input,button,select,textarea{font-family:inherit}
 .tab-menu-item:hover svg path,.tab-menu-item:hover svg circle,.tab-menu-item:hover svg rect{fill:#FDE0C0;fill-opacity:.7}
 .tab-menu-item.act svg path,.tab-menu-item.act svg circle,.tab-menu-item.act svg rect{fill:#FDD5AE;fill-opacity:.8}
 
+/* ====== AVATAR ====== */
+.avatar-overlay{opacity:0}
+div:hover>.avatar-overlay{opacity:1}
+
 /* ====== YANDEX ADS ====== */
 .ad-block{background:rgba(255,255,255,.5);border-radius:16px;padding:8px;margin:16px 0;text-align:center;border:1px solid var(--border);overflow:hidden;min-height:90px;display:flex;align-items:center;justify-content:center}
 .ad-block>div{width:100%}
@@ -2527,10 +2531,11 @@ function fSettings(g){
     <!-- Profile card -->
     <div class="rc" style="margin-bottom:16px">
       <div style="display:flex;align-items:center;gap:16px;margin-bottom:6px">
-        <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--roseD));
-          display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#fff;font-weight:700;flex-shrink:0">
-          ${(u.name?u.name[0]:'?').toUpperCase()}
+        <div style="width:48px;height:48px;border-radius:50%;overflow:hidden;cursor:pointer;flex-shrink:0;position:relative;box-shadow:0 2px 8px rgba(0,0,0,.1)" onclick="document.getElementById('avatar-input').click()" title="Сменить аватар">
+          ${u.avatar?'<img src="'+u.avatar+'" style="width:100%;height:100%;object-fit:cover">':'<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--rose),var(--roseD));display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#fff;font-weight:700">'+(u.name?u.name[0]:'?').toUpperCase()+'</div>'}
+          <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.35);color:#fff;font-size:.55rem;text-align:center;padding:2px 0;opacity:0;transition:opacity .2s" class="avatar-overlay">📷</div>
         </div>
+        <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
         <div style="flex:1;text-align:left"><div style="font-weight:700;font-size:1.05rem">${u.name||'Пользователь'}</div>
         <div style="color:var(--text2);font-size:.85rem">${u.email||''}</div></div>
         <div style="background:${isF?'var(--roseL)':'rgba(143,191,168,.15)'};padding:4px 12px;border-radius:50px;
@@ -2538,6 +2543,7 @@ function fSettings(g){
           ${isF?'🌸 Женский':'🌲 Мужской'}
         </div>
       </div>
+      ${u.avatar?'<button class="btn btn-g btn-sm" onclick="var u=S.users.find(x=>x.id===S.curUser);delete u.avatar;save();renderFemaleDash();renderMaleDash()" style="font-size:.72rem;padding:4px 10px">Удалить аватар</button>':''}
     </div>
 
     ${partnerName?`
@@ -2700,17 +2706,6 @@ function fSettings(g){
       </div>`:''}
     </div>
 
-    <!-- Sync -->
-    <div class="rc" style="margin-bottom:16px;text-align:left">
-      <div style="font-weight:600;font-size:.95rem;margin-bottom:6px">${_('settings_sync')}</div>
-      <div style="display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--text2)">
-        <span style="width:8px;height:8px;border-radius:50%;background:${_ghToken?'var(--green)':'#888'}"></span>
-        <span>GitHub: ${_ghToken?_('settings_sync_connected')+' ('+_ghRepo+')':_('settings_sync_not')}</span>
-      </div>
-      <div style="font-size:.75rem;color:var(--text3);margin-top:8px">${_('settings_sync_auto')}</div>
-      <button class="btn btn-s btn-sm btn-block mt-2" onclick="setupSync()" style="font-size:.82rem">${_('settings_sync_btn')}</button>
-    </div>
-
     <!-- Yandex Ads -->
     <div class="rc" style="margin-bottom:16px;text-align:left">
       <div style="font-weight:600;font-size:.95rem;margin-bottom:4px">📢 Реклама Яндекса</div>
@@ -2738,6 +2733,22 @@ function fSettings(g){
       ${_('settings_logout')}
     </button>
   </div>`;
+}
+
+function handleAvatarUpload(input){
+  if(!input.files||!input.files[0])return;
+  let file=input.files[0];
+  if(file.size>200000){alert('Файл слишком большой. Максимум 200 КБ.');return}
+  let reader=new FileReader();
+  reader.onload=function(e){
+    let u=S.users.find(x=>x.id===S.curUser);
+    if(!u)return;
+    u.avatar=e.target.result;
+    save();
+    renderFemaleDash();renderMaleDash();
+    showToast('Аватар обновлён ✅','success');
+  };
+  reader.readAsDataURL(file);
 }
 
 // ====== SONYA AI ======
