@@ -155,13 +155,12 @@ input,button,select,textarea{font-family:inherit}
 .cycle-tip::before{content:'';position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--card);pointer-events:none;opacity:0;transition:all .2s cubic-bezier(.25,.8,.25,1);z-index:300}
 .cycle-tip:hover::before{opacity:1;bottom:calc(100%)}
 
-/* ====== TAB MENU BUTTON ====== */
-.tab-menu-fab{position:fixed;top:14px;right:14px;z-index:300;width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--rose),var(--roseD));border:none;color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(27,158,140,.3);display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:all .25s cubic-bezier(.25,.8,.25,1)}
-.tab-menu-fab:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(27,158,140,.4)}
-.tab-menu-fab:active{transform:translateY(0);box-shadow:0 2px 8px rgba(27,158,140,.2)}
-.tab-menu-overlay{position:fixed;inset:0;z-index:299;background:rgba(0,0,0,.3);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:flex-end;padding:70px 16px 0}
+/* ====== TAB MENU INLINE BUTTON ====== */
+.dash-menu-btn-inline{width:36px;height:36px;border-radius:12px;background:transparent;border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:all .2s;flex-shrink:0}
+.dash-menu-btn-inline:hover{background:rgba(27,158,140,.08);border-color:rgba(27,158,140,.2);color:var(--roseD)}
+.tab-menu-overlay{position:fixed;inset:0;z-index:299;background:rgba(0,0,0,.3);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:center;padding:70px 16px 0}
 .tab-menu-overlay.show{display:flex}
-.tab-menu-panel{background:var(--card);border-radius:20px;padding:16px;max-width:320px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,.2);display:grid;grid-template-columns:1fr 1fr;gap:8px;animation:slideDown .2s ease}
+.tab-menu-panel{background:var(--card);border-radius:20px;padding:16px;max-width:360px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,.2);display:grid;grid-template-columns:1fr 1fr;gap:8px;animation:slideDown .2s ease}
 @keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
 .tab-menu-item{padding:12px;border-radius:14px;cursor:pointer;text-align:center;transition:all .2s;border:1.5px solid transparent;background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(245,240,232,.4))}
 .tab-menu-item:hover{background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(253,220,181,.3));border-color:rgba(27,158,140,.15)}
@@ -516,7 +515,10 @@ input,button,select,textarea{font-family:inherit}
 <button class="dash-menu-btn" onclick="toggleTabMenu('df-tabs')" title="Menu"><i data-lucide="menu" class="lx"></i></button>
 <div class="dash" id="p-dash-female">
   <header class="dash-hdr">
-    <div class="dash-logo" onclick="S._fTab='wave';renderFemaleDash()"><img src="logo.jpg" alt="BioSync" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1.5px solid var(--cyan);box-shadow:0 0 10px rgba(0,240,255,.25);flex-shrink:0;vertical-align:middle;margin-right:4px">Bio<span>Sync</span></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="dash-menu-btn-inline" onclick="toggleTabOverlay()" title="Меню вкладок"><i data-lucide="grid-3x3" class="lx lx-lg"></i></button>
+      <div class="dash-logo" onclick="S._fTab='wave';renderFemaleDash()"><img src="logo.jpg" alt="BioSync" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1.5px solid var(--cyan);box-shadow:0 0 10px rgba(0,240,255,.25);flex-shrink:0;vertical-align:middle;margin-right:4px">Bio<span>Sync</span></div>
+    </div>
     <div class="dash-r"><span class="dash-user" id="df-user"></span>
       <button class="btn btn-sm" id="df-voice-btn" onclick="openVoiceModal()" style="background:linear-gradient(135deg,var(--rose),var(--roseD));color:#fff;font-size:.85rem;padding:6px 14px;gap:6px;display:none" title="Выговориться"><i data-lucide="mic" class="lx lx-sm"></i></button>
       <button class="btn btn-g btn-sm" onclick="logout()">Выйти</button>
@@ -529,8 +531,7 @@ input,button,select,textarea{font-family:inherit}
   </div>
 </div>
 
-<!-- ====== TAB MENU FAB ====== -->
-<button class="tab-menu-fab" id="tab-menu-fab" onclick="toggleTabOverlay()" title="Меню вкладок"><i data-lucide="grid-3x3" class="lx"></i></button>
+<!-- ====== TAB MENU OVERLAY ====== -->
 <div class="tab-menu-overlay" id="tab-menu-overlay" onclick="if(event.target===this)toggleTabOverlay()">
   <div class="tab-menu-panel" id="tab-menu-panel"></div>
 </div>
@@ -546,7 +547,10 @@ input,button,select,textarea{font-family:inherit}
 <button class="dash-menu-btn" onclick="toggleTabMenu('dm-tabs')" title="Menu"><i data-lucide="menu" class="lx"></i></button>
 <div class="dash" id="p-dash-male">
   <header class="dash-hdr">
-    <div class="dash-logo" onclick="S._mTab='compass';renderMaleDash()"><img src="logo.jpg" alt="BioSync" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1.5px solid var(--cyan);box-shadow:0 0 10px rgba(0,240,255,.25);flex-shrink:0;vertical-align:middle;margin-right:4px">Bio<span>Sync</span></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="dash-menu-btn-inline" onclick="toggleTabOverlay()" title="Меню вкладок"><i data-lucide="grid-3x3" class="lx lx-lg"></i></button>
+      <div class="dash-logo" onclick="S._mTab='compass';renderMaleDash()"><img src="logo.jpg" alt="BioSync" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1.5px solid var(--cyan);box-shadow:0 0 10px rgba(0,240,255,.25);flex-shrink:0;vertical-align:middle;margin-right:4px">Bio<span>Sync</span></div>
+    </div>
     <div class="dash-r"><span class="dash-user" id="dm-user"></span><button class="btn btn-g btn-sm" onclick="logout()">Выйти</button></div>
   </header>
   <div class="dash-c">
@@ -1030,8 +1034,6 @@ function navigate(page){
   if(page==='login'){setTimeout(checkRemembered,100)}
   if(page==='dash-female'&&S.curUser)renderFemaleDash();
   if(page==='dash-male'&&S.curUser)renderMaleDash();
-  let fab=document.getElementById('tab-menu-fab');
-  if(fab)fab.style.display=page.startsWith('dash-')?'flex':'none';
 }
 function toggleTabMenu(id){
   let el=document.getElementById(id);
