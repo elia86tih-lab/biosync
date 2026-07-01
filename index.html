@@ -1548,15 +1548,16 @@ function fWave(){
     <div class="pd"><span>${_('wave_day_short',ph.day,ph.cl)}</span><span>📍 ${_(['wave_rest','wave_grow','wave_bloom','wave_fade'][ph.phaseId])} — ${_(['wave_seed','wave_sprout','wave_flower','wave_fall'][ph.phaseId])}</span></div>
     ${renderPhaseGarden(ph, S.curUser)}
   </div>`;
-  // Sonya advice
-  let pred=sonyaPredict();
-  if(pred.alert){
+  // Sonya AI advice
+  let aiAdvice=sonyaDailyAIAdvice();
+  if(aiAdvice&&aiAdvice.alert){
+    let loadingSpinner=aiAdvice.loading?'<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--rose);animation:voicePulse 1s infinite;margin-right:4px"></span>':'';
     html+=`<div style="background:linear-gradient(135deg,rgba(0,240,255,.06),rgba(27,158,140,.04));border-radius:16px;padding:14px;margin-bottom:14px;border:1px solid rgba(0,240,255,.12);cursor:pointer" onclick="S._fTab='sonya';renderFemaleDash()">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
         <span style="font-size:1rem">🔮</span><span style="font-weight:700;font-size:.82rem;color:var(--roseD)">${_('sonya_advice_short')}</span>
         <span style="margin-left:auto;font-size:.65rem;color:var(--rose);font-weight:600">${_('sonya_ai_badge')}</span>
       </div>
-      <p style="font-size:.78rem;color:var(--text2);line-height:1.5">${pred.alert} · ${pred.moodAdvice.length>120?pred.moodAdvice.substring(0,117)+'…':pred.moodAdvice}</p>
+      <p style="font-size:.78rem;color:var(--text2);line-height:1.5">${loadingSpinner}${aiAdvice.alert} · ${aiAdvice.moodAdvice.length>120?aiAdvice.moodAdvice.substring(0,117)+'…':aiAdvice.moodAdvice}</p>
       <p style="font-size:.68rem;color:var(--rose);margin-top:4px;font-weight:500">${_('sonya_advice_offer')}</p>
     </div>`;
   }
@@ -1667,9 +1668,9 @@ function fCouple(){
 function fMood(){
   let mf=S.moodForm[S.curUser]||{mood:'',energy:5,pain:0};
   let saved=S._moodSaved;
-  let pred=sonyaPredict();
+  let aiAdvice=sonyaDailyAIAdvice();
   let adviceShort='';
-  if(pred.alert){adviceShort=`<div style="background:linear-gradient(135deg,rgba(27,158,140,.06),transparent);border-radius:14px;padding:12px 14px;margin-bottom:12px;border-left:3px solid var(--rose);display:flex;align-items:flex-start;gap:10px;cursor:pointer" onclick="S._fTab='sonya';renderFemaleDash()"><span style="font-size:1.1rem;flex-shrink:0">🔮</span><div style="flex:1"><div style="font-weight:600;font-size:.8rem;color:var(--roseD);margin-bottom:2px">${_('sonya_advice_short')}</div><p style="font-size:.78rem;color:var(--text2);line-height:1.5">${pred.alert} · ${pred.moodAdvice}</p><p style="font-size:.72rem;color:var(--rose);margin-top:4px;font-weight:500">${_('sonya_advice_offer')}</p></div></div>`}
+  if(aiAdvice&&aiAdvice.alert){let loadingSpinner3=aiAdvice.loading?'<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--rose);animation:voicePulse 1s infinite;margin-right:4px"></span>':'';adviceShort=`<div style="background:linear-gradient(135deg,rgba(27,158,140,.06),transparent);border-radius:14px;padding:12px 14px;margin-bottom:12px;border-left:3px solid var(--rose);display:flex;align-items:flex-start;gap:10px;cursor:pointer" onclick="S._fTab='sonya';renderFemaleDash()"><span style="font-size:1.1rem;flex-shrink:0">🔮</span><div style="flex:1"><div style="font-weight:600;font-size:.8rem;color:var(--roseD);margin-bottom:2px">${_('sonya_advice_short')}</div><p style="font-size:.78rem;color:var(--text2);line-height:1.5">${loadingSpinner3}${aiAdvice.alert} · ${aiAdvice.moodAdvice}</p><p style="font-size:.72rem;color:var(--rose);margin-top:4px;font-weight:500">${_('sonya_advice_offer')}</p></div></div>`}
   let html=`<div class="ms">${adviceShort}<h3>${tooltip('📝 Как ты сегодня?','Дневник настроения','Отмечайте настроение и самочувствие каждый день — это помогает отслеживать цикл и лучше понимать себя.')}</h3>
     <div class="mg">${MOODS.map(m=>`<button class="mb ${mf.mood===m.l?'sel':''}" onclick="setMood('${m.l}')">
       <span class="mb-emoji">${m.e}</span><span>${m.l}</span></button>`).join('')}</div>
@@ -1840,7 +1841,7 @@ function mCompass(){
     <div class="ph"><div class="ph-sym" style="font-size:2rem">${fs.icons[ph.phaseId]}</div>
       <div class="ph-i"><h3>${_(_PKN.cn[ph.phaseId])}</h3><p>${_pd(ph.phaseId)}${priv.showDay?' · День '+ph.day:''}</p></div></div>
     ${moodHtml}
-    ${(()=>{let old=S.curUser;S.curUser=cp.fId;let pred=sonyaPredict();S.curUser=old;if(!pred.alert)return'';return `<div style="background:linear-gradient(135deg,rgba(0,240,255,.06),rgba(27,158,140,.04));border-radius:14px;padding:12px 14px;margin:12px 0;border:1px solid rgba(0,240,255,.12);cursor:pointer" onclick="S._sonyaMode='chat';renderMaleDash()"><div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="font-size:1rem">🔮</span><span style="font-weight:700;font-size:.8rem;color:var(--roseD)">${_('sonya_advice_short')}</span><span style="margin-left:auto;font-size:.62rem;color:var(--rose);font-weight:600">${_('sonya_ai_badge')}</span></div><p style="font-size:.76rem;color:var(--text2);line-height:1.5">${pred.alert} · ${pred.moodAdvice.length>100?pred.moodAdvice.substring(0,97)+'…':pred.moodAdvice}</p></div>`;})()}
+    ${(()=>{let old=S.curUser;S.curUser=cp.fId;let aiAdvice=sonyaDailyAIAdvice();S.curUser=old;if(!aiAdvice||!aiAdvice.alert)return'';let loadingSpinner=aiAdvice.loading?'<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--rose);animation:voicePulse 1s infinite;margin-right:4px"></span>':'';return `<div style="background:linear-gradient(135deg,rgba(0,240,255,.06),rgba(27,158,140,.04));border-radius:14px;padding:12px 14px;margin:12px 0;border:1px solid rgba(0,240,255,.12);cursor:pointer" onclick="S._sonyaMode='chat';renderMaleDash()"><div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="font-size:1rem">🔮</span><span style="font-weight:700;font-size:.8rem;color:var(--roseD)">${_('sonya_advice_short')}</span><span style="margin-left:auto;font-size:.62rem;color:var(--rose);font-weight:600">${_('sonya_ai_badge')}</span></div><p style="font-size:.76rem;color:var(--text2);line-height:1.5">${loadingSpinner}${aiAdvice.alert} · ${aiAdvice.moodAdvice.length>100?aiAdvice.moodAdvice.substring(0,97)+'…':aiAdvice.moodAdvice}</p></div>`;})()}
     ${renderWaveSVG(ph, cp.fId)}
     <div class="pd"><span>🌊 ${priv.showDay?_('wave_day_short',ph.day,ph.cl):_('phase_word')+': '+_(['wave_rest','wave_grow','wave_bloom','wave_fade'][ph.phaseId])}</span><span>📍 ${_(['wave_rest','wave_grow','wave_bloom','wave_fade'][ph.phaseId])} — ${_(['wave_seed','wave_sprout','wave_flower','wave_fall'][ph.phaseId])}</span></div>
     ${renderPhaseGarden(ph, cp.fId)}
@@ -2726,7 +2727,10 @@ function sonyaIntro(){
 }
 function sonyaPredict(){
   let ph=getPhase(S.curUser);
-  if(!ph)return {alert:null,advice:_('sonya_setup')};
+  if(!ph)return {alert:null,advice:''};
+  let today=new Date().toDateString();
+  let cache=S._sonyaPredCache;
+  if(cache&&cache.date===today&&cache.alert)return {alert:cache.alert,moodAdvice:cache.moodAdvice};
   let phaseAlerts=[
     {alert:'🌙 Покой',advice:'В ближайшие дни — энергия на спаде. Отличное время для тихих вечеров и заботы о себе.'},
     {alert:'🌱 Рост',advice:'Энергия растёт! Лучшее время для свиданий, новых идей и активного отдыха вдвоём.'},
@@ -2743,7 +2747,33 @@ function sonyaPredict(){
   let moods=(S.logs[S.curUser]||[]).slice(-3);
   let stress=moods.some(m=>m.mood==='Раздражение'||m.mood==='Грусть');
   let extra=stress?` Заметила, что последние дни были непростыми. ${partnerN?'Попробуйте сегодня вечером ритуал благодарности — он особенно эффективен в этой фазе.':'Попробуй технику дыхания по квадрату — 4-4-4-4.'}`:' Чудесное время побыть вдвоём 🌸';
-  return {alert:pa.alert,moodAdvice:pa.advice+extra};
+  let result={alert:pa.alert,moodAdvice:pa.advice+extra};
+  S._sonyaPredCache={date:today,alert:result.alert,moodAdvice:result.moodAdvice};
+  return result;
+}
+function sonyaDailyAIAdvice(){
+  let today=new Date().toDateString();
+  if(S._sonyaAIAdvice&&S._sonyaAIAdvice.date===today)return S._sonyaAIAdvice;
+  let pred=sonyaPredict();
+  if(!pred||!pred.alert)return null;
+  S._sonyaAIAdvice={date:today,alert:pred.alert,moodAdvice:pred.moodAdvice,loading:true};
+  let prompt='Дай короткий персональный совет на сегодня (2-3 предложения) для пользователя BioSync, учитывая: фазу цикла, последние настроения, статус пары. Ответь строго на языке '+LANG_NAMES[_lang]+'. НЕ используй маркдаун, только чистый текст. Будь тёплой и конкретной.';
+  sonyaAI(prompt,[]).then(function(reply){
+    if(reply&&reply.length>10){
+      S._sonyaAIAdvice={date:today,alert:pred.alert,moodAdvice:reply,loading:false};
+    }else{
+      S._sonyaAIAdvice={date:today,alert:pred.alert,moodAdvice:pred.moodAdvice,loading:false};
+    }
+    save();
+    var onFemale=document.getElementById('p-dash-female').classList.contains('active');
+    var onMale=document.getElementById('p-dash-male').classList.contains('active');
+    if(onFemale)renderFemaleDash();
+    if(onMale)renderMaleDash();
+  }).catch(function(){
+    S._sonyaAIAdvice={date:today,alert:pred.alert,moodAdvice:pred.moodAdvice,loading:false};
+    save();
+  });
+  return S._sonyaAIAdvice;
 }
 function sonyaMediation(topic){
   let ph=getPhase(S.curUser);
@@ -2883,7 +2913,8 @@ function fSonya(){
   let s=getSub(S.curUser);
   let isPremium=s.plan==='premium'||s.plan==='unlimited'||s.trial;
   let intro=sonyaIntro();
-  let pred=sonyaPredict();
+  let aiAdvice=sonyaDailyAIAdvice();
+  let pred=aiAdvice||{alert:null,moodAdvice:''};
   let ph=getPhase(S.curUser);
   let cp=S.couples.find(x=>x.fId===S.curUser);
   let cpActive=cp&&cp.status==='active';
