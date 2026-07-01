@@ -2657,9 +2657,9 @@ function fSettings(g){
         <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
         <div style="flex:1;text-align:left"><div style="font-weight:700;font-size:1.05rem">${u.name||'Пользователь'}</div>
         <div style="color:var(--text2);font-size:.85rem">${u.email||''}</div></div>
-        <div style="background:${isF?'var(--roseL)':'rgba(143,191,168,.15)'};padding:4px 12px;border-radius:50px;
+        <div style="background:${isF?'var(--roseL)':'rgba(192,176,208,.15)'};padding:4px 12px;border-radius:50px;
           font-size:.75rem;font-weight:600;          color:${isF?'var(--roseD)':'var(--lav)'}">
-          ${isF?'🌸 Женский':'🌲 Мужской'}
+          ${isF?'♀ Женщина':'♂ Мужчина'}
         </div>
       </div>
       ${u.avatar?'<button class="btn btn-g btn-sm" onclick="var u=S.users.find(x=>x.id===S.curUser);delete u.avatar;save();renderFemaleDash();renderMaleDash()" style="font-size:.72rem;padding:4px 10px">Удалить аватар</button>':''}
