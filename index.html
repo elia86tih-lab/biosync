@@ -1738,10 +1738,10 @@ function fCouple(){
         if(priv.showPhase&&ph){
           html2+='<div style="background:var(--card);border-radius:10px;padding:8px 10px;margin-bottom:8px"><div style="display:flex;gap:6px;align-items:center"><span style="font-size:1.2rem">'+fs.icons[ph.phaseId]+'</span><div><div style="font-weight:600;font-size:.72rem">'+_pn(ph.phaseId)+'</div><div style="font-size:.65rem;color:var(--text3)">'+_pd(ph.phaseId).substring(0,40)+'…'+(priv.showDay?' · День '+ph.day:'')+'</div></div></div>';
           html2+='<div style="text-align:center;font-size:.65rem;color:var(--text3);padding:4px 0">📊 График волны '+ph.day+'/'+ph.cl+'</div>';
+          html2+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:8px">';
+          for(let i=0;i<4;i++){let act=i===ph.phaseId;html2+='<div style="background:'+(act?fs.colors[i]+'20':'var(--bg)')+';border-radius:8px;padding:6px 4px;text-align:center;border:'+(act?'1px solid '+fs.colors[i]+'40':'1px solid transparent')+'"><div style="font-size:.9rem">'+fs.icons[i]+'</div><div style="font-size:.55rem;color:var(--text3)">'+WAVE_NAMES[i]+'</div></div>'}
+          html2+='</div>';
         }
-        html2+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:8px">';
-        for(let i=0;i<4;i++){let act=i===ph.phaseId;html2+='<div style="background:'+(act?fs.colors[i]+'20':'var(--bg)')+';border-radius:8px;padding:6px 4px;text-align:center;border:'+(act?'1px solid '+fs.colors[i]+'40':'1px solid transparent')+'"><div style="font-size:.9rem">'+fs.icons[i]+'</div><div style="font-size:.55rem;color:var(--text3)">'+WAVE_NAMES[i]+'</div></div>'}
-        html2+='</div>';
         html2+='<div style="display:flex;justify-content:space-between;font-size:.65rem;color:var(--text3);padding:2px 0">';
         html2+='<span>💡 Подсказки: '+(priv.showCareTips?'✅':'🚫')+'</span><span>😊 Настроение: '+(priv.showMood?'✅':'🚫')+'</span><span>📆 День: '+(priv.showDay?'✅':'🚫')+'</span>';
         html2+='</div>';
