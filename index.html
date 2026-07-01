@@ -1707,18 +1707,32 @@ function fCouple(){
         </div>
       </div>
       <div class="ts mt-3" style="text-align:left">
-        <h3>👁️ Как выглядит Компас партнера</h3>
-        <p style="font-size:.78rem;color:var(--text3);margin-bottom:8px">То, что видит ${mu?mu.name:'партнер'} в разделе «Компас» при текущих настройках:</p>
-        ${(()=>{let priv=getUserPriv(S.curUser);let ph=getPhase(S.curUser);let html2='<div style="background:var(--bg);border-radius:14px;padding:14px;border:1px solid var(--border);font-size:.78rem;line-height:1.7">';
-        html2+='<div style="font-weight:600;margin-bottom:4px">🧭 Компас партнерши</div>';
-        if(priv.showPhase&&ph){html2+='<div>🌊 Фаза: <strong>'+WAVE_NAMES[ph.phaseId]+'</strong></div>';html2+='<div>📅 '+_('wave_day_short',ph.day,ph.cl)+'</div>'}
-        else html2+='<div>🔒 Доступ к фазе ограничен</div>';
-        if(priv.showDay&&ph)html2+='<div>📆 День: <strong>'+ph.day+'</strong> из '+ph.cl+'</div>';
-        if(priv.showCareTips)html2+='<div>💡 Подсказки по заботе: <span style="color:var(--green)">✅ доступны</span></div>';
-        else html2+='<div>💡 Подсказки: <span style="color:var(--text3)">🚫 скрыты</span></div>';
-        if(priv.showMood)html2+='<div>😊 История настроения: <span style="color:var(--green)">✅ видна</span></div>';
-        else html2+='<div>😊 Настроение: <span style="color:var(--text3)">🚫 скрыто</span></div>';
-        html2+='</div>';return html2})()}
+        <h3>🧭 Компас партнера — как он видит</h3>
+        <p style="font-size:.78rem;color:var(--text3);margin-bottom:12px">${mu?mu.name:'Партнер'} открывает вкладку «Компас» и видит:</p>
+        ${(()=>{let priv=getUserPriv(S.curUser);let ph=getPhase(S.curUser);let fs=getUserFlowerSet(S.curUser);let tips=priv.showCareTips&&ph?(M_TIPS[ph.phaseId]||[]):[];let mainTip=tips.length?tips.find(function(t){return t.c===''})?tips.find(function(t){return t.c===''}).b:tips[0].b:'Будь рядом.';
+        let html2='<div style="background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(245,240,232,.6));border-radius:16px;padding:16px;border:1.5px solid var(--border);box-shadow:0 2px 6px rgba(44,40,37,.06),inset 0 1px 0 rgba(255,255,255,.9);font-size:.76rem;line-height:1.6">';
+        html2+='<div style="background:rgba(143,191,168,.08);border-radius:10px;padding:6px 10px;margin-bottom:10px;text-align:center;font-size:.7rem;color:var(--green);font-weight:600">💞 Подключен к '+_('partner_name')+'</div>';
+        html2+='<div style="background:linear-gradient(135deg,rgba(143,191,168,.08),rgba(224,168,168,.06));border-radius:12px;padding:10px 12px;margin-bottom:10px;border:1px solid rgba(143,191,168,.1)">';
+        html2+='<div style="font-size:.7rem;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em">СЕГОДНЯ</div>';
+        html2+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+        if(priv.showPhase&&ph){html2+='<div style="background:var(--card);border-radius:10px;padding:10px;text-align:center"><div style="font-size:1.5rem">'+fs.icons[ph.phaseId]+'</div><div style="font-size:.65rem;color:var(--text2);font-weight:600">'+WAVE_NAMES[ph.phaseId]+'</div></div>'}
+        else{html2+='<div style="background:var(--card);border-radius:10px;padding:10px;text-align:center"><div style="font-size:1.5rem">🔒</div><div style="font-size:.65rem;color:var(--text3)">Скрыто</div></div>'}
+        html2+='<div style="background:var(--card);border-radius:10px;padding:10px;text-align:center"><div style="font-size:1.5rem">💡</div><div style="font-size:.65rem;color:var(--text2);font-weight:600">Совет</div></div>';
+        html2+='</div>';
+        html2+='<div style="margin-top:6px;font-size:.7rem;color:var(--text2);padding:6px 10px;background:rgba(255,255,255,.5);border-radius:8px">'+mainTip.substring(0,80)+(mainTip.length>80?'…':'')+'</div>';
+        html2+='</div>';
+        if(priv.showPhase&&ph){
+          html2+='<div style="background:var(--card);border-radius:10px;padding:8px 10px;margin-bottom:8px"><div style="display:flex;gap:6px;align-items:center"><span style="font-size:1.2rem">'+fs.icons[ph.phaseId]+'</span><div><div style="font-weight:600;font-size:.72rem">'+_pn(ph.phaseId)+'</div><div style="font-size:.65rem;color:var(--text3)">'+_pd(ph.phaseId).substring(0,40)+'…'+(priv.showDay?' · День '+ph.day:'')+'</div></div></div>';
+          html2+='<div style="text-align:center;font-size:.65rem;color:var(--text3);padding:4px 0">📊 График волны '+ph.day+'/'+ph.cl+'</div>';
+        }
+        html2+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:8px">';
+        for(let i=0;i<4;i++){let act=i===ph.phaseId;html2+='<div style="background:'+(act?fs.colors[i]+'20':'var(--bg)')+';border-radius:8px;padding:6px 4px;text-align:center;border:'+(act?'1px solid '+fs.colors[i]+'40':'1px solid transparent')+'"><div style="font-size:.9rem">'+fs.icons[i]+'</div><div style="font-size:.55rem;color:var(--text3)">'+WAVE_NAMES[i]+'</div></div>'}
+        html2+='</div>';
+        html2+='<div style="display:flex;justify-content:space-between;font-size:.65rem;color:var(--text3);padding:2px 0">';
+        html2+='<span>💡 Подсказки: '+(priv.showCareTips?'✅':'🚫')+'</span><span>😊 Настроение: '+(priv.showMood?'✅':'🚫')+'</span><span>📆 День: '+(priv.showDay?'✅':'🚫')+'</span>';
+        html2+='</div>';
+        html2+='</div><p style="font-size:.68rem;color:var(--text3);margin-top:6px;line-height:1.5">💡 <strong>Связь:</strong> настройки приватности управляют видимостью в Компасе. Фаза → подсказки по заботе. День → точность прогноза. Настроение → эмоциональный контекст.</p>';
+        return html2})()}
       </div>
     </div>`;
   }
