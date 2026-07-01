@@ -147,6 +147,12 @@ input,button,select,textarea{font-family:inherit}
 .tab-btn:hover svg path,.tab-btn:hover svg circle,.tab-btn:hover svg rect,.tab-btn:hover svg line,.tab-btn:hover svg polyline,.tab-btn:hover svg polygon{fill:#FDE0C0;fill-opacity:.7}
 .tab-btn.act svg path,.tab-btn.act svg circle,.tab-btn.act svg rect,.tab-btn.act svg line,.tab-btn.act svg polyline,.tab-btn.act svg polygon{fill:#FDD5AE;fill-opacity:.8}
 
+/* ====== YANDEX ADS ====== */
+.ad-block{background:rgba(255,255,255,.5);border-radius:16px;padding:8px;margin:16px 0;text-align:center;border:1px solid var(--border);overflow:hidden;min-height:90px;display:flex;align-items:center;justify-content:center}
+.ad-block>div{width:100%}
+.ad-label{font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.15em;margin-bottom:6px;text-align:center}
+.ad-placeholder{font-size:.78rem;color:var(--text3);padding:20px;background:rgba(27,158,140,.04);border-radius:12px;border:1px dashed rgba(27,158,140,.15);display:flex;align-items:center;justify-content:center;gap:8px}
+
 /* ====== PHASE WAVE CARD ====== */
 .pw{background:var(--card);border-radius:28px;padding:28px;margin-bottom:28px;
   box-shadow:0 2px 6px rgba(44,40,37,.04);border:1px solid var(--border);overflow:hidden;
@@ -348,6 +354,8 @@ input,button,select,textarea{font-family:inherit}
 </style>
 <script src="https://unpkg.com/lucide@latest">
 </script>
+<script>window.yaContextCb=window.yaContextCb||[]</script>
+<script src="https://yandex.ru/ads/system/context.js" async></script>
 </head>
 <body>
 
@@ -496,6 +504,7 @@ input,button,select,textarea{font-family:inherit}
   </header>
   <div class="dash-c">
     <div class="tabs" id="df-tabs"></div>
+    <div id="ya-ad-female-top" class="ad-block"></div>
     <div id="df-content"></div>
   </div>
 </div>
@@ -516,6 +525,7 @@ input,button,select,textarea{font-family:inherit}
   </header>
   <div class="dash-c">
     <div class="tabs" id="dm-tabs"></div>
+    <div id="ya-ad-male-top" class="ad-block"></div>
     <div id="dm-content"></div>
   </div>
 </div>
@@ -1320,6 +1330,7 @@ function renderFemaleDash(){
   let fn=cf[activeTab];
   if(fn){c.innerHTML=rI(fn())+appFooter();lucide.createIcons(c)}
   else c.innerHTML=appFooter();
+  renderAllAds();
   let hdr=document.querySelector('.dash-hdr .dash-r');
   if(hdr)lucide.createIcons(hdr);
 }
@@ -1706,6 +1717,7 @@ function renderMaleDash(){
   let fn=cf[activeTab];
   if(fn){c.innerHTML=rI(fn())+appFooter();lucide.createIcons(c)}
   else c.innerHTML=appFooter();
+  renderAllAds();
 }
 
 function getCoupleForMale(){
@@ -2614,6 +2626,13 @@ function fSettings(g){
       <button class="btn btn-s btn-sm btn-block mt-2" onclick="setupSync()" style="font-size:.82rem">${_('settings_sync_btn')}</button>
     </div>
 
+    <!-- Yandex Ads -->
+    <div class="rc" style="margin-bottom:16px;text-align:left">
+      <div style="font-weight:600;font-size:.95rem;margin-bottom:4px">📢 Реклама Яндекса</div>
+      <p style="color:var(--text2);font-size:.78rem;margin-bottom:10px;line-height:1.5">Выплаты на счёт: <strong>40817810320000814885</strong> (Яндекс Банк).<br>Получите ID блоков в <a href="https://partner.yandex.ru" target="_blank" style="color:var(--roseD);text-decoration:underline">Рекламной сети Яндекса</a> и вставьте их ниже.</p>
+      <div id="ya-ad-settings"></div>
+    </div>
+
     <!-- Danger zone -->
     <div class="rc" style="margin-bottom:16px;text-align:left;border:1px solid rgba(212,96,96,.2)">
       <div style="font-weight:600;font-size:.95rem;margin-bottom:4px;color:#D46060">${_('settings_danger')}</div>
@@ -3411,6 +3430,49 @@ const PREMIUM_TIPS=[
   {emoji:'🌙',text:'Попросите <a href="https://alice.yandex.ru/prompthub/c/family" target="_blank" style="color:var(--roseD);text-decoration:underline">Алису</a> запустить ваш вечерний ритуал расслабления перед сном.'},
   {emoji:'💬',text:'Используйте <a href="https://alice.yandex.ru/prompthub/c/family" target="_blank" style="color:var(--roseD);text-decoration:underline">Алису Семья</a> как семейный органайзер — записывайте идеи ритуалов голосом.'}
 ];
+
+// ====== YANDEX ADS CONFIG ======
+// Замените R-A-XXXXXX-X на свои ID из Рекламной сети Яндекса: https://partner.yandex.ru
+// Выплаты на счёт: 40817810320000814885 (Яндекс Банк)
+const YA_ADS={
+  enabled:!SVR,
+  blocks:[
+    {id:'R-A-XXXXXX-1',container:'ya-ad-female-top',type:'floorAd'},
+    {id:'R-A-XXXXXX-2',container:'ya-ad-female-mid',type:'feed'},
+    {id:'R-A-XXXXXX-3',container:'ya-ad-male-top',type:'floorAd'},
+    {id:'R-A-XXXXXX-4',container:'ya-ad-male-mid',type:'feed'}
+  ]
+};
+(function(){
+  if(!localStorage.getItem('biosync_ya_blocks')){
+    localStorage.setItem('biosync_ya_blocks',JSON.stringify(YA_ADS.blocks.map(function(b){return b.id})));
+  }
+})();
+function loadYaBlockIds(){
+  try{var ids=JSON.parse(localStorage.getItem('biosync_ya_blocks')||'[]');YA_ADS.blocks.forEach(function(b,i){if(ids[i])b.id=ids[i]})}catch(e){}
+}
+loadYaBlockIds();
+function renderYandexAd(blockId,containerId){
+  if(!YA_ADS.enabled)return;
+  var el=document.getElementById(containerId);
+  if(!el)return;
+  if(blockId.indexOf('XXXXXX')>=0){
+    el.innerHTML='<div class="ad-placeholder"><span>📢</span><span>Яндекс.Реклама — укажите R-A-ID в настройках</span></div>';
+    return;
+  }
+  el.innerHTML='<div id="yandex_rtb_'+blockId+'" style="width:100%"></div>';
+  try{
+    window.yaContextCb.push(function(){
+      Ya.Context.AdvManager.render({blockId:blockId,renderTo:'yandex_rtb_'+blockId,type:'feed',platform:'touch'});
+    });
+  }catch(e){}
+}
+function renderAllAds(){
+  YA_ADS.blocks.forEach(function(b){renderYandexAd(b.id,b.container)});
+  var as=document.getElementById('ya-ad-settings');
+  if(as){as.innerHTML=YA_ADS.blocks.map(function(b,i){return '<div style="margin-bottom:8px"><label style="font-size:.75rem;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">'+b.container+'</label><input type="text" id="ya-ad-id-'+i+'" value="'+b.id+'" style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.8rem;font-family:monospace;background:var(--card);color:var(--text)" placeholder="R-A-XXXXXX-X"></div>'+'<button class="btn btn-p btn-sm mt-2" onclick="var ids=[];for(var j=0;j<'+YA_ADS.blocks.length+';j++)ids.push(document.getElementById(String.fromCharCode(39)+'+String.fromCharCode(39)+'ya-ad-id-'+String.fromCharCode(39)+'+j).value);updateYaBlockIds(ids)" style="font-size:.78rem;padding:6px 16px">💾 Сохранить ID</button>'}).join('')}
+}
+
 const PAYMENT_DETAILS={
   account:'40817810320000814885',
   bik:'044525677',
