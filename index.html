@@ -1410,66 +1410,93 @@ function waveY(x,W){
   return 80;
 }
 function renderWaveSVG(ph, uid){
-  const W=560,H=140,bn=WAVE_BN,by=WAVE_BY;
+  const W=560,H=150,bn=WAVE_BN,by=WAVE_BY;
   let fs=getUserFlowerSet(uid||S.curUser);
   let cols=fs.colors;
   let icons=fs.icons;
   let svg=`<svg class="svg-wave" viewBox="0 0 ${W} ${H}">`;
   let startDate=S.cycle[uid||S.curUser];
+  let cl=ph.cl||28;
+  let dayW=W/cl;
   if(startDate&&startDate.lps){
     let sd=new Date(startDate.lps);
-    let cl=ph.cl||28;
-    let dayW=W/cl;
-    for(let d=1;d<=cl;d+=7){
-      let x=(d-1)*dayW;
+    let monthNames=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+    let shortDays=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+    let endDate=new Date(sd);
+    endDate.setDate(endDate.getDate()+cl-1);
+    svg+=`<text x="${W/2}" y="12" fill="var(--text2)" font-size="9" text-anchor="middle" font-weight="700" opacity=".8">${monthNames[sd.getMonth()]} — ${monthNames[endDate.getMonth()]} ${endDate.getFullYear()}</text>`;
+    // Day numbers every 2 days
+    for(let d=1;d<=cl;d+=2){
+      let x=(d-1)*dayW+dayW/2;
       let dt=new Date(sd);
       dt.setDate(dt.getDate()+d-1);
-      let dayName=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][dt.getDay()];
-      let dateNum=dt.getDate();
-      svg+=`<line x1="${x}" y1="0" x2="${x}" y2="105" stroke="var(--border)" stroke-width=".8" stroke-dasharray="3,4" opacity=".6"/>`;
-      svg+=`<text x="${x}" y="14" fill="var(--text2)" font-size="8" text-anchor="middle" opacity=".7" font-weight="500">${dayName}</text>`;
-      svg+=`<text x="${x}" y="25" fill="var(--text3)" font-size="8" text-anchor="middle" opacity=".6">${dateNum}</text>`;
+      let dayNum=dt.getDate();
+      let isWeekend=dt.getDay()===0||dt.getDay()===6;
+      let isToday=new Date().toDateString()===dt.toDateString();
+      let fillCol=isToday?'var(--roseD)':isWeekend?'var(--rose)':'var(--text3)';
+      let fSize=isToday?'8':'7';
+      let fWeight=isToday?'800':isWeekend?'600':'400';
+      let fOpacity=isToday?'1':'.7';
+      svg+=`<text x="${x}" y="29" fill="${fillCol}" font-size="${fSize}" text-anchor="middle" font-weight="${fWeight}" opacity="${fOpacity}">${dayNum}</text>`;
     }
+    // Day name headers every 4 days
+    for(let d=1;d<=cl;d+=4){
+      let x=(d-1)*dayW+dayW/2;
+      let dt=new Date(sd);
+      dt.setDate(dt.getDate()+d-1);
+      let dn=shortDays[dt.getDay()];
+      let isWeekend2=dt.getDay()===0||dt.getDay()===6;
+      let dnFill=isWeekend2?'var(--rose)':'var(--text3)';
+      let dnWeight=isWeekend2?'600':'400';
+      let dnOpacity=isWeekend2?'.8':'.5';
+      svg+=`<text x="${x}" y="18" fill="${dnFill}" font-size="7" text-anchor="middle" font-weight="${dnWeight}" opacity="${dnOpacity}">${dn}</text>`;
+    }
+    // Weekend columns + today marker + period dots
     for(let d=1;d<=cl;d++){
       let dt=new Date(sd);
       dt.setDate(dt.getDate()+d-1);
       if(dt.getDay()===0||dt.getDay()===6){
         let x=(d-1)*dayW;
-        svg+=`<rect x="${x}" y="27" width="${dayW}" height="78" fill="var(--border)" opacity=".2" rx="2"/>`;
+        svg+=`<rect x="${x}" y="13" width="${dayW}" height="22" fill="var(--rose)" opacity=".08" rx="3"/>`;
+      }
+      if(new Date().toDateString()===dt.toDateString()){
+        let x=(d-1)*dayW;
+        svg+=`<rect x="${x}" y="13" width="${dayW}" height="22" fill="var(--cyan)" opacity=".15" rx="3"/>`;
+        svg+=`<rect x="${x+1}" y="13" width="2" height="22" fill="var(--cyan)" opacity=".6" rx="1"/>`;
+      }
+      if(d<=5){
+        let x=(d-1)*dayW;
+        svg+=`<rect x="${x+dayW*0.25}" y="28" width="${dayW*0.5}" height="4" fill="var(--roseD)" opacity=".5" rx="2"/>`;
       }
     }
-  }
-  let cl=ph.cl||28;
-  let dayW=W/cl;
-  if(startDate&&startDate.lps){
-    let sd=new Date(startDate.lps);
+    // Fertile window, ovulation, PMS labels
     let fwStart=Math.max(1,Math.round(10/28*cl));
     let fwEnd=Math.min(cl,Math.round(16/28*cl));
     let fwx1=(fwStart-1)*dayW;
     let fwx2=(fwEnd-1)*dayW;
-    svg+=`<rect x="${fwx1}" y="30" width="${fwx2-fwx1}" height="12" fill="var(--green)" opacity=".18" rx="4"/>`;
-    svg+=`<text x="${(fwx1+fwx2)/2}" y="48" fill="var(--green)" font-size="8" text-anchor="middle" font-weight="600" opacity=".7">${_('fertile_win')}</text>`;
+    svg+=`<rect x="${fwx1}" y="33" width="${fwx2-fwx1}" height="10" fill="var(--green)" opacity=".18" rx="4"/>`;
+    svg+=`<text x="${(fwx1+fwx2)/2}" y="50" fill="var(--green)" font-size="7" text-anchor="middle" font-weight="600" opacity=".7">${_('fertile_win')}</text>`;
     let ovDay=Math.round(14/28*cl);
     let ovx=(ovDay-1)*dayW;
-    svg+=`<line x1="${ovx}" y1="30" x2="${ovx}" y2="103" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="3,3" opacity=".7"/>`;
-    svg+=`<circle cx="${ovx}" cy="27" r="7" fill="var(--gold)" opacity=".8"/>`;
-    svg+=`<text x="${ovx}" y="30" fill="#fff" font-size="7" text-anchor="middle" font-weight="700">🟡</text>`;
-    let pmsStart=Math.round(24/28*cl);
-    let pmsEnd=cl;
-    if(pmsStart<=cl){
-      let px1=(pmsStart-1)*dayW;
-      let px2=(pmsEnd-1)*dayW;
-      svg+=`<rect x="${px1}" y="30" width="${px2-px1}" height="12" fill="var(--roseD)" opacity=".12" rx="4"/>`;
-      svg+=`<text x="${(px1+px2)/2}" y="48" fill="var(--roseD)" font-size="8" text-anchor="middle" font-weight="600" opacity=".65">${_('high_emo')}</text>`;
-    }
+    svg+=`<line x1="${ovx}" y1="33" x2="${ovx}" y2="103" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="3,3" opacity=".7"/>`;
+    svg+=`<circle cx="${ovx}" cy="30" r="6" fill="var(--gold)" opacity=".8"/>`;
+    svg+=`<text x="${ovx}" y="33" fill="#fff" font-size="6" text-anchor="middle" font-weight="700">●</text>`;
     let dtOv=new Date(sd);
     dtOv.setDate(dtOv.getDate()+ovDay-1);
     let ovLabel=dtOv.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
-    svg+=`<text x="${ovx}" y="85" fill="var(--gold)" font-size="7" text-anchor="middle" font-weight="600" opacity=".7">${_('ovulation')}</text>`;
-    svg+=`<text x="${ovx}" y="95" fill="var(--gold)" font-size="6" text-anchor="middle" opacity=".5">${ovLabel}</text>`;
+    svg+=`<text x="${ovx}" y="88" fill="var(--gold)" font-size="7" text-anchor="middle" font-weight="600" opacity=".7">${_('ovulation')}</text>`;
+    svg+=`<text x="${ovx}" y="98" fill="var(--gold)" font-size="6" text-anchor="middle" opacity=".5">${ovLabel}</text>`;
+    let pmsStart=Math.round(24/28*cl);
+    if(pmsStart<=cl){
+      let px1=(pmsStart-1)*dayW;
+      let px2=cl*dayW;
+      svg+=`<rect x="${px1}" y="33" width="${px2-px1}" height="10" fill="var(--roseD)" opacity=".12" rx="4"/>`;
+      svg+=`<text x="${(px1+px2)/2}" y="50" fill="var(--roseD)" font-size="7" text-anchor="middle" font-weight="600" opacity=".65">${_('high_emo')}</text>`;
+    }
   }
+  let barsYOffset=10;
   for(let i=0;i<4;i++){
-    let x1=bn[i]*W,x2=bn[i+1]*W,y1=by[i],y2=by[i+1];
+    let x1=bn[i]*W,x2=bn[i+1]*W,y1=by[i]+barsYOffset,y2=by[i+1]+barsYOffset;
     let c1x=x1+(x2-x1)*0.4,c2x=x1+(x2-x1)*0.6;
     let op=i===ph.phaseId?'.85':'.45';
     let col=cols[i];
@@ -1479,25 +1506,23 @@ function renderWaveSVG(ph, uid){
     </linearGradient>`;
     svg+=`<path d="M ${x1},${H} L ${x1},${y1} C ${c1x},${y1} ${c2x},${y2} ${x2},${y2} L ${x2},${H} Z"
       fill="url(#wg${i})" opacity="${op}"/>`;
-    if(i>0){
-      svg+=`<circle cx="${x1}" cy="${y1}" r="3" fill="${cols[i-1]}" opacity=".4"/>`;
-    }
+    if(i>0){svg+=`<circle cx="${x1}" cy="${y1}" r="3" fill="${cols[i-1]}" opacity=".4"/>`;}
   }
-  let d=`M 0,${by[0]}`;
+  let d=`M 0,${by[0]+barsYOffset}`;
   for(let i=0;i<4;i++){
-    let x1=bn[i]*W,x2=bn[i+1]*W,y1=by[i],y2=by[i+1];
+    let x1=bn[i]*W,x2=bn[i+1]*W,y1=by[i]+barsYOffset,y2=by[i+1]+barsYOffset;
     let c1x=x1+(x2-x1)*0.4,c2x=x1+(x2-x1)*0.6;
     d+=` C ${c1x},${y1} ${c2x},${y2} ${x2},${y2}`;
   }
   svg+=`<path d="${d}" fill="none" stroke="#2D2A26" stroke-width="1.5" opacity=".15"/>`;
-  let cx=(ph.day/ph.cl)*W,cy=waveY(cx,W);
+  let cx=(ph.day/ph.cl)*W,cy=waveY(cx,W)+barsYOffset;
   svg+=`<circle class="wave-ring" cx="${cx}" cy="${cy}" r="16" fill="none" stroke="${cols[ph.phaseId]}" stroke-width="2.5"/>`;
   svg+=`<circle class="wave-dot" cx="${cx}" cy="${cy}" r="8" fill="${cols[ph.phaseId]}" stroke="#fff" stroke-width="3"/>`;
   let phaseLabels=[_('wave_rest'),_('wave_grow'),_('wave_bloom'),_('wave_fade')];
   for(let i=0;i<4;i++){
     let lx=(bn[i]+bn[i+1])/2*W;
-    svg+=`<text x="${lx}" y="132" class="wave-icon">${icons[i]}</text>`;
-    svg+=`<text x="${lx}" y="148" class="wave-label">${phaseLabels[i]}</text>`;
+    svg+=`<text x="${lx}" y="142" class="wave-icon">${icons[i]}</text>`;
+    svg+=`<text x="${lx}" y="150" class="wave-label">${phaseLabels[i]}</text>`;
   }
   svg+=`</svg>`;
   return svg;
