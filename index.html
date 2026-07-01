@@ -349,29 +349,11 @@ input,button,select,textarea{font-family:inherit}
     <div style="position:absolute;top:20px;right:24px;z-index:10">
       <button class="btn btn-g btn-sm" onclick="let t=S._theme||localStorage.getItem('biosync_theme')||'light';setTheme(t==='dark'?'light':'dark')" style="font-size:1.2rem;padding:8px 12px;border-radius:50%;width:40px;height:40px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow)" title="Сменить тему"><i data-lucide="moon" class="lx"></i></button>
     </div>
-    <div style="margin-bottom:8px;display:flex;justify-content:center">
-      <svg width="80" height="80" viewBox="0 0 80 80" style="animation:float 4s ease-in-out infinite;filter:drop-shadow(0 4px 20px rgba(27,158,140,.2))">
-        <defs>
-          <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#1B9E8C"/>
-            <stop offset="1" stop-color="#15857A"/>
-          </linearGradient>
-          <linearGradient id="lg2" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#1B9E8C" stop-opacity=".3"/>
-            <stop offset="1" stop-color="#00F0FF" stop-opacity=".3"/>
-          </linearGradient>
-        </defs>
-        <circle cx="40" cy="40" r="36" fill="none" stroke="url(#lg1)" stroke-width="2" opacity=".15"/>
-        <circle cx="40" cy="40" r="28" fill="none" stroke="url(#lg1)" stroke-width="1.5" opacity=".1"/>
-        <path d="M14 50 Q25 35 40 45 T66 38" fill="none" stroke="url(#lg1)" stroke-width="4" stroke-linecap="round"/>
-        <path d="M14 56 Q25 41 40 51 T66 44" fill="none" stroke="#00F0FF" stroke-width="3" stroke-linecap="round" opacity=".4"/>
-        <circle cx="40" cy="28" r="8" fill="url(#lg1)"/>
-        <circle cx="40" cy="28" r="4" fill="#fff"/>
-        <circle cx="40" cy="28" r="12" fill="none" stroke="#00F0FF" stroke-width="1.5" opacity=".3">
-          <animate attributeName="r" values="8;14;8" dur="3s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values=".4;0;.4" dur="3s" repeatCount="indefinite"/>
-        </circle>
-      </svg>
+    <div style="margin-bottom:8px;display:flex;justify-content:center;position:relative">
+      <div style="position:relative;display:inline-block">
+        <div style="position:absolute;inset:-6px;border-radius:50%;box-shadow:0 0 40px rgba(0,240,255,.5),0 0 80px rgba(27,158,140,.3);animation:voicePulse 2s ease-in-out infinite;pointer-events:none"></div>
+        <img src="logo.jpg" alt="BioSync" style="width:88px;height:88px;border-radius:50%;object-fit:cover;border:3px solid var(--cyan);box-shadow:0 8px 30px rgba(0,240,255,.3);animation:float 4s ease-in-out infinite">
+      </div>
     </div>
     <h1>BioSync <span>Код пары</span></h1>
     <p style="margin-bottom:16px">Превратите знание о цикле в инструмент бережного общения. Приложение синхронизирует гормональный трекер женщины с персонализированными подсказками для мужчины — через <strong>«Код пары»</strong> вы соединяете аккаунты и получаете единое пространство для отношений.</p>
@@ -499,7 +481,7 @@ input,button,select,textarea{font-family:inherit}
 <button class="dash-menu-btn" onclick="toggleTabMenu('df-tabs')" title="Menu"><i data-lucide="menu" class="lx"></i></button>
 <div class="dash" id="p-dash-female">
   <header class="dash-hdr">
-    <div class="dash-logo" onclick="S._fTab='wave';renderFemaleDash()"><svg width="28" height="28" viewBox="0 0 64 64" style="flex-shrink:0;vertical-align:middle;margin-right:4px"><defs><linearGradient id="dlg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1B9E8C"/><stop offset="1" stop-color="#15857A"/></linearGradient></defs><path d="M10 40 Q20 26 32 36 T54 28" fill="none" stroke="url(#dlg)" stroke-width="3.5" stroke-linecap="round"/><path d="M10 46 Q20 32 32 42 T54 34" fill="none" stroke="#00F0FF" stroke-width="2.5" stroke-linecap="round" opacity=".4"/><circle cx="32" cy="20" r="6" fill="url(#dlg)"/><circle cx="32" cy="20" r="3" fill="#fff"/></svg>Bio<span>Sync</span></div>
+    <div class="dash-logo" onclick="S._fTab='wave';renderFemaleDash()"><img src="logo.jpg" alt="BioSync" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1.5px solid var(--cyan);box-shadow:0 0 10px rgba(0,240,255,.25);flex-shrink:0;vertical-align:middle;margin-right:4px">Bio<span>Sync</span></div>
     <div class="dash-r"><span class="dash-user" id="df-user"></span>
       <button class="btn btn-sm" id="df-voice-btn" onclick="openVoiceModal()" style="background:linear-gradient(135deg,var(--rose),var(--roseD));color:#fff;font-size:.85rem;padding:6px 14px;gap:6px;display:none" title="Выговориться"><i data-lucide="mic" class="lx lx-sm"></i></button>
       <button class="btn btn-g btn-sm" onclick="logout()">Выйти</button>
@@ -522,7 +504,7 @@ input,button,select,textarea{font-family:inherit}
 <button class="dash-menu-btn" onclick="toggleTabMenu('dm-tabs')" title="Menu"><i data-lucide="menu" class="lx"></i></button>
 <div class="dash" id="p-dash-male">
   <header class="dash-hdr">
-    <div class="dash-logo" onclick="S._mTab='compass';renderMaleDash()"><svg width="28" height="28" viewBox="0 0 64 64" style="flex-shrink:0;vertical-align:middle;margin-right:4px"><defs><linearGradient id="dlg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1B9E8C"/><stop offset="1" stop-color="#15857A"/></linearGradient></defs><path d="M10 40 Q20 26 32 36 T54 28" fill="none" stroke="url(#dlg)" stroke-width="3.5" stroke-linecap="round"/><path d="M10 46 Q20 32 32 42 T54 34" fill="none" stroke="#00F0FF" stroke-width="2.5" stroke-linecap="round" opacity=".4"/><circle cx="32" cy="20" r="6" fill="url(#dlg)"/><circle cx="32" cy="20" r="3" fill="#fff"/></svg>Bio<span>Sync</span></div>
+    <div class="dash-logo" onclick="S._mTab='compass';renderMaleDash()"><img src="logo.jpg" alt="BioSync" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1.5px solid var(--cyan);box-shadow:0 0 10px rgba(0,240,255,.25);flex-shrink:0;vertical-align:middle;margin-right:4px">Bio<span>Sync</span></div>
     <div class="dash-r"><span class="dash-user" id="dm-user"></span><button class="btn btn-g btn-sm" onclick="logout()">Выйти</button></div>
   </header>
   <div class="dash-c">
@@ -1489,6 +1471,18 @@ function fWave(){
     <div class="pd"><span>${_('wave_day_short',ph.day,ph.cl)}</span><span>📍 ${_(['wave_rest','wave_grow','wave_bloom','wave_fade'][ph.phaseId])} — ${_(['wave_seed','wave_sprout','wave_flower','wave_fall'][ph.phaseId])}</span></div>
     ${renderPhaseGarden(ph, S.curUser)}
   </div>`;
+  // Sonya advice
+  let pred=sonyaPredict();
+  if(pred.alert){
+    html+=`<div style="background:linear-gradient(135deg,rgba(0,240,255,.06),rgba(27,158,140,.04));border-radius:16px;padding:14px;margin-bottom:14px;border:1px solid rgba(0,240,255,.12);cursor:pointer" onclick="S._fTab='sonya';renderFemaleDash()">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:1rem">🔮</span><span style="font-weight:700;font-size:.82rem;color:var(--roseD)">${_('sonya_advice_short')}</span>
+        <span style="margin-left:auto;font-size:.65rem;color:var(--rose);font-weight:600">${_('sonya_ai_badge')}</span>
+      </div>
+      <p style="font-size:.78rem;color:var(--text2);line-height:1.5">${pred.alert} · ${pred.moodAdvice.length>120?pred.moodAdvice.substring(0,117)+'…':pred.moodAdvice}</p>
+      <p style="font-size:.68rem;color:var(--rose);margin-top:4px;font-weight:500">${_('sonya_advice_offer')}</p>
+    </div>`;
+  }
   // Prediction
   html+=`<div class="pw" style="padding:14px"><h3 style="font-size:.95rem;margin-bottom:8px;color:var(--text2)">${_('wave_forecast')}</h3>`;
   PHASES.forEach((p,i)=>{
@@ -1768,6 +1762,7 @@ function mCompass(){
     <div class="ph"><div class="ph-sym" style="font-size:2rem">${fs.icons[ph.phaseId]}</div>
       <div class="ph-i"><h3>${_(_PKN.cn[ph.phaseId])}</h3><p>${_pd(ph.phaseId)}${priv.showDay?' · День '+ph.day:''}</p></div></div>
     ${moodHtml}
+    ${(()=>{let pred=sonyaPredict();if(!pred.alert)return'';return `<div style="background:linear-gradient(135deg,rgba(0,240,255,.06),rgba(27,158,140,.04));border-radius:14px;padding:12px 14px;margin:12px 0;border:1px solid rgba(0,240,255,.12);cursor:pointer" onclick="S._sonyaMode='chat';renderMaleDash()"><div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="font-size:1rem">🔮</span><span style="font-weight:700;font-size:.8rem;color:var(--roseD)">${_('sonya_advice_short')}</span><span style="margin-left:auto;font-size:.62rem;color:var(--rose);font-weight:600">${_('sonya_ai_badge')}</span></div><p style="font-size:.76rem;color:var(--text2);line-height:1.5">${pred.alert} · ${pred.moodAdvice.length>100?pred.moodAdvice.substring(0,97)+'…':pred.moodAdvice}</p></div>`;})()}
     ${renderWaveSVG(ph, cp.fId)}
     <div class="pd"><span>🌊 ${priv.showDay?_('wave_day_short',ph.day,ph.cl):_('phase_word')+': '+_(['wave_rest','wave_grow','wave_bloom','wave_fade'][ph.phaseId])}</span><span>📍 ${_(['wave_rest','wave_grow','wave_bloom','wave_fade'][ph.phaseId])} — ${_(['wave_seed','wave_sprout','wave_flower','wave_fall'][ph.phaseId])}</span></div>
     ${renderPhaseGarden(ph, cp.fId)}
