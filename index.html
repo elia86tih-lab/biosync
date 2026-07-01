@@ -3331,7 +3331,7 @@ function fSonya(){
   if(mode==='chat'){return fSonyaChat()}
   if(mode==='soothe-ball'){return fSonyaBreathBall(ph)}
   return '';
-
+}
 
 function fSonyaChat(){
   let chat=S._sonyaChat||[];
@@ -3458,8 +3458,6 @@ function _doBreathStep(){
     _breathCount--;if(c)c.textContent=_breathCount;
     if(_breathCount<=0){clearInterval(_breathTimer);_breathPhase=(_breathPhase+1)%4;_doBreathStep()}
   },1000);
-}
-
 }
 
 function fSonyaSootheGround(){
