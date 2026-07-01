@@ -998,10 +998,12 @@ function navigate(page){
 function toggleTabMenu(id){
   let el=document.getElementById(id);
   if(!el)return;
-  el.style.display=el.style.display==='none'?'flex':'';
-  if(el.style.display==='flex'){
+  if(el.style.display==='none'){
+    el.style.display='flex';
     el.scrollIntoView({behavior:'smooth',block:'nearest'});
     el.focus();
+  } else {
+    el.style.display='none';
   }
 }
 function show(id){document.getElementById(id).style.display=''}
@@ -1769,7 +1771,7 @@ function mCompass(){
     <div class="ph"><div class="ph-sym" style="font-size:2rem">${fs.icons[ph.phaseId]}</div>
       <div class="ph-i"><h3>${_(_PKN.cn[ph.phaseId])}</h3><p>${_pd(ph.phaseId)}${priv.showDay?' · День '+ph.day:''}</p></div></div>
     ${moodHtml}
-    ${(()=>{let pred=sonyaPredict();if(!pred.alert)return'';return `<div style="background:linear-gradient(135deg,rgba(0,240,255,.06),rgba(27,158,140,.04));border-radius:14px;padding:12px 14px;margin:12px 0;border:1px solid rgba(0,240,255,.12);cursor:pointer" onclick="S._sonyaMode='chat';renderMaleDash()"><div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="font-size:1rem">🔮</span><span style="font-weight:700;font-size:.8rem;color:var(--roseD)">${_('sonya_advice_short')}</span><span style="margin-left:auto;font-size:.62rem;color:var(--rose);font-weight:600">${_('sonya_ai_badge')}</span></div><p style="font-size:.76rem;color:var(--text2);line-height:1.5">${pred.alert} · ${pred.moodAdvice.length>100?pred.moodAdvice.substring(0,97)+'…':pred.moodAdvice}</p></div>`;})()}
+    ${(()=>{let old=S.curUser;S.curUser=cp.fId;let pred=sonyaPredict();S.curUser=old;if(!pred.alert)return'';return `<div style="background:linear-gradient(135deg,rgba(0,240,255,.06),rgba(27,158,140,.04));border-radius:14px;padding:12px 14px;margin:12px 0;border:1px solid rgba(0,240,255,.12);cursor:pointer" onclick="S._sonyaMode='chat';renderMaleDash()"><div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="font-size:1rem">🔮</span><span style="font-weight:700;font-size:.8rem;color:var(--roseD)">${_('sonya_advice_short')}</span><span style="margin-left:auto;font-size:.62rem;color:var(--rose);font-weight:600">${_('sonya_ai_badge')}</span></div><p style="font-size:.76rem;color:var(--text2);line-height:1.5">${pred.alert} · ${pred.moodAdvice.length>100?pred.moodAdvice.substring(0,97)+'…':pred.moodAdvice}</p></div>`;})()}
     ${renderWaveSVG(ph, cp.fId)}
     <div class="pd"><span>🌊 ${priv.showDay?_('wave_day_short',ph.day,ph.cl):_('phase_word')+': '+_(['wave_rest','wave_grow','wave_bloom','wave_fade'][ph.phaseId])}</span><span>📍 ${_(['wave_rest','wave_grow','wave_bloom','wave_fade'][ph.phaseId])} — ${_(['wave_seed','wave_sprout','wave_flower','wave_fall'][ph.phaseId])}</span></div>
     ${renderPhaseGarden(ph, cp.fId)}
