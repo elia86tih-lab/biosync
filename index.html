@@ -1614,9 +1614,6 @@ function fWave(){
   S._sonyaMode='home';
   html+=fSonya();
   S._sonyaMode=savedMode;
-  // Clean up any duplicate IDs from embedded Sonya
-  html=html.replace(/id="sonya-chat-input"/g,'id="sonya-chat-input-w"');
-  html=html.replace(/id="sonya-chat-send-btn"/g,'id="sonya-chat-send-btn-w"');
   return html;
 }
 function sonyaMiniSend(){
