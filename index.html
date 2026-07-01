@@ -1611,9 +1611,12 @@ function fWave(){
   html+=`</div>`;
   // Sonya full section
   let savedMode=S._sonyaMode;
-  S._sonyaMode='home';
+  if(!savedMode||savedMode==='home')S._sonyaMode='home';
   html+=fSonya();
   S._sonyaMode=savedMode;
+  // Fix embedded Sonya buttons: add _fTab='sonya' so they navigate to Sonya tab
+  html=html.replace(/S\._sonyaMode='([^']+)';renderFemaleDash/g,"S._fTab='sonya';S._sonyaMode='$1';renderFemaleDash");
+  html=html.replace(/S\._sonyaTopic='([^']+)';S\._sonyaMode='([^']+)';renderFemaleDash/g,"S._fTab='sonya';S._sonyaTopic='$1';S._sonyaMode='$2';renderFemaleDash");
   return html;
 }
 function sonyaMiniSend(){
