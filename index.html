@@ -1395,7 +1395,7 @@ function renderFemaleDash(){
 // ====== NEW SVG WAVE ENGINE ======
 const WAVE_COLORS = ['#C4A4A4','#A8C4A8','#F0D78C','#D4A574'];
 const WAVE_ICONS = ['🌰','🌱','🌸','🍂'];
-const WAVE_NAMES = ['Покой','Рост','Цветение','Увядание'];
+const WAVE_NAMES = ['Покой','Рост','Цветение','Спад'];
 const WAVE_DESC = ['Семя в земле','Первые всходы','Прекрасный цветок','Листопады'];
 const WAVE_BN = [0,5/28,13/28,16/28,1]; // phase boundaries as fraction
 const WAVE_BY = [82,76,18,24,80]; // y at each boundary
@@ -2073,7 +2073,7 @@ const _T={
 'wave_rest':{ru:'Покой',en:'Rest',zh:'静息',hi:'विश्राम',es:'Reposo',ar:'راحة',fr:'Repos',bn:'বিশ্রাম',pt:'Repouso',ur:'آرام',de:'Ruhe',id:'Istirahat',ja:'静寂',tr:'Dinlenme',ko:'휴식'},
 'wave_grow':{ru:'Рост',en:'Growth',zh:'生长',hi:'वृद्धि',es:'Crecimiento',ar:'نمو',fr:'Croissance',bn:'বৃদ্ধি',pt:'Crescimento',ur:'ترقی',de:'Wachstum',id:'Tumbuh',ja:'成長',tr:'Büyüme',ko:'성장'},
 'wave_bloom':{ru:'Цветение',en:'Bloom',zh:'绽放',hi:'खिलना',es:'Florecimiento',ar:'إزهار',fr:'Floraison',bn:'ব্লুম',pt:'Florescer',ur:'کھلنا',de:'Blüte',id:'Mekar',ja:'開花',tr:'Çiçeklenme',ko:'개화'},
-'wave_fade':{ru:'Увядание',en:'Fade',zh:'凋零',hi:'मुरझाना',es:'Marchitez',ar:'ذبول',fr:'Flétrissement',bn:'বিবর্ণ',pt:'Murchamento',ur:'مرجھانا',de:'Verblassen',id:'Layu',ja:'衰退',tr:'Solma',ko:'시듦'},
+'wave_fade':{ru:'Спад',en:'Decline',zh:'衰退',hi:'गिरावट',es:'Declive',ar:'انحدار',fr:'Déclin',bn:'পতন',pt:'Declínio',ur:'زوال',de:'Rückgang',id:'Penurunan',ja:'下降',tr:'Düşüş',ko:'하강'},
 'wave_seed':{ru:'Семя в земле',en:'Seed in soil',zh:'土中的种子',hi:'मिट्टी में बीज',es:'Semilla en la tierra',ar:'بذرة في التربة',fr:'Graine en terre',bn:'মাটিতে বীজ',pt:'Semente na terra',ur:'مٹی میں بیج',de:'Samen in der Erde',id:'Benih di tanah',ja:'土中の種',tr:'Toprakta tohum',ko:'흙속의 씨앗'},
 'wave_sprout':{ru:'Первые всходы',en:'First sprouts',zh:'初芽',hi:'पहले अंकुर',es:'Primeros brotes',ar:'أول البراعم',fr:'Premiers germes',bn:'প্রথম চারা',pt:'Primeiros brotos',ur:'پہلے پودے',de:'Erste Triebe',id:'Tunas pertama',ja:'初芽',tr:'İlk sürgünler',ko:'첫 새싹'},
 'wave_flower':{ru:'Прекрасный цветок',en:'Beautiful flower',zh:'美丽的花',hi:'सुंदर फूल',es:'Flor hermosa',ar:'زهرة جميلة',fr:'Belle fleur',bn:'সুন্দর ফুল',pt:'Flor linda',ur:'خوبصورت پھول',de:'Schöne Blume',id:'Bunga indah',ja:'美しい花',tr:'Güzel çiçek',ko:'아름다운 꽃'},
@@ -2728,7 +2728,7 @@ function sonyaPredict(){
     {alert:'🌙 Покой',advice:'В ближайшие дни — энергия на спаде. Отличное время для тихих вечеров и заботы о себе.'},
     {alert:'🌱 Рост',advice:'Энергия растёт! Лучшее время для свиданий, новых идей и активного отдыха вдвоём.'},
     {alert:'🌸 Цветение',advice:'Пик общительности и близости. Сегодня отличный день для откровенного разговора.'},
-    {alert:'🍂 Увядание',advice:'Чувствительность повышается. Будьте мягче друг к другу. Избегайте критики.'}
+    {alert:'🍂 Спад',advice:'Чувствительность повышается. Будьте мягче друг к другу. Избегайте критики.'}
   ];
   let pa=phaseAlerts[ph.phaseId];
   let couple=S.couples.find(x=>x.fId===S.curUser||x.mId===S.curUser);
