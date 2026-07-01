@@ -2706,19 +2706,6 @@ function fSettings(g){
       </div>`:''}
     </div>
 
-    <!-- Yandex Ads -->
-    <div class="rc" style="margin-bottom:16px;text-align:left">
-      <div style="font-weight:600;font-size:.95rem;margin-bottom:4px">📢 Реклама Яндекса</div>
-      <p style="color:var(--text2);font-size:.78rem;margin-bottom:10px;line-height:1.5">
-        Выплаты: счёт <strong>40817810320000814885</strong> (Яндекс Банк)<br>
-        <a href="https://partner.yandex.ru" target="_blank" style="color:var(--roseD);text-decoration:underline;font-weight:600">1. Откройте partner.yandex.ru → зарегистрируйтесь</a><br>
-        2. Добавьте площадку: <strong style="color:var(--roseD)">elia86tih-lab.github.io/biosync2code</strong><br>
-        3. Создайте 4 блока (формат «Лента» и «Floor Ad»)<br>
-        4. Вставьте их ID ниже и нажмите «Сохранить»
-      </p>
-      <div id="ya-ad-settings"></div>
-    </div>
-
     <!-- Danger zone -->
     <div class="rc" style="margin-bottom:16px;text-align:left;border:1px solid rgba(212,96,96,.2)">
       <div style="font-weight:600;font-size:.95rem;margin-bottom:4px;color:#D46060">${_('settings_danger')}</div>
@@ -2990,6 +2977,26 @@ function fSonya(){
       <div style="font-size:1.3rem;font-weight:800;letter-spacing:-.02em">${_('sonya_title')}</div>
       <div style="font-size:.82rem;color:var(--text3);margin-top:4px;font-weight:500">${_('sonya_24')}</div>
     </div>
+
+    <!-- ====== CHAT CTA ====== -->
+    <div style="background:linear-gradient(135deg,rgba(0,240,255,.12),rgba(27,158,140,.08));border-radius:24px;padding:24px;margin-bottom:16px;border:2px solid var(--cyan);box-shadow:0 0 30px rgba(0,240,255,.15),0 8px 32px rgba(27,158,140,.1)">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:2rem;margin-bottom:4px">🧠</div>
+        <div style="font-weight:800;font-size:1.1rem">${_('sonya_chat')}</div>
+        <p style="font-size:.82rem;color:var(--text2);margin-top:4px">${_('sonya_chat_desc')}</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button class="btn btn-p btn-lg" onclick="S._sonyaMode='chat';renderFemaleDash()" style="padding:14px;font-size:.9rem;border-radius:16px;box-shadow:0 4px 16px rgba(27,158,140,.25)">
+          <span style="display:block;font-size:1.5rem;margin-bottom:4px">💬</span>
+          Написать в чат
+        </button>
+        <button class="btn btn-s btn-lg" onclick="openVoiceModal()" style="padding:14px;font-size:.9rem;border-radius:16px;background:linear-gradient(135deg,rgba(0,240,255,.15),rgba(27,158,140,.1));border:1.5px solid var(--cyan);color:var(--cyan)">
+          <span style="display:block;font-size:1.5rem;margin-bottom:4px">🎤</span>
+          Голосовое сообщение
+        </button>
+      </div>
+    </div>
+
     <div style="background:linear-gradient(135deg,rgba(192,176,208,.12),transparent);border-radius:24px;padding:20px;margin-bottom:16px;border:1px solid rgba(192,176,208,.15)">
       <div style="display:flex;align-items:flex-start;gap:14px">
         <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--lav),#A890B8);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;box-shadow:0 4px 12px rgba(192,176,208,.3)">🤍</div>
@@ -3049,12 +3056,6 @@ function fSonya(){
         <div style="font-size:.7rem;color:var(--text3)">Задание на неделю</div>
         ${!isPremium?'<div style="font-size:.6rem;color:var(--roseD);margin-top:2px">Premium</div>':''}
       </div>
-      <div class="rc" style="padding:16px;text-align:center;cursor:pointer;background:linear-gradient(135deg,rgba(0,240,255,.08),rgba(27,158,140,.04));border:1px solid rgba(0,240,255,.2)" onclick="S._sonyaMode='chat';renderFemaleDash()">
-        <span style="font-size:1.6rem;display:block;margin-bottom:4px">🧠</span>
-        <div style="font-weight:600;font-size:.82rem">${_('sonya_chat')}</div>
-        <div style="font-size:.7rem;color:var(--text3)">${_('sonya_chat_desc')}</div>
-        <div style="font-size:.6rem;color:var(--rose);margin-top:2px;font-weight:600">${_('sonya_ai_badge')}</div>
-      </div>
     </div>
 
     ${cpActive?`
@@ -3068,6 +3069,37 @@ function fSonya(){
 
     <div style="text-align:center;padding:12px 0;font-size:.75rem;color:var(--text3)">
       🤍 Соня (от греч. Σοφία — мудрость). Я не решаю за вас — я помогаю услышать друг друга.
+    </div>
+
+    <!-- Dzen widget -->
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border)">
+      <div style="font-weight:700;font-size:.95rem;margin-bottom:10px;display:flex;align-items:center;gap:8px">
+        <span>📚</span><span>Статьи о семье и отношениях</span>
+        <span style="margin-left:auto;font-size:.65rem;color:var(--text3)">Яндекс.Дзен</span>
+      </div>
+      <div style="background:var(--card);border-radius:20px;padding:16px;border:1px solid var(--border)">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+          <a href="https://dzen.ru/topic/semya" target="_blank" class="rc" style="padding:14px;text-align:center;text-decoration:none;color:var(--text);display:block">
+            <span style="font-size:1.6rem;display:block;margin-bottom:4px">👨‍👩‍👧‍👦</span>
+            <span style="font-weight:600;font-size:.8rem">Семья</span>
+          </a>
+          <a href="https://dzen.ru/topic/otnosheniya" target="_blank" class="rc" style="padding:14px;text-align:center;text-decoration:none;color:var(--text);display:block">
+            <span style="font-size:1.6rem;display:block;margin-bottom:4px">💕</span>
+            <span style="font-weight:600;font-size:.8rem">Отношения</span>
+          </a>
+          <a href="https://dzen.ru/topic/psychology" target="_blank" class="rc" style="padding:14px;text-align:center;text-decoration:none;color:var(--text);display:block">
+            <span style="font-size:1.6rem;display:block;margin-bottom:4px">🧠</span>
+            <span style="font-weight:600;font-size:.8rem">Психология</span>
+          </a>
+          <a href="https://dzen.ru/topic/health" target="_blank" class="rc" style="padding:14px;text-align:center;text-decoration:none;color:var(--text);display:block">
+            <span style="font-size:1.6rem;display:block;margin-bottom:4px">🌿</span>
+            <span style="font-weight:600;font-size:.8rem">Здоровье</span>
+          </a>
+        </div>
+        <a href="https://dzen.ru/topic/semya" target="_blank" style="display:block;text-align:center;padding:10px;background:linear-gradient(135deg,rgba(0,240,255,.06),rgba(27,158,140,.04));border-radius:14px;color:var(--roseD);font-size:.8rem;font-weight:600;text-decoration:none;border:1px solid rgba(27,158,140,.1)">
+          📖 Читать статьи о семье на Яндекс.Дзен →
+        </a>
+      </div>
     </div>
   </div>`;
   }
@@ -3569,6 +3601,17 @@ function mSonya(){
     </div>`:''}
 
     <div style="text-align:center;padding:12px 0;font-size:.75rem;color:var(--text3)">🤍 Соня хранит тайну обоих и никогда не передаёт слова дословно.</div>
+
+    <!-- Dzen widget -->
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border)">
+      <div style="font-weight:700;font-size:.95rem;margin-bottom:10px;display:flex;align-items:center;gap:8px">
+        <span>📚</span><span>Статьи о семье</span>
+        <span style="margin-left:auto;font-size:.65rem;color:var(--text3)">Яндекс.Дзен</span>
+      </div>
+      <a href="https://dzen.ru/topic/semya" target="_blank" style="display:block;text-align:center;padding:12px;background:linear-gradient(135deg,rgba(0,240,255,.06),rgba(27,158,140,.04));border-radius:14px;color:var(--roseD);font-size:.8rem;font-weight:600;text-decoration:none;border:1px solid rgba(27,158,140,.1)">
+        📖 Читать статьи о семье на Яндекс.Дзен →
+      </a>
+    </div>
   </div>`;
   }
 
